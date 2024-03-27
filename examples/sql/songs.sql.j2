@@ -1,0 +1,30 @@
+SELECT
+    track.name as title,
+    artist.name as artist_name,
+    {% if cond__album_name %}
+      album.title as album_name,
+    {% endif %}
+    media_type.name as file_format
+FROM
+    album
+    JOIN artist USING (artist_id)
+    LEFT JOIN track USING (album_id)
+    JOIN media_type USING (media_type_id)
+
+{% if cond__artist or cond__file_format %}
+  WHERE
+  {% set num_conds = 0 %}
+  {% if cond__artist %}
+    artist.name = {{ placeholder('artist') }}
+    {% set num_conds = num_conds + 1 %}
+  {% endif %}
+
+  {% if cond__file_format %}
+    {% if num_conds > 0 %}
+      AND
+    {% endif %}
+    media_type.name = {{ placeholder('file_format') }}
+    {% set num_conds = num_conds + 1 %}
+  {% endif %}
+{% endif %}
+;
