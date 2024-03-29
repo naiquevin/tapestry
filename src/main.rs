@@ -52,6 +52,13 @@ fn pos_args_mapping(template: &str, udvars: &HashSet<String>) -> HashMap<String,
         .collect::<HashMap<String, String>>()
 }
 
+fn variables_mapping(udvars: &HashSet<String>) -> HashMap<String, String> {
+    udvars
+        .iter()
+        .map(|v| (v.to_owned(), format!(":{v}")))
+        .collect::<HashMap<String, String>>()
+}
+
 fn main() {
     let mut tmpl_env = minijinja::Environment::new();
     tmpl_env.set_loader(minijinja::path_loader("examples/sql"));
@@ -73,9 +80,14 @@ fn main() {
     println!("-- Query with positional arguments (for production code)");
     let pos_args = pos_args_mapping(&output, &udvars);
     println!("-- Positional args: {pos_args:?}");
+    let query = gen_tmpl.render(&pos_args).unwrap();
+    println!("{query}");
     println!("");
 
-    let query = gen_tmpl.render(&pos_args).unwrap();
+    println!("-- Query with variables mapping (for production code)");
+    let vars_map = variables_mapping(&udvars);
+    println!("-- Query variables: {vars_map:?}");
+    let query = gen_tmpl.render(&vars_map).unwrap();
     println!("{query}");
     println!("");
 
