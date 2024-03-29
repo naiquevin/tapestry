@@ -20,7 +20,7 @@ fn placeholder(name: String) -> Result<String, Error> {
 
 fn capture_udvars<'a>(line: &'a str, re: &Regex, valid_udvars: &HashSet<String>) -> Vec<&'a str> {
     let mut result = vec![];
-    for cap in re.captures_iter(&line) {
+    for cap in re.captures_iter(line) {
         if let Some(g) = cap.get(1) {
             let var = g.as_str();
             if valid_udvars.contains(var) {
@@ -39,7 +39,7 @@ fn pos_args_mapping(template: &str, udvars: &HashSet<String>) -> HashMap<String,
         if line.is_empty() {
             continue;
         }
-        for var in capture_udvars(&line, &re, udvars) {
+        for var in capture_udvars(line, &re, udvars) {
             if result.get(var).is_none() {
                 result.insert(var.to_owned(), counter);
                 counter += 1;
@@ -69,7 +69,7 @@ fn main() {
     let output = tmpl.render(ctx).unwrap();
     println!("-- Intermediate query");
     println!("{output}");
-    println!("");
+    println!();
 
     // The generated output is again a jinja2 template. We add it to
     // the env and find the undeclared_variables
@@ -82,14 +82,14 @@ fn main() {
     println!("-- Positional args: {pos_args:?}");
     let query = gen_tmpl.render(&pos_args).unwrap();
     println!("{query}");
-    println!("");
+    println!();
 
     println!("-- Query with variables mapping (for production code)");
     let vars_map = variables_mapping(&udvars);
     println!("-- Query variables: {vars_map:?}");
     let query = gen_tmpl.render(&vars_map).unwrap();
     println!("{query}");
-    println!("");
+    println!();
 
     let test_query = gen_tmpl
         .render(context! {
@@ -99,7 +99,7 @@ fn main() {
         .unwrap();
     println!("-- Query for test code");
     println!("{test_query}");
-    println!("");
+    println!();
 }
 
 #[cfg(test)]
