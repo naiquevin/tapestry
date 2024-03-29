@@ -91,10 +91,12 @@ fn main() {
     println!("{query}");
     println!("");
 
-    let test_query = gen_tmpl.render(context! {
-        artist => "'Iron Maiden'",
-        file_format => "'Protected AAC audio file'"
-    }).unwrap();
+    let test_query = gen_tmpl
+        .render(context! {
+            artist => "'Iron Maiden'",
+            file_format => "'Protected AAC audio file'"
+        })
+        .unwrap();
     println!("-- Query for test code");
     println!("{test_query}");
     println!("");
