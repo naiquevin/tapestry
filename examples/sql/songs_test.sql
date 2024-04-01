@@ -1,8 +1,9 @@
 BEGIN;
 SELECT
     plan (1);
--- Run the tests.
 
+-- start(noformat)
+-- Run the tests.
 SELECT results_eq(
        'SELECT track.name AS title, artist.name AS artist_name, media_type.name AS file_format FROM album JOIN artist USING(artist_id) LEFT JOIN track USING (album_id) JOIN media_type USING (media_type_id) WHERE artist.name = ''Iron Maiden'' AND media_type.name = ''Protected AAC audio file''',
        $$VALUES
@@ -20,8 +21,9 @@ SELECT results_eq(
        $$,
        'Verify return value'
 );
-
 -- Finish the tests and clean up.
+-- end(noformat)
+
 SELECT
     *
 FROM

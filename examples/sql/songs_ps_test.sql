@@ -15,6 +15,7 @@ WHERE
 BEGIN;
 SELECT
     plan (1);
+-- start(noformat)
 -- Run the tests.
 SELECT results_eq(
        'EXECUTE song_formats(''Iron Maiden'', ''Protected AAC audio file'')',
@@ -33,6 +34,7 @@ SELECT results_eq(
        $$,
        'Verify return value'
 );
+-- end(noformat)
 -- Finish the tests and clean up.
 SELECT
     *
