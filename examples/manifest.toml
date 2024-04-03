@@ -20,28 +20,24 @@ all_conds = [ "genre", "limit" ]
 id = "songs@artist+album"
 template = "sql/songs.sql.j2"
 conds = [ "artist", "album_name" ]
+# output file name is optional. If not specified, it will be generated
+# from the id by replacing the special characters with hyphens
 output = "songs__artist__album.sql"
 
 [[queries]]
 id = "songs@artist&file_format+album"
 template = "sql/songs.sql.j2"
 conds = [ "artist", "album_name", "file_format" ]
-# check if it's viable to compute the output filename based on the
-# id. E.g. by separating different groups (@, +) by double underscore
-# and items in each group by hyphen
-output = "songs__artist-file_format__album.sql"
 
 [[queries]]
 id = "artists_long_songs"
 template = "sql/artists_long_songs.sql.j2"
 conds = []
-output = "all_artists_long_songs.sql"
 
 [[queries]]
 id = "artists_long_songs@genre*limit"
 template = "sql/artists_long_songs.sql.j2"
 conds = [ "genre", "limit" ]
-output = "top_artists_long_songs_of_genre.sql"
 
 [[tests]]
 query = "songs@artist&file_format+album"
@@ -51,10 +47,12 @@ query = "songs@artist&file_format+album"
 #
 # (only 1 for now)
 template = "sql/songs_test.sql.j2"
-output = "test_<queryname><n>.sql"
 
 [[tests]]
 query = "artists_long_songs@genre*limit"
 template = "sql/artists_long_songs_test.sql.j2"
+# output file name is optional. If not specified, it will be generated
+# from the id by replacing the special characters with hyphens and
+# then suffixing `_test<n>`
 output = "artists_long_songs-genre-limit_test01.sql"
 
