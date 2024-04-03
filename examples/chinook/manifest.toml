@@ -2,10 +2,14 @@
 # arguments) or `variables` syntax
 placeholder = "posargs"
 
+[template_dir]
+queries = "templates/queries"
+tests = "templates/tests"
+
 # Where the rendered sql files will be created. The paths must be
 # relative to this manifest file.
 [output_dir]
-queries = "output/sql"
+queries = "output/queries"
 tests = "output/tests"
 
 [[templates]]
