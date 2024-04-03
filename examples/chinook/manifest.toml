@@ -2,27 +2,24 @@
 # arguments) or `variables` syntax
 placeholder = "posargs"
 
-[template_dir]
-queries = "templates/queries"
-tests = "templates/tests"
-
+query_templates_dir = "templates/queries"
+test_templates_dir = "templates/tests"
 # Where the rendered sql files will be created. The paths must be
 # relative to this manifest file.
-[output_dir]
-queries = "output/queries"
-tests = "output/tests"
+queries_output_dir = "output/queries"
+tests_output_dir = "output/tests"
 
 [[query_templates]]
-path = "sql/songs.sql.j2"
+path = "songs.sql.j2"
 all_conds = [ "artist", "file_format", "album_name" ]
 
 [[query_templates]]
-path = "sql/artists_long_songs.sql.j2"
+path = "artists_long_songs.sql.j2"
 all_conds = [ "genre", "limit" ]
 
 [[queries]]
 id = "songs@artist+album"
-template = "sql/songs.sql.j2"
+template = "songs.sql.j2"
 conds = [ "artist", "album_name" ]
 # output file name is optional. If not specified, it will be generated
 # from the id by replacing the special characters with hyphens
@@ -30,17 +27,17 @@ output = "songs__artist__album.sql"
 
 [[queries]]
 id = "songs@artist&file_format+album"
-template = "sql/songs.sql.j2"
+template = "songs.sql.j2"
 conds = [ "artist", "album_name", "file_format" ]
 
 [[queries]]
 id = "artists_long_songs"
-template = "sql/artists_long_songs.sql.j2"
+template = "artists_long_songs.sql.j2"
 conds = []
 
 [[queries]]
 id = "artists_long_songs@genre*limit"
-template = "sql/artists_long_songs.sql.j2"
+template = "artists_long_songs.sql.j2"
 conds = [ "genre", "limit" ]
 
 [[test_templates]]
@@ -50,11 +47,11 @@ query = "songs@artist&file_format+album"
 #  1. prepared_statement
 #
 # (only 1 for now)
-template = "sql/songs_test.sql.j2"
+template = "songs_test.sql.j2"
 
 [[test_templates]]
 query = "artists_long_songs@genre*limit"
-template = "sql/artists_long_songs_test.sql.j2"
+template = "artists_long_songs_test.sql.j2"
 # output file name is optional. If not specified, it will be generated
 # from the id by replacing the special characters with hyphens and
 # then suffixing `_test<n>`
