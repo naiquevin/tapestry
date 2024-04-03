@@ -29,28 +29,11 @@ output = "songs__artist-file_format__album.sql"
 
 [[tests]]
 query = "songs@artist&file_format+album"
+# Following variables will be available inside the template
+#
+#  1. prepared_statement
+#
+# (only 1 for now)
 template = "sql/songs_test.sql.j2"
-# By default prepared_statement would be considered true, but if
-# false, then `params` need to be set. Basically if prepared_statement
-# is true, then the user is able to write the params in the test
-# template file itself as arguments to the `EXECUTE` call. But if it's
-# false, then the sql query needs to be rendered from the template and
-# included in the test template.
-prepared_statement = false
-params = { artist = "Iron Maiden" }
 output = "test_<queryname><n>.sql"
-# Variables that will be available inside the test template
-#
-#    1. prepared_statement (if prepared_statement = true)
-#    2. query (if prepared_statement = false)
-#    3. var for each key defined in the params (if prepared_statement = false)
-#
-
-[[tests]]
-query = "songs@artist&file_format+album"
-template = "sql/songs_test.sql.j2"
-# prepared_statement = true
-
-
-
 
