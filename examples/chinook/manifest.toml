@@ -12,11 +12,11 @@ tests = "templates/tests"
 queries = "output/queries"
 tests = "output/tests"
 
-[[templates]]
+[[query_templates]]
 path = "sql/songs.sql.j2"
 all_conds = [ "artist", "file_format", "album_name" ]
 
-[[templates]]
+[[query_templates]]
 path = "sql/artists_long_songs.sql.j2"
 all_conds = [ "genre", "limit" ]
 
@@ -43,7 +43,7 @@ id = "artists_long_songs@genre*limit"
 template = "sql/artists_long_songs.sql.j2"
 conds = [ "genre", "limit" ]
 
-[[tests]]
+[[test_templates]]
 query = "songs@artist&file_format+album"
 # Following variables will be available inside the template
 #
@@ -52,7 +52,7 @@ query = "songs@artist&file_format+album"
 # (only 1 for now)
 template = "sql/songs_test.sql.j2"
 
-[[tests]]
+[[test_templates]]
 query = "artists_long_songs@genre*limit"
 template = "sql/artists_long_songs_test.sql.j2"
 # output file name is optional. If not specified, it will be generated
