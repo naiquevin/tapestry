@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 minijinja = { version = "1.0.15", features = ["loader"] }
 regex = "1.10.4"
+toml = "0.8.12"

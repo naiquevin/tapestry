@@ -1,6 +1,9 @@
+use crate::metadata::MetaData;
 use minijinja::{context, Error};
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
+
+mod metadata;
 
 fn placeholder(name: String) -> Result<String, Error> {
     Ok(format!("{{{{ {name} }}}}"))
@@ -59,13 +62,14 @@ fn variables_mapping(udvars: &HashSet<String>) -> HashMap<String, String> {
         .collect::<HashMap<String, String>>()
 }
 
-fn main() {
+#[allow(dead_code)]
+fn main2() {
     let mut tmpl_env = minijinja::Environment::new();
     tmpl_env.set_loader(minijinja::path_loader("examples/sql"));
     tmpl_env.add_function("placeholder", placeholder);
 
-    let tmpl = tmpl_env.get_template("songs.sql.j2").unwrap();
-    let ctx = context! { cond__artist => true, cond__file_format => true };
+    let tmpl = tmpl_env.get_template("artists_long_songs.sql.j2").unwrap();
+    let ctx = context! { cond__genre => true, cond__limit => true };
     let output = tmpl.render(ctx).unwrap();
     println!("-- Intermediate query");
     println!("{output}");
@@ -93,14 +97,23 @@ fn main() {
 
     let test_query = gen_tmpl
         .render(context! {
-            artist => "'Iron Maiden'",
-            file_format => "'Protected AAC audio file'"
+            genre => "'Rock'",
+            limit => "10"
         })
         .unwrap();
     println!("-- Query for test code");
     println!("{test_query}");
     println!();
 }
+
+fn main() {
+    let path = std::path::Path::new("manifest.toml");
+    match MetaData::try_from(path) {
+        Ok(m) => println!("{m:?}"),
+        Err(e) => println!("{e:?}")
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
