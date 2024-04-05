@@ -116,10 +116,9 @@ fn main() {
     let path = std::path::Path::new("manifest.toml");
     match MetaData::try_from(path) {
         Ok(m) => println!("{m:?}"),
-        Err(e) => println!("{e:?}")
+        Err(e) => println!("{e:?}"),
     }
 }
-
 
 #[cfg(test)]
 mod tests {

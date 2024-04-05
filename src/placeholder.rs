@@ -1,11 +1,11 @@
-use crate::error::{Error, parse_error};
+use crate::error::{parse_error, Error};
 use std::convert::TryFrom;
 use toml::Value;
 
 #[derive(Debug)]
 pub enum Placeholder {
     PosArgs,
-    Variables
+    Variables,
 }
 
 impl TryFrom<&Value> for Placeholder {
@@ -22,9 +22,7 @@ impl TryFrom<&Value> for Placeholder {
                     Err(parse_error!("Invalid placeholder: '{}", s))
                 }
             }
-            None => {
-                Err(parse_error!("Value of key 'placeholder' must be a string"))
-            }
+            None => Err(parse_error!("Value of key 'placeholder' must be a string")),
         }
     }
 }

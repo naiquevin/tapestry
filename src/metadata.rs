@@ -1,4 +1,4 @@
-use crate::error::{Error, parse_error};
+use crate::error::{parse_error, Error};
 use crate::placeholder::Placeholder;
 use crate::query::Queries;
 use crate::query_template::QueryTemplates;
@@ -27,19 +27,24 @@ impl TryFrom<&Path> for MetaData {
     fn try_from(p: &Path) -> Result<Self, Self::Error> {
         let contents = std::fs::read_to_string(p).map_err(Error::Io)?;
         let table: Table = contents.parse().map_err(Error::Toml)?;
-        let placeholder = table.get("placeholder")
+        let placeholder = table
+            .get("placeholder")
             .ok_or(parse_error!("Key 'placeholder' is missing"))
             .map(Placeholder::try_from)??;
-        let query_templates_dir = table.get("query_templates_dir")
+        let query_templates_dir = table
+            .get("query_templates_dir")
             .ok_or(parse_error!("Key 'query_templates_dir' is missing"))
             .map(|v| decode_pathbuf(v, None, "query_templates_dir"))??;
-        let test_templates_dir = table.get("test_templates_dir")
+        let test_templates_dir = table
+            .get("test_templates_dir")
             .ok_or(parse_error!("Key 'test_templates_dir' is missing"))
             .map(|v| decode_pathbuf(v, None, "test_templates_dir"))??;
-        let queries_output_dir = table.get("queries_output_dir")
+        let queries_output_dir = table
+            .get("queries_output_dir")
             .ok_or(parse_error!("Key 'queries_output_dir' is missing"))
             .map(|v| decode_pathbuf(v, None, "query_output_dir"))??;
-        let tests_output_dir = table.get("tests_output_dir")
+        let tests_output_dir = table
+            .get("tests_output_dir")
             .ok_or(parse_error!("Key 'tests_output_dir' is missing"))
             .map(|v| decode_pathbuf(v, None, "tests_output_dir"))??;
 
@@ -78,4 +83,3 @@ impl TryFrom<&Path> for MetaData {
         Ok(m)
     }
 }
-

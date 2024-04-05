@@ -1,7 +1,7 @@
-use crate::error::{Error, parse_error};
+use crate::error::{parse_error, Error};
 use crate::toml::{decode_pathbuf, decode_vecstr};
-use std::collections::HashMap;
 use std::collections::hash_map::Entry;
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use toml::Value;
@@ -14,22 +14,23 @@ struct QueryTemplate {
 }
 
 impl QueryTemplate {
-
     fn decode<P: AsRef<Path>>(base_dir: P, value: &Value) -> Result<Self, Error> {
         match value.as_table() {
             Some(t) => {
-                let path = t.get("path")
+                let path = t
+                    .get("path")
                     .ok_or(parse_error!("Query template path missing"))
-                    .map(|v| decode_pathbuf(v, Some(base_dir.as_ref()), "query_templates[].path"))??;
-                let all_conds = t.get("all_conds")
+                    .map(|v| {
+                        decode_pathbuf(v, Some(base_dir.as_ref()), "query_templates[].path")
+                    })??;
+                let all_conds = t
+                    .get("all_conds")
                     .ok_or(parse_error!("Missing 'all_conds' in 'query_template'"))
                     .map(|v| decode_vecstr(v, "query_templates[].all_conds"))??;
 
                 Ok(Self { path, all_conds })
             }
-            None => {
-                Err(parse_error!("Invalid 'query_template' entry"))
-            }
+            None => Err(parse_error!("Invalid 'query_template' entry")),
         }
     }
 
@@ -47,21 +48,17 @@ impl QueryTemplate {
 #[derive(Debug)]
 pub struct QueryTemplates {
     inner: Vec<Rc<QueryTemplate>>,
-    cache: HashMap<String, Rc<QueryTemplate>>
+    cache: HashMap<String, Rc<QueryTemplate>>,
 }
 
 impl QueryTemplates {
-
     pub fn new() -> Self {
         let inner: Vec<Rc<QueryTemplate>> = vec![];
         let cache: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
         Self { inner, cache }
     }
 
-    pub fn decode<P: AsRef<Path>>(
-        base_dir: P,
-        value: &Value
-    ) -> Result<Self, Error> {
+    pub fn decode<P: AsRef<Path>>(base_dir: P, value: &Value) -> Result<Self, Error> {
         let items = match value.as_array() {
             Some(xs) => {
                 let mut res = Vec::with_capacity(xs.len());
@@ -71,10 +68,13 @@ impl QueryTemplates {
                 }
                 res
             }
-            None => return Err(parse_error!("Invalid query templates"))
+            None => return Err(parse_error!("Invalid query templates")),
         };
         let cache: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
-        Ok(Self { inner: items, cache })
+        Ok(Self {
+            inner: items,
+            cache,
+        })
     }
 
     #[allow(dead_code)]
@@ -85,11 +85,7 @@ impl QueryTemplates {
         match entry {
             Entry::Occupied(o) => Some(o.into_mut()),
             Entry::Vacant(v) => {
-                let res = self.inner
-                    .iter()
-                    .find(|entry| {
-                        entry.id().as_str() == key
-                    });
+                let res = self.inner.iter().find(|entry| entry.id().as_str() == key);
                 if let Some(qt) = res {
                     v.insert(qt.clone());
                 }

@@ -1,5 +1,5 @@
-use crate::error::{Error, parse_error};
-use crate::toml::{decode_string, decode_pathbuf};
+use crate::error::{parse_error, Error};
+use crate::toml::{decode_pathbuf, decode_string};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
@@ -14,7 +14,6 @@ struct TestTemplate {
 }
 
 impl TestTemplate {
-
     fn decode<P: AsRef<Path>>(
         templates_base_dir: P,
         output_base_dir: P,
@@ -22,19 +21,35 @@ impl TestTemplate {
     ) -> Result<Self, Error> {
         match value.as_table() {
             Some(t) => {
-                let query = t.get("query")
+                let query = t
+                    .get("query")
                     .ok_or(parse_error!("Missing 'query' in 'test_templates' entry"))
                     .map(|v| decode_string(v, "test_templates[].query"))??;
-                let template = t.get("template")
+                let template = t
+                    .get("template")
                     .ok_or(parse_error!("Missing 'template' in 'test_templates' entry"))
-                    .map(|v| decode_pathbuf(v, Some(templates_base_dir.as_ref()), "test_templates[].template"))??;
+                    .map(|v| {
+                        decode_pathbuf(
+                            v,
+                            Some(templates_base_dir.as_ref()),
+                            "test_templates[].template",
+                        )
+                    })??;
                 let output = match t.get("output") {
-                    Some(v) => Some(decode_pathbuf(v, Some(output_base_dir.as_ref()), "test_templates[].output")?),
+                    Some(v) => Some(decode_pathbuf(
+                        v,
+                        Some(output_base_dir.as_ref()),
+                        "test_templates[].output",
+                    )?),
                     None => None,
                 };
-                Ok(Self { query, template, output })
-            },
-            None => Err(parse_error!("Invalid 'test_templates' entry"))
+                Ok(Self {
+                    query,
+                    template,
+                    output,
+                })
+            }
+            None => Err(parse_error!("Invalid 'test_templates' entry")),
         }
     }
 }
@@ -47,7 +62,6 @@ pub struct TestTemplates {
 }
 
 impl TestTemplates {
-
     pub fn new() -> Self {
         let inner: Vec<Rc<TestTemplate>> = vec![];
         let cache: HashMap<String, Rc<TestTemplate>> = HashMap::new();
@@ -57,7 +71,7 @@ impl TestTemplates {
     pub fn decode<P: AsRef<Path>>(
         templates_base_dir: P,
         output_base_dir: P,
-        value: &Value
+        value: &Value,
     ) -> Result<Self, Error> {
         let items = match value.as_array() {
             Some(xs) => {
@@ -67,11 +81,13 @@ impl TestTemplates {
                     res.push(Rc::new(tt));
                 }
                 res
-            },
-            None => return Err(parse_error!("Invalid test_templates"))
+            }
+            None => return Err(parse_error!("Invalid test_templates")),
         };
         let cache: HashMap<String, Rc<TestTemplate>> = HashMap::new();
-        Ok(Self { inner: items, cache })
+        Ok(Self {
+            inner: items,
+            cache,
+        })
     }
-
 }
