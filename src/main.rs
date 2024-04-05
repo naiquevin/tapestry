@@ -3,7 +3,13 @@ use minijinja::{context, Error};
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 
+mod error;
 mod metadata;
+mod placeholder;
+mod query;
+mod query_template;
+mod test_template;
+mod toml;
 
 fn placeholder(name: String) -> Result<String, Error> {
     Ok(format!("{{{{ {name} }}}}"))
