@@ -1,11 +1,13 @@
 use crate::error::Error;
 use crate::toml::{decode_string, decode_pathbuf};
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
 use toml::Value;
 
 #[allow(unused)]
 #[derive(Debug)]
-pub struct TestTemplate {
+struct TestTemplate {
     query: String,
     template: PathBuf,
     output: Option<PathBuf>,
@@ -37,20 +39,39 @@ impl TestTemplate {
     }
 }
 
-pub fn decode_test_templates<P: AsRef<Path>>(
-    templates_base_dir: P,
-    output_base_dir: P,
-    value: &Value
-) -> Result<Vec<TestTemplate>, Error> {
-    match value.as_array() {
-        Some(xs) => {
-            let mut res = Vec::with_capacity(xs.len());
-            for x in xs {
-                let tt = TestTemplate::decode(&templates_base_dir, &output_base_dir, x)?;
-                res.push(tt);
-            }
-            Ok(res)
-        },
-        None => Err(Error::Parsing("Invalid test_templates".to_owned()))
+#[allow(unused)]
+#[derive(Debug)]
+pub struct TestTemplates {
+    inner: Vec<Rc<TestTemplate>>,
+    cache: HashMap<String, Rc<TestTemplate>>,
+}
+
+impl TestTemplates {
+
+    pub fn new() -> Self {
+        let inner: Vec<Rc<TestTemplate>> = vec![];
+        let cache: HashMap<String, Rc<TestTemplate>> = HashMap::new();
+        Self { inner, cache }
     }
+
+    pub fn decode<P: AsRef<Path>>(
+        templates_base_dir: P,
+        output_base_dir: P,
+        value: &Value
+    ) -> Result<Self, Error> {
+        let items = match value.as_array() {
+            Some(xs) => {
+                let mut res = Vec::with_capacity(xs.len());
+                for x in xs {
+                    let tt = TestTemplate::decode(&templates_base_dir, &output_base_dir, x)?;
+                    res.push(Rc::new(tt));
+                }
+                res
+            },
+            None => return Err(Error::Parsing("Invalid test_templates".to_owned()))
+        };
+        let cache: HashMap<String, Rc<TestTemplate>> = HashMap::new();
+        Ok(Self { inner: items, cache })
+    }
+
 }

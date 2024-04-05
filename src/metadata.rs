@@ -2,7 +2,7 @@ use crate::error::Error;
 use crate::placeholder::Placeholder;
 use crate::query::Queries;
 use crate::query_template::QueryTemplates;
-use crate::test_template::{decode_test_templates, TestTemplate};
+use crate::test_template::TestTemplates;
 use crate::toml::decode_pathbuf;
 use std::convert::TryFrom;
 use std::path::{Path, PathBuf};
@@ -18,7 +18,7 @@ pub struct MetaData {
     tests_output_dir: PathBuf,
     query_templates: QueryTemplates,
     queries: Queries,
-    test_templates: Vec<TestTemplate>
+    test_templates: TestTemplates,
 }
 
 impl TryFrom<&Path> for MetaData {
@@ -58,10 +58,10 @@ impl TryFrom<&Path> for MetaData {
         };
 
         let test_templates = match table.get("test_templates") {
-            Some(v) => decode_test_templates(&test_templates_dir, &tests_output_dir, v)?,
+            Some(v) => TestTemplates::decode(&test_templates_dir, &tests_output_dir, v)?,
             // @TODO: Log a warning here as there is nothing to be
             // done if no queries are defined.
-            None => vec![],
+            None => TestTemplates::new(),
         };
 
         let m = Self {
