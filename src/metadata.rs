@@ -1,6 +1,6 @@
 use crate::error::Error;
 use crate::placeholder::Placeholder;
-use crate::query::{decode_queries, Query};
+use crate::query::Queries;
 use crate::query_template::QueryTemplates;
 use crate::test_template::{decode_test_templates, TestTemplate};
 use crate::toml::decode_pathbuf;
@@ -17,7 +17,7 @@ pub struct MetaData {
     queries_output_dir: PathBuf,
     tests_output_dir: PathBuf,
     query_templates: QueryTemplates,
-    queries: Vec<Query>,
+    queries: Queries,
     test_templates: Vec<TestTemplate>
 }
 
@@ -51,10 +51,10 @@ impl TryFrom<&Path> for MetaData {
         };
 
         let queries = match table.get("queries") {
-            Some(v) => decode_queries(&query_templates_dir, &queries_output_dir, v)?,
+            Some(v) => Queries::decode(&query_templates_dir, &queries_output_dir, v)?,
             // @TODO: Log a warning here as there is nothing to be
             // done if no queries are defined.
-            None => vec![],
+            None => Queries::new(),
         };
 
         let test_templates = match table.get("test_templates") {
