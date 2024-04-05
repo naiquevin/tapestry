@@ -1,6 +1,9 @@
+use std::collections::HashMap;
+use std::collections::hash_map::Entry;
 use std::convert::TryFrom;
 use std::io;
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
 use toml::{Table, Value};
 
 #[derive(Debug)]
@@ -92,22 +95,70 @@ impl QueryTemplate {
             }
         }
     }
+
+    /// Returns identifier for the QueryTemplate
+    ///
+    /// It's simply the path returned as String. Expected to be used
+    /// for caching etc.
+    fn id(&self) -> String {
+        // @UNWRAP: Path is expected to be valid UTF-8
+        self.path.to_str().unwrap().to_owned()
+    }
 }
 
-fn decode_query_templates<P: AsRef<Path>>(
-    base_dir: P,
-    value: &Value
-) -> Result<Vec<QueryTemplate>, Error> {
-    match value.as_array() {
-        Some(xs) => {
-            let mut res = Vec::with_capacity(xs.len());
-            for x in xs {
-                let qt = QueryTemplate::decode(&base_dir, x)?;
-                res.push(qt)
+#[allow(unused)]
+#[derive(Debug)]
+struct QueryTemplates {
+    inner: Vec<Rc<QueryTemplate>>,
+    cache: HashMap<String, Rc<QueryTemplate>>
+}
+
+impl QueryTemplates {
+
+    fn new() -> Self {
+        let inner: Vec<Rc<QueryTemplate>> = vec![];
+        let cache: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
+        Self { inner, cache }
+    }
+
+    fn decode<P: AsRef<Path>>(
+        base_dir: P,
+        value: &Value
+    ) -> Result<Self, Error> {
+        let items = match value.as_array() {
+            Some(xs) => {
+                let mut res = Vec::with_capacity(xs.len());
+                for x in xs {
+                    let qt = Rc::new(QueryTemplate::decode(&base_dir, x)?);
+                    res.push(qt)
+                }
+                res
             }
-            Ok(res)
+            None => return Err(Error::Parsing("Invalid query templates".to_owned()))
+        };
+        let cache: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
+        Ok(Self { inner: items, cache })
+    }
+
+    #[allow(dead_code)]
+    fn get(&mut self, path: &Path) -> Option<&Rc<QueryTemplate>> {
+        // @UNWRAP: Path is expected to be valid UTF-8
+        let key = path.to_str().unwrap();
+        let entry = self.cache.entry(key.to_owned());
+        match entry {
+            Entry::Occupied(o) => Some(o.into_mut()),
+            Entry::Vacant(v) => {
+                let res = self.inner
+                    .iter()
+                    .find(|entry| {
+                        entry.id().as_str() == key
+                    });
+                if let Some(qt) = res {
+                    v.insert(qt.clone());
+                }
+                res
+            }
         }
-        None => Err(Error::Parsing("Invalid query templates".to_owned()))
     }
 }
 
@@ -227,7 +278,7 @@ pub struct MetaData {
     test_templates_dir: PathBuf,
     queries_output_dir: PathBuf,
     tests_output_dir: PathBuf,
-    query_templates: Vec<QueryTemplate>,
+    query_templates: QueryTemplates,
     queries: Vec<Query>,
     test_templates: Vec<TestTemplate>
 }
@@ -255,10 +306,10 @@ impl TryFrom<&Path> for MetaData {
             .map(|v| decode_pathbuf(v, None))??;
 
         let query_templates = match table.get("query_templates") {
-            Some(v) => decode_query_templates(&query_templates_dir, v)?,
+            Some(v) => QueryTemplates::decode(&query_templates_dir, v)?,
             // @TODO: Log a warning here as there is nothing to be
             // done if no templates are defined.
-            None => vec![],
+            None => QueryTemplates::new(),
         };
 
         let queries = match table.get("queries") {
