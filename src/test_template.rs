@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::error::{Error, parse_error};
 use crate::toml::{decode_string, decode_pathbuf};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -23,10 +23,10 @@ impl TestTemplate {
         match value.as_table() {
             Some(t) => {
                 let query = t.get("query")
-                    .ok_or(Error::Parsing("Missing 'query' in 'test_templates' entry".to_owned()))
+                    .ok_or(parse_error!("Missing 'query' in 'test_templates' entry"))
                     .map(decode_string)??;
                 let template = t.get("template")
-                    .ok_or(Error::Parsing("Missing 'template' in 'test_templates' entry".to_owned()))
+                    .ok_or(parse_error!("Missing 'template' in 'test_templates' entry"))
                     .map(|v| decode_pathbuf(v, Some(templates_base_dir.as_ref())))??;
                 let output = match t.get("output") {
                     Some(v) => Some(decode_pathbuf(v, Some(output_base_dir.as_ref()))?),
@@ -34,7 +34,7 @@ impl TestTemplate {
                 };
                 Ok(Self { query, template, output })
             },
-            None => Err(Error::Parsing("Invalid 'test_templates' entry".to_owned()))
+            None => Err(parse_error!("Invalid 'test_templates' entry"))
         }
     }
 }
@@ -68,7 +68,7 @@ impl TestTemplates {
                 }
                 res
             },
-            None => return Err(Error::Parsing("Invalid test_templates".to_owned()))
+            None => return Err(parse_error!("Invalid test_templates"))
         };
         let cache: HashMap<String, Rc<TestTemplate>> = HashMap::new();
         Ok(Self { inner: items, cache })

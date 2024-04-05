@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::error::{Error, parse_error};
 use crate::toml::{decode_string, decode_pathbuf, decode_vecstr};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -24,13 +24,13 @@ impl Query {
         match value.as_table() {
             Some(t) => {
                 let id = t.get("id")
-                    .ok_or(Error::Parsing("Missing 'id' in 'query' entry".to_owned()))
+                    .ok_or(parse_error!("Missing 'id' in 'query' entry"))
                     .map(decode_string)??;
                 let template = t.get("template")
-                    .ok_or(Error::Parsing("Missing 'template' in 'query' entry".to_owned()))
+                    .ok_or(parse_error!("Missing 'template' in 'query' entry"))
                     .map(|v| decode_pathbuf(v, Some(templates_base_dir.as_ref())))??;
                 let conds = t.get("conds")
-                    .ok_or(Error::Parsing("Missing 'conds' in 'query' entry".to_owned()))
+                    .ok_or(parse_error!("Missing 'conds' in 'query' entry"))
                     .map(decode_vecstr)??;
                 let output = match t.get("option") {
                     Some(v) => Some(decode_pathbuf(v, Some(output_base_dir.as_ref()))?),
@@ -38,7 +38,7 @@ impl Query {
                 };
                 Ok(Self { id, template, conds, output })
             },
-            None => Err(Error::Parsing("Invalid 'query' entry".to_owned()))
+            None => Err(parse_error!("Invalid 'query' entry"))
         }
     }
 }
@@ -72,7 +72,7 @@ impl Queries {
                 }
                 res
             }
-            None => return Err(Error::Parsing("Invalid queries".to_owned()))
+            None => return Err(parse_error!("Invalid queries"))
         };
         let cache: HashMap<String, Rc<Query>> = HashMap::new();
         Ok(Self { inner: items, cache })

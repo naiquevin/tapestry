@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::error::{Error, parse_error};
 use crate::toml::{decode_pathbuf, decode_vecstr};
 use std::collections::HashMap;
 use std::collections::hash_map::Entry;
@@ -19,16 +19,16 @@ impl QueryTemplate {
         match value.as_table() {
             Some(t) => {
                 let path = t.get("path")
-                    .ok_or(Error::Parsing("Query template path missing".to_owned()))
+                    .ok_or(parse_error!("Query template path missing"))
                     .map(|v| decode_pathbuf(v, Some(base_dir.as_ref())))??;
                 let all_conds = t.get("all_conds")
-                    .ok_or(Error::Parsing("Invalid query tempalte".to_owned()))
+                    .ok_or(parse_error!("Invalid query tempalte"))
                     .map(decode_vecstr)??;
 
                 Ok(Self { path, all_conds })
             }
             None => {
-                Err(Error::Parsing("Invalid 'query_template' entry".to_owned()))
+                Err(parse_error!("Invalid 'query_template' entry"))
             }
         }
     }
@@ -71,7 +71,7 @@ impl QueryTemplates {
                 }
                 res
             }
-            None => return Err(Error::Parsing("Invalid query templates".to_owned()))
+            None => return Err(parse_error!("Invalid query templates"))
         };
         let cache: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
         Ok(Self { inner: items, cache })

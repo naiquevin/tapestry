@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::error::{Error, parse_error};
 use std::convert::TryFrom;
 use toml::Value;
 
@@ -19,12 +19,11 @@ impl TryFrom<&Value> for Placeholder {
                 } else if s == "variables" {
                     Ok(Self::Variables)
                 } else {
-                    let msg = format!("Invalid placeholder: '{s}'");
-                    Err(Error::Parsing(msg))
+                    Err(parse_error!("Invalid placeholder: '{}", s))
                 }
             }
             None => {
-                Err(Error::Parsing("Value of key 'placeholder' must be a string".to_owned()))
+                Err(parse_error!("Value of key 'placeholder' must be a string"))
             }
         }
     }
