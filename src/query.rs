@@ -25,15 +25,15 @@ impl Query {
             Some(t) => {
                 let id = t.get("id")
                     .ok_or(parse_error!("Missing 'id' in 'query' entry"))
-                    .map(decode_string)??;
+                    .map(|v| decode_string(v, "queries[].id"))??;
                 let template = t.get("template")
                     .ok_or(parse_error!("Missing 'template' in 'query' entry"))
-                    .map(|v| decode_pathbuf(v, Some(templates_base_dir.as_ref())))??;
+                    .map(|v| decode_pathbuf(v, Some(templates_base_dir.as_ref()), "queries[].template"))??;
                 let conds = t.get("conds")
                     .ok_or(parse_error!("Missing 'conds' in 'query' entry"))
-                    .map(decode_vecstr)??;
+                    .map(|v| decode_vecstr(v, "queries[].conds"))??;
                 let output = match t.get("option") {
-                    Some(v) => Some(decode_pathbuf(v, Some(output_base_dir.as_ref()))?),
+                    Some(v) => Some(decode_pathbuf(v, Some(output_base_dir.as_ref()), "queries[].output")?),
                     None => None
                 };
                 Ok(Self { id, template, conds, output })

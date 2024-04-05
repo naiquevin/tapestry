@@ -32,16 +32,16 @@ impl TryFrom<&Path> for MetaData {
             .map(Placeholder::try_from)??;
         let query_templates_dir = table.get("query_templates_dir")
             .ok_or(parse_error!("Key 'query_templates_dir' is missing"))
-            .map(|v| decode_pathbuf(v, None))??;
+            .map(|v| decode_pathbuf(v, None, "query_templates_dir"))??;
         let test_templates_dir = table.get("test_templates_dir")
             .ok_or(parse_error!("Key 'test_templates_dir' is missing"))
-            .map(|v| decode_pathbuf(v, None))??;
+            .map(|v| decode_pathbuf(v, None, "test_templates_dir"))??;
         let queries_output_dir = table.get("queries_output_dir")
             .ok_or(parse_error!("Key 'queries_output_dir' is missing"))
-            .map(|v| decode_pathbuf(v, None))??;
+            .map(|v| decode_pathbuf(v, None, "query_output_dir"))??;
         let tests_output_dir = table.get("tests_output_dir")
             .ok_or(parse_error!("Key 'tests_output_dir' is missing"))
-            .map(|v| decode_pathbuf(v, None))??;
+            .map(|v| decode_pathbuf(v, None, "tests_output_dir"))??;
 
         let query_templates = match table.get("query_templates") {
             Some(v) => QueryTemplates::decode(&query_templates_dir, v)?,

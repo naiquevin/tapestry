@@ -24,12 +24,12 @@ impl TestTemplate {
             Some(t) => {
                 let query = t.get("query")
                     .ok_or(parse_error!("Missing 'query' in 'test_templates' entry"))
-                    .map(decode_string)??;
+                    .map(|v| decode_string(v, "test_templates[].query"))??;
                 let template = t.get("template")
                     .ok_or(parse_error!("Missing 'template' in 'test_templates' entry"))
-                    .map(|v| decode_pathbuf(v, Some(templates_base_dir.as_ref())))??;
+                    .map(|v| decode_pathbuf(v, Some(templates_base_dir.as_ref()), "test_templates[].template"))??;
                 let output = match t.get("output") {
-                    Some(v) => Some(decode_pathbuf(v, Some(output_base_dir.as_ref()))?),
+                    Some(v) => Some(decode_pathbuf(v, Some(output_base_dir.as_ref()), "test_templates[].output")?),
                     None => None,
                 };
                 Ok(Self { query, template, output })

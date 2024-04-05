@@ -20,10 +20,10 @@ impl QueryTemplate {
             Some(t) => {
                 let path = t.get("path")
                     .ok_or(parse_error!("Query template path missing"))
-                    .map(|v| decode_pathbuf(v, Some(base_dir.as_ref())))??;
+                    .map(|v| decode_pathbuf(v, Some(base_dir.as_ref()), "query_templates[].path"))??;
                 let all_conds = t.get("all_conds")
-                    .ok_or(parse_error!("Invalid query tempalte"))
-                    .map(decode_vecstr)??;
+                    .ok_or(parse_error!("Missing 'all_conds' in 'query_template'"))
+                    .map(|v| decode_vecstr(v, "query_templates[].all_conds"))??;
 
                 Ok(Self { path, all_conds })
             }
