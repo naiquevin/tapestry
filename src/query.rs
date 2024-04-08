@@ -1,6 +1,6 @@
 use crate::error::{parse_error, Error};
 use crate::query_template::QueryTemplates;
-use crate::toml::{decode_pathbuf, decode_string, decode_vecstr};
+use crate::toml::{decode_pathbuf, decode_string, decode_strset};
 use crate::validation::ManifestMistake;
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
@@ -12,7 +12,7 @@ use toml::Value;
 pub struct Query {
     id: String,
     template: PathBuf,
-    conds: Vec<String>,
+    conds: HashSet<String>,
     output: Option<PathBuf>,
 }
 
@@ -37,7 +37,7 @@ impl Query {
                 let conds = t
                     .get("conds")
                     .ok_or(parse_error!("Missing 'conds' in 'query' entry"))
-                    .map(|v| decode_vecstr(v, "queries[].conds"))??;
+                    .map(|v| decode_strset(v, "queries[].conds"))??;
                 let output = match t.get("option") {
                     Some(v) => Some(decode_pathbuf(
                         v,
@@ -64,13 +64,10 @@ impl Query {
         let mut mistakes = vec![];
         match query_templates.get(&self.template) {
             Some(qt) => {
-                // @TODO: Store conds (and all_conds) as HashSet instead of Vec
-                let all_conds: HashSet<&str> = qt.all_conds.iter().map(|s| s.as_str()).collect();
-                let conds: HashSet<&str> = self.conds.iter().map(|s| s.as_str()).collect();
-                if !conds.is_subset(&all_conds) {
-                    let diff = conds
-                        .difference(&all_conds)
-                        .copied()
+                if !self.conds.is_subset(&qt.all_conds) {
+                    let diff = self.conds
+                        .difference(&qt.all_conds)
+                        .map(|s| s.as_str())
                         .collect::<Vec<&str>>();
                     mistakes.push(ManifestMistake::InvalidConds {
                         query_id: &self.id,

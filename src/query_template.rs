@@ -1,7 +1,7 @@
 use crate::error::{parse_error, Error};
-use crate::toml::{decode_pathbuf, decode_vecstr};
+use crate::toml::{decode_pathbuf, decode_strset};
 use crate::validation::{validate_path, ManifestMistake};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use toml::Value;
@@ -10,7 +10,7 @@ use toml::Value;
 #[derive(Debug)]
 pub struct QueryTemplate {
     path: PathBuf,
-    pub all_conds: Vec<String>,
+    pub all_conds: HashSet<String>,
 }
 
 impl QueryTemplate {
@@ -26,7 +26,7 @@ impl QueryTemplate {
                 let all_conds = t
                     .get("all_conds")
                     .ok_or(parse_error!("Missing 'all_conds' in 'query_template'"))
-                    .map(|v| decode_vecstr(v, "query_templates[].all_conds"))??;
+                    .map(|v| decode_strset(v, "query_templates[].all_conds"))??;
 
                 Ok(Self { path, all_conds })
             }
@@ -129,24 +129,24 @@ mod tests {
 
     use super::*;
 
+    fn strset(xs: Vec<&str>) -> HashSet<String> {
+        xs.iter().map(|s| String::from(*s)).collect()
+    }
+
     #[test]
     fn test_validation_duplicates() {
         let mut qts = QueryTemplates::new();
         let qt_1 = QueryTemplate {
             path: PathBuf::from("examples/chinook/templates/queries/artists_long_songs.sql.j2"),
-            all_conds: vec!["genre".to_owned(), "limit".to_owned()],
+            all_conds: strset(vec!["genre", "limit"]),
         };
         let qt_2 = QueryTemplate {
             path: PathBuf::from("examples/chinook/templates/queries/songs.sql.j2"),
-            all_conds: vec![
-                "artist".to_owned(),
-                "file_format".to_owned(),
-                "album_name".to_owned(),
-            ],
+            all_conds: strset(vec!["artist", "file_format", "album_name"]),
         };
         let qt_3 = QueryTemplate {
             path: PathBuf::from("examples/chinook/templates/queries/artists_long_songs.sql.j2"),
-            all_conds: vec!["limit".to_owned()],
+            all_conds: strset(vec!["limit"]),
         };
         qts.inner.push(Rc::new(qt_1));
         qts.inner.push(Rc::new(qt_2));
