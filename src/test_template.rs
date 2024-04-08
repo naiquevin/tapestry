@@ -1,5 +1,7 @@
 use crate::error::{parse_error, Error};
+use crate::query::Queries;
 use crate::toml::{decode_pathbuf, decode_string};
+use crate::validation::{validate_path, ManifestMistake};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
@@ -52,6 +54,25 @@ impl TestTemplate {
             None => Err(parse_error!("Invalid 'test_templates' entry")),
         }
     }
+
+    fn validate<'a, 'b>(&'a self, queries: &'b Queries) -> Vec<ManifestMistake<'a>>
+    where
+        'b: 'a,
+    {
+        let mut mistakes = vec![];
+        if queries.get(&self.query).is_none() {
+            mistakes.push(ManifestMistake::QueryRefNotFound {
+                query_id: &self.query,
+                test_template: self.template.to_str().unwrap(),
+            });
+        }
+
+        match validate_path(&self.template, "test_templates[].template") {
+            Ok(()) => {}
+            Err(m) => mistakes.push(m),
+        }
+        mistakes
+    }
 }
 
 #[allow(unused)]
@@ -89,5 +110,30 @@ impl TestTemplates {
             inner: items,
             cache,
         })
+    }
+
+    pub fn validate<'a, 'b>(&'a self, queries: &'b Queries) -> Vec<ManifestMistake>
+    where
+        'b: 'a,
+    {
+        let mut mistakes = vec![];
+        let count = self.inner.len();
+        let mut all_outputs: HashMap<&Path, usize> = HashMap::with_capacity(count);
+        for tt in &self.inner {
+            mistakes.append(&mut tt.validate(queries));
+            if let Some(o) = &tt.output {
+                all_outputs.entry(o).and_modify(|c| *c += 1).or_insert(1);
+            }
+        }
+        for (key, val) in all_outputs.iter() {
+            if val > &1 {
+                let m = ManifestMistake::Duplicates {
+                    key: "test_templates[].path",
+                    value: key.to_str().unwrap(),
+                };
+                mistakes.push(m)
+            }
+        }
+        mistakes
     }
 }

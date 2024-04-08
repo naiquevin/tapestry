@@ -10,6 +10,7 @@ mod query;
 mod query_template;
 mod test_template;
 mod toml;
+mod validation;
 
 fn placeholder(name: String) -> Result<String, Error> {
     Ok(format!("{{{{ {name} }}}}"))
@@ -115,7 +116,11 @@ fn main2() {
 fn main() {
     let path = std::path::Path::new("manifest.toml");
     match MetaData::try_from(path) {
-        Ok(m) => println!("{m:?}"),
+        Ok(m) => {
+            // println!("{m:?}")
+            let mistakes = m.validate();
+            println!("{mistakes:?}");
+        }
         Err(e) => println!("{e:?}"),
     }
 }

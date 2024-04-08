@@ -4,6 +4,7 @@ use crate::query::Queries;
 use crate::query_template::QueryTemplates;
 use crate::test_template::TestTemplates;
 use crate::toml::decode_pathbuf;
+use crate::validation::{validate_path, ManifestMistake};
 use std::convert::TryFrom;
 use std::path::{Path, PathBuf};
 use toml::Table;
@@ -81,5 +82,23 @@ impl TryFrom<&Path> for MetaData {
         };
 
         Ok(m)
+    }
+}
+
+impl MetaData {
+    pub fn validate(&self) -> Vec<ManifestMistake> {
+        let mut mistakes = vec![];
+        match validate_path(&self.query_templates_dir, "query_templates_dir") {
+            Ok(()) => {}
+            Err(m) => mistakes.push(m),
+        }
+        match validate_path(&self.test_templates_dir, "test_templates_dir") {
+            Ok(()) => {}
+            Err(m) => mistakes.push(m),
+        }
+        mistakes.append(&mut self.query_templates.validate());
+        mistakes.append(&mut self.queries.validate(&self.query_templates));
+        mistakes.append(&mut self.test_templates.validate(&self.queries));
+        mistakes
     }
 }
