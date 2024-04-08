@@ -92,14 +92,14 @@ impl Query {
 #[derive(Debug)]
 pub struct Queries {
     inner: Vec<Rc<Query>>,
-    cache: HashMap<String, Rc<Query>>,
+    index: HashMap<String, Rc<Query>>,
 }
 
 impl Queries {
     pub fn new() -> Self {
         let inner: Vec<Rc<Query>> = vec![];
-        let cache: HashMap<String, Rc<Query>> = HashMap::new();
-        Self { inner, cache }
+        let index: HashMap<String, Rc<Query>> = HashMap::new();
+        Self { inner, index }
     }
 
     pub fn decode<P: AsRef<Path>>(
@@ -107,16 +107,21 @@ impl Queries {
         output_base_dir: P,
         value: &Value,
     ) -> Result<Self, Error> {
-        let mut cache: HashMap<String, Rc<Query>> = HashMap::new();
+        // @NOTE: The index is populated at the time of initialization
+        // to avoid complexity. A lazy and memory efficient approach
+        // would be populating the index at the time of lookup (like a
+        // read-through cache) but in that case we'd need to manage
+        // multiple mutable references.
+        let mut index: HashMap<String, Rc<Query>> = HashMap::new();
         let items = match value.as_array() {
             Some(xs) => {
                 let mut res = Vec::with_capacity(xs.len());
                 for x in xs {
                     let q = Rc::new(Query::decode(&templates_base_dir, &output_base_dir, x)?);
-                    let cache_key = q.id.clone();
-                    let cache_val = q.clone();
+                    let idx_key = q.id.clone();
+                    let idx_val = q.clone();
                     res.push(q);
-                    cache.insert(cache_key, cache_val);
+                    index.insert(idx_key, idx_val);
                 }
                 res
             }
@@ -124,7 +129,7 @@ impl Queries {
         };
         Ok(Self {
             inner: items,
-            cache,
+            index,
         })
     }
 
@@ -171,6 +176,6 @@ impl Queries {
     }
 
     pub fn get(&self, id: &str) -> Option<&Rc<Query>> {
-        self.cache.get(id)
+        self.index.get(id)
     }
 }

@@ -37,7 +37,7 @@ impl QueryTemplate {
     /// Returns identifier for the QueryTemplate
     ///
     /// It's simply the path returned as String. Expected to be used
-    /// for caching etc.
+    /// for indexing etc.
     fn id(&self) -> String {
         // @UNWRAP: Path is expected to be valid UTF-8
         self.path.to_str().unwrap().to_owned()
@@ -55,31 +55,32 @@ impl QueryTemplate {
 #[derive(Debug)]
 pub struct QueryTemplates {
     inner: Vec<Rc<QueryTemplate>>,
-    cache: HashMap<String, Rc<QueryTemplate>>,
+    index: HashMap<String, Rc<QueryTemplate>>,
 }
 
 impl QueryTemplates {
     pub fn new() -> Self {
         let inner: Vec<Rc<QueryTemplate>> = vec![];
-        let cache: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
-        Self { inner, cache }
+        let index: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
+        Self { inner, index }
     }
 
     pub fn decode<P: AsRef<Path>>(base_dir: P, value: &Value) -> Result<Self, Error> {
-        // @NOTE: The cache is warmed at the time of initialization to
-        // avoid complexity. A lazy and memory efficient approach
-        // would be populating the cache at the time of lookup but in
-        // that case we'd need to manage multiple mutable references.
-        let mut cache: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
+        // @NOTE: The index is populated at the time of initialization
+        // to avoid complexity. A lazy and memory efficient approach
+        // would be populating the index at the time of lookup (like a
+        // read-through cache) but in that case we'd need to manage
+        // multiple mutable references.
+        let mut index: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
         let items = match value.as_array() {
             Some(xs) => {
                 let mut res = Vec::with_capacity(xs.len());
                 for x in xs {
                     let qt = Rc::new(QueryTemplate::decode(&base_dir, x)?);
-                    let cache_key = qt.id();
-                    let cache_val = qt.clone();
+                    let idx_key = qt.id();
+                    let idx_val = qt.clone();
                     res.push(qt);
-                    cache.insert(cache_key, cache_val);
+                    index.insert(idx_key, idx_val);
                 }
                 res
             }
@@ -88,7 +89,7 @@ impl QueryTemplates {
 
         Ok(Self {
             inner: items,
-            cache,
+            index,
         })
     }
 
@@ -119,7 +120,7 @@ impl QueryTemplates {
 
     pub fn get(&self, path: &Path) -> Option<&Rc<QueryTemplate>> {
         let key = path.to_str().unwrap().to_owned();
-        self.cache.get(&key)
+        self.index.get(&key)
     }
 }
 
