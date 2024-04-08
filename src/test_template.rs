@@ -79,14 +79,12 @@ impl TestTemplate {
 #[derive(Debug)]
 pub struct TestTemplates {
     inner: Vec<Rc<TestTemplate>>,
-    cache: HashMap<String, Rc<TestTemplate>>,
 }
 
 impl TestTemplates {
     pub fn new() -> Self {
         let inner: Vec<Rc<TestTemplate>> = vec![];
-        let cache: HashMap<String, Rc<TestTemplate>> = HashMap::new();
-        Self { inner, cache }
+        Self { inner }
     }
 
     pub fn decode<P: AsRef<Path>>(
@@ -105,10 +103,8 @@ impl TestTemplates {
             }
             None => return Err(parse_error!("Invalid test_templates")),
         };
-        let cache: HashMap<String, Rc<TestTemplate>> = HashMap::new();
         Ok(Self {
-            inner: items,
-            cache,
+            inner: items
         })
     }
 
