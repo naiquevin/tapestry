@@ -7,7 +7,6 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use toml::Value;
 
-#[allow(unused)]
 #[derive(Debug)]
 struct TestTemplate {
     query: String,
@@ -75,7 +74,6 @@ impl TestTemplate {
     }
 }
 
-#[allow(unused)]
 #[derive(Debug)]
 pub struct TestTemplates {
     inner: Vec<Rc<TestTemplate>>,
@@ -103,9 +101,7 @@ impl TestTemplates {
             }
             None => return Err(parse_error!("Invalid test_templates")),
         };
-        Ok(Self {
-            inner: items
-        })
+        Ok(Self { inner: items })
     }
 
     pub fn validate<'a, 'b>(&'a self, queries: &'b Queries) -> Vec<ManifestMistake>

@@ -12,13 +12,13 @@ use toml::Table;
 #[allow(unused)]
 #[derive(Debug)]
 pub struct MetaData {
-    placeholder: Placeholder,
-    query_templates_dir: PathBuf,
-    test_templates_dir: PathBuf,
+    pub placeholder: Placeholder,
+    pub query_templates_dir: PathBuf,
+    pub test_templates_dir: PathBuf,
     queries_output_dir: PathBuf,
     tests_output_dir: PathBuf,
-    query_templates: QueryTemplates,
-    queries: Queries,
+    pub query_templates: QueryTemplates,
+    pub queries: Queries,
     test_templates: TestTemplates,
 }
 

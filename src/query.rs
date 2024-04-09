@@ -7,12 +7,11 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use toml::Value;
 
-#[allow(unused)]
 #[derive(Debug)]
 pub struct Query {
     id: String,
-    template: PathBuf,
-    conds: HashSet<String>,
+    pub template: PathBuf,
+    pub conds: HashSet<String>,
     output: Option<PathBuf>,
 }
 
@@ -65,7 +64,8 @@ impl Query {
         match query_templates.get(&self.template) {
             Some(qt) => {
                 if !self.conds.is_subset(&qt.all_conds) {
-                    let diff = self.conds
+                    let diff = self
+                        .conds
                         .difference(&qt.all_conds)
                         .map(|s| s.as_str())
                         .collect::<Vec<&str>>();
@@ -83,9 +83,24 @@ impl Query {
 
         mistakes
     }
+
+    /// Returns file name of the template, which is a `PathBuf`
+    ///
+    /// # Panics
+    ///
+    /// 1. This fn assumes that the template path is valid unicode and
+    /// will panic if that's not the case.
+    ///
+    /// 2. If the path ends in `..`
+    ///
+    pub fn template_file_name(&self) -> &str {
+        self.template
+            .file_name()
+            .map(|ostr| ostr.to_str().unwrap())
+            .unwrap()
+    }
 }
 
-#[allow(unused)]
 #[derive(Debug)]
 pub struct Queries {
     inner: Vec<Rc<Query>>,

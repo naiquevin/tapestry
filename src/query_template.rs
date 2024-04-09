@@ -6,7 +6,6 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use toml::Value;
 
-#[allow(unused)]
 #[derive(Debug)]
 pub struct QueryTemplate {
     path: PathBuf,
@@ -43,6 +42,24 @@ impl QueryTemplate {
         self.path.to_str().unwrap()
     }
 
+    /// Returns file name of the template which can be used with
+    /// `minijinja::Environment` that's initialized using
+    /// `minijinja::path_loader`
+    ///
+    /// # Panics
+    ///
+    /// 1. This fn assumes that the template path is valid unicode and
+    /// will panic if that's not the case.
+    ///
+    /// 2. If the path ends in `..`
+    ///
+    pub fn file_name(&self) -> &str {
+        self.path
+            .file_name()
+            .map(|ostr| ostr.to_str().unwrap())
+            .unwrap()
+    }
+
     fn validate(&self) -> Option<ManifestMistake> {
         match validate_path(&self.path, "query_templates[].path") {
             Ok(()) => None,
@@ -51,7 +68,6 @@ impl QueryTemplate {
     }
 }
 
-#[allow(unused)]
 #[derive(Debug)]
 pub struct QueryTemplates {
     inner: Vec<Rc<QueryTemplate>>,

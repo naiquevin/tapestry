@@ -43,7 +43,7 @@ pub fn decode_strset(value: &Value, key: &str) -> Result<HashSet<String>, Error>
                 match v.as_str() {
                     Some(x) => {
                         res.insert(x.to_owned());
-                    },
+                    }
                     None => {
                         return Err(parse_error!(
                             "Value of '{}' is expected to be array of strings",

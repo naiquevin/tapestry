@@ -5,6 +5,9 @@ pub enum Error {
     Io(io::Error),
     Toml(toml::de::Error),
     Parsing(String),
+    UndefinedQuery(String),
+    UndefinedQueryTemplate(String),
+    MiniJinja(minijinja::Error),
 }
 
 macro_rules! parse_error {
