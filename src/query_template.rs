@@ -38,9 +38,9 @@ impl QueryTemplate {
     ///
     /// It's simply the path returned as String. Expected to be used
     /// for indexing etc.
-    fn id(&self) -> String {
+    fn id(&self) -> &str {
         // @UNWRAP: Path is expected to be valid UTF-8
-        self.path.to_str().unwrap().to_owned()
+        self.path.to_str().unwrap()
     }
 
     fn validate(&self) -> Option<ManifestMistake> {
@@ -77,7 +77,7 @@ impl QueryTemplates {
                 let mut res = Vec::with_capacity(xs.len());
                 for x in xs {
                     let qt = Rc::new(QueryTemplate::decode(&base_dir, x)?);
-                    let idx_key = qt.id();
+                    let idx_key = qt.id().to_owned();
                     let idx_val = qt.clone();
                     res.push(qt);
                     index.insert(idx_key, idx_val);
