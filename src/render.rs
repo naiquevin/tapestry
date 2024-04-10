@@ -1,5 +1,5 @@
 use crate::error::Error;
-use crate::metadata::MetaData;
+use crate::metadata::Metadata;
 use crate::placeholder::Placeholder;
 use minijinja::{context, path_loader, Environment};
 use regex::Regex;
@@ -62,13 +62,13 @@ pub fn variables_mapping(udvars: &HashSet<String>) -> HashMap<String, String> {
 
 #[allow(unused)]
 pub struct Engine<'a> {
-    metadata: &'a MetaData,
+    metadata: &'a Metadata,
     query_templates_env: Environment<'static>,
     test_templates_env: Environment<'static>,
 }
 
-impl<'a> From<&'a MetaData> for Engine<'a> {
-    fn from(metadata: &'a MetaData) -> Self {
+impl<'a> From<&'a Metadata> for Engine<'a> {
+    fn from(metadata: &'a Metadata) -> Self {
         // Env for query_templates
         let mut qt_env = Environment::new();
         qt_env.set_loader(path_loader(&metadata.query_templates_dir));

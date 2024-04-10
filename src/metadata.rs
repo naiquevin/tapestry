@@ -11,7 +11,7 @@ use toml::Table;
 
 #[allow(unused)]
 #[derive(Debug)]
-pub struct MetaData {
+pub struct Metadata {
     pub placeholder: Placeholder,
     pub query_templates_dir: PathBuf,
     pub test_templates_dir: PathBuf,
@@ -22,7 +22,7 @@ pub struct MetaData {
     pub test_templates: TestTemplates,
 }
 
-impl TryFrom<&Path> for MetaData {
+impl TryFrom<&Path> for Metadata {
     type Error = Error;
 
     fn try_from(p: &Path) -> Result<Self, Self::Error> {
@@ -85,7 +85,7 @@ impl TryFrom<&Path> for MetaData {
     }
 }
 
-impl MetaData {
+impl Metadata {
     pub fn validate(&self) -> Vec<ManifestMistake> {
         let mut mistakes = vec![];
         match validate_path(&self.query_templates_dir, "query_templates_dir") {

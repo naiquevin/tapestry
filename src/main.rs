@@ -1,4 +1,4 @@
-use crate::metadata::MetaData;
+use crate::metadata::Metadata;
 use crate::placeholder::Placeholder;
 use crate::render::{placeholder, pos_args_mapping, variables_mapping, Engine};
 use minijinja::context;
@@ -59,7 +59,7 @@ fn main2() {
 
 fn main() {
     let path = std::path::Path::new("manifest.toml");
-    match MetaData::try_from(path) {
+    match Metadata::try_from(path) {
         Ok(m) => {
             // println!("{m:?}")
             let mistakes = m.validate();
