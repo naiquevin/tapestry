@@ -1,6 +1,6 @@
 use crate::metadata::MetaData;
 use crate::placeholder::Placeholder;
-use crate::rendering::{placeholder, pos_args_mapping, variables_mapping, Engine};
+use crate::render::{placeholder, pos_args_mapping, variables_mapping, Engine};
 use minijinja::context;
 
 mod error;
@@ -8,7 +8,7 @@ mod metadata;
 mod placeholder;
 mod query;
 mod query_template;
-mod rendering;
+mod render;
 mod test_template;
 mod toml;
 mod validation;
