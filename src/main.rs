@@ -1,3 +1,4 @@
+use crate::sql_format::PgFormatter;
 use crate::metadata::Metadata;
 use crate::placeholder::Placeholder;
 use crate::render::{placeholder, pos_args_mapping, variables_mapping, Engine};
@@ -9,6 +10,7 @@ mod placeholder;
 mod query;
 mod query_template;
 mod render;
+mod sql_format;
 mod test_template;
 mod toml;
 mod validation;
@@ -59,6 +61,7 @@ fn main2() {
 
 fn main() {
     let path = std::path::Path::new("manifest.toml");
+    let formatter = PgFormatter::new("pg_format");
     match Metadata::try_from(path) {
         Ok(m) => {
             // println!("{m:?}")
@@ -67,7 +70,8 @@ fn main() {
                 let engine = Engine::from(&m);
                 let qid = "artists_long_songs@genre*limit";
                 let query_output = engine.render_query(qid, None).unwrap();
-                println!("{query_output}");
+                let fop = formatter.format(&query_output);
+                println!("{}", String::from_utf8_lossy(&fop));
                 println!("---------------");
                 let ps = match m.placeholder {
                     Placeholder::PosArgs => Some(query_output.as_str()),
@@ -75,7 +79,8 @@ fn main() {
                 };
                 for tt in m.test_templates.find_by_query(qid) {
                     let test_output = engine.render_test(&tt.path, ps).unwrap();
-                    println!("{test_output}");
+                    let ftop = formatter.format(&test_output);
+                    println!("{}", String::from_utf8_lossy(&ftop));
                     println!("---------------");
                 }
             } else {
