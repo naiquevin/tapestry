@@ -19,7 +19,7 @@ pub struct MetaData {
     tests_output_dir: PathBuf,
     pub query_templates: QueryTemplates,
     pub queries: Queries,
-    test_templates: TestTemplates,
+    pub test_templates: TestTemplates,
 }
 
 impl TryFrom<&Path> for MetaData {

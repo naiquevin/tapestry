@@ -8,9 +8,9 @@ use std::rc::Rc;
 use toml::Value;
 
 #[derive(Debug)]
-struct TestTemplate {
-    query: String,
-    template: PathBuf,
+pub struct TestTemplate {
+    pub query: String,
+    pub template: PathBuf,
     output: Option<PathBuf>,
 }
 
@@ -72,6 +72,24 @@ impl TestTemplate {
         }
         mistakes
     }
+
+    /// Returns file name of the template which can be used with
+    /// `minijinja::Environment` that's initialized using
+    /// `minijinja::path_loader`
+    ///
+    /// # Panics
+    ///
+    /// 1. This fn assumes that the template path is valid unicode and
+    /// will panic if that's not the case.
+    ///
+    /// 2. If the path ends in `..`
+    ///
+    pub fn file_name(&self) -> &str {
+        self.template
+            .file_name()
+            .map(|ostr| ostr.to_str().unwrap())
+            .unwrap()
+    }
 }
 
 #[derive(Debug)]
@@ -127,5 +145,24 @@ impl TestTemplates {
             }
         }
         mistakes
+    }
+
+    pub fn get(&self, template_path: &Path) -> Option<&Rc<TestTemplate>> {
+        self.inner.iter().find(|tt| tt.template == template_path)
+    }
+
+    /// Returns all test templates for the given `query_id`
+    ///
+    /// Note that currently this fn scans through the inner data
+    /// structure so it's not as performant. As all the various lookup
+    /// patterns for test_templates become more clear, we will decide
+    /// to either use an index or modify inner itself to use a
+    /// suitable data structure such as a `HashMap` of Strings (query
+    /// ids) mapping to `Vec<TestTemplate>`.
+    pub fn find_by_query(&self, query_id: &str) -> Vec<&Rc<TestTemplate>> {
+        self.inner
+            .iter()
+            .filter(|tt| tt.query.as_str() == query_id)
+            .collect()
     }
 }

@@ -1,10 +1,11 @@
 use crate::error::Error;
 use crate::metadata::MetaData;
 use crate::placeholder::Placeholder;
-use minijinja::{path_loader, Environment};
+use minijinja::{context, path_loader, Environment};
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
 use std::convert::From;
+use std::path::Path;
 
 pub fn placeholder(name: String) -> Result<String, minijinja::Error> {
     Ok(format!("{{{{ {name} }}}}"))
@@ -86,7 +87,11 @@ impl<'a> From<&'a MetaData> for Engine<'a> {
 }
 
 impl<'a> Engine<'a> {
-    pub fn render_query(&self, query_id: &str) -> Result<String, Error> {
+    pub fn render_query(
+        &self,
+        query_id: &str,
+        placeholder: Option<&Placeholder>,
+    ) -> Result<String, Error> {
         let query = self
             .metadata
             .queries
@@ -108,11 +113,37 @@ impl<'a> Engine<'a> {
             .template_from_str(&intermediate_output)
             .map_err(Error::MiniJinja)?;
         let udvars = intermediate_tmpl.undeclared_variables(false);
-        let vars = match self.metadata.placeholder {
+        let placeholder = placeholder.unwrap_or(&self.metadata.placeholder);
+        let vars = match placeholder {
             Placeholder::PosArgs => pos_args_mapping(&intermediate_output, &udvars),
             Placeholder::Variables => variables_mapping(&udvars),
         };
         intermediate_tmpl.render(vars).map_err(Error::MiniJinja)
+    }
+
+    pub fn render_test(
+        &self,
+        path: &Path,
+        prepared_statement: Option<&str>,
+    ) -> Result<String, Error> {
+        let test_template =
+            self.metadata
+                .test_templates
+                .get(path)
+                .ok_or(Error::UndefinedTestTemplate(
+                    path.to_str().unwrap().to_owned(),
+                ))?;
+        let tmpl = self
+            .test_templates_env
+            .get_template(test_template.file_name())
+            .map_err(Error::MiniJinja)?;
+        // @TODO: Can we avoid allocation below by using `Cow`?
+        let ps = match prepared_statement {
+            Some(s) => s.to_owned(),
+            None => self.render_query(&test_template.query, Some(&Placeholder::PosArgs))?,
+        };
+        let ctx = context! { prepared_statement => ps };
+        tmpl.render(ctx).map_err(Error::MiniJinja)
     }
 }
 

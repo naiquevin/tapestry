@@ -7,6 +7,7 @@ pub enum Error {
     Parsing(String),
     UndefinedQuery(String),
     UndefinedQueryTemplate(String),
+    UndefinedTestTemplate(String),
     MiniJinja(minijinja::Error),
 }
 

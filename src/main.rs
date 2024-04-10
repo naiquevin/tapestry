@@ -1,4 +1,5 @@
 use crate::metadata::MetaData;
+use crate::placeholder::Placeholder;
 use crate::rendering::{placeholder, pos_args_mapping, variables_mapping, Engine};
 use minijinja::context;
 
@@ -64,10 +65,19 @@ fn main() {
             let mistakes = m.validate();
             if mistakes.is_empty() {
                 let engine = Engine::from(&m);
-                let output = engine
-                    .render_query("artists_long_songs@genre*limit")
-                    .unwrap();
-                println!("{output}");
+                let qid = "artists_long_songs@genre*limit";
+                let query_output = engine.render_query(qid, None).unwrap();
+                println!("{query_output}");
+                println!("---------------");
+                let ps = match m.placeholder {
+                    Placeholder::PosArgs => Some(query_output.as_str()),
+                    Placeholder::Variables => None,
+                };
+                for tt in m.test_templates.find_by_query(qid) {
+                    let test_output = engine.render_test(&tt.template, ps).unwrap();
+                    println!("{test_output}");
+                    println!("---------------");
+                }
             } else {
                 println!("{mistakes:?}");
             }
