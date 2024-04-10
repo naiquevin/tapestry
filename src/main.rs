@@ -59,7 +59,7 @@ fn main2() {
 }
 
 fn main() {
-    let path = std::path::Path::new("manifest.toml");
+    let path = std::path::Path::new("tapestry.toml");
     match Metadata::try_from(path) {
         Ok(m) => {
             // println!("{m:?}")
