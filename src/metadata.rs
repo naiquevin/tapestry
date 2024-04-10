@@ -2,6 +2,7 @@ use crate::error::{parse_error, Error};
 use crate::placeholder::Placeholder;
 use crate::query::Queries;
 use crate::query_template::QueryTemplates;
+use crate::sql_format::Formatter;
 use crate::test_template::TestTemplates;
 use crate::toml::decode_pathbuf;
 use crate::validation::{validate_path, ManifestMistake};
@@ -15,6 +16,7 @@ pub struct Metadata {
     pub placeholder: Placeholder,
     pub query_templates_dir: PathBuf,
     pub test_templates_dir: PathBuf,
+    pub formatter: Option<Formatter>,
     queries_output_dir: PathBuf,
     tests_output_dir: PathBuf,
     pub query_templates: QueryTemplates,
@@ -49,6 +51,11 @@ impl TryFrom<&Path> for Metadata {
             .ok_or(parse_error!("Key 'tests_output_dir' is missing"))
             .map(|v| decode_pathbuf(v, None, "tests_output_dir"))??;
 
+        let formatter = match table.get("formatter").map(Formatter::decode) {
+            Some(res) => res?,
+            None => None,
+        };
+
         let query_templates = match table.get("query_templates") {
             Some(v) => QueryTemplates::decode(&query_templates_dir, v)?,
             // @TODO: Log a warning here as there is nothing to be
@@ -76,6 +83,7 @@ impl TryFrom<&Path> for Metadata {
             test_templates_dir,
             queries_output_dir,
             tests_output_dir,
+            formatter,
             query_templates,
             queries,
             test_templates,
