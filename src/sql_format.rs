@@ -12,11 +12,10 @@ use toml::Value;
 /// executable via `stdin`.
 struct Cmd<'a> {
     exec: &'a Path,
-    args: Vec<&'a str>
+    args: Vec<&'a str>,
 }
 
 impl<'a> Cmd<'a> {
-
     fn execute(&self, input: &str) -> Vec<u8> {
         let mut child = Command::new(&self.exec)
             .args(&self.args)
@@ -30,7 +29,9 @@ impl<'a> Cmd<'a> {
         // owned String here
         let input = input.to_owned();
         thread::spawn(move || {
-            stdin.write_all(input.as_bytes()).expect("Failed to write to stdin");
+            stdin
+                .write_all(input.as_bytes())
+                .expect("Failed to write to stdin");
         });
 
         let output = child.wait_with_output().expect("Failed to read stdout");
@@ -52,24 +53,29 @@ impl TryFrom<&Value> for PgFormatter {
     fn try_from(value: &Value) -> Result<Self, Self::Error> {
         match value.as_table() {
             Some(t) => {
-                let exec_path = t.get("exec_path")
-                    .ok_or(parse_error!("Missing 'exec_path' in 'formatter.pgFormatter"))
-                    .map(|v| {
-                        decode_pathbuf(v, None, "formatter.pgFormatter.exec_path")
-                    })??;
+                let exec_path = t
+                    .get("exec_path")
+                    .ok_or(parse_error!(
+                        "Missing 'exec_path' in 'formatter.pgFormatter"
+                    ))
+                    .map(|v| decode_pathbuf(v, None, "formatter.pgFormatter.exec_path"))??;
                 let conf_path = match t.get("conf_path") {
                     Some(cp) => Some(decode_pathbuf(cp, None, "formatter.pgFormatter.conf_path")?),
-                    None => None
+                    None => None,
                 };
-                Ok(Self { exec_path, conf_path })
-            },
-            None => Err(parse_error!("Value of 'formatter.pgFormatter' must be a toml table"))
+                Ok(Self {
+                    exec_path,
+                    conf_path,
+                })
+            }
+            None => Err(parse_error!(
+                "Value of 'formatter.pgFormatter' must be a toml table"
+            )),
         }
     }
 }
 
 impl PgFormatter {
-
     pub fn format(&self, sql: &str) -> Vec<u8> {
         let mut default_args = vec!["-M", "-p", "start\\(noformat\\).+end\\(noformat\\)", "-"];
         let mut args = Vec::new();
@@ -80,7 +86,7 @@ impl PgFormatter {
         args.append(&mut default_args);
         let cmd = Cmd {
             exec: &self.exec_path,
-            args
+            args,
         };
         cmd.execute(sql)
     }
