@@ -47,11 +47,11 @@ query = "songs@artist&file_format+album"
 #  1. prepared_statement
 #
 # (only 1 for now)
-template = "songs_test.sql.j2"
+path = "songs_test.sql.j2"
 
 [[test_templates]]
 query = "artists_long_songs@genre*limit"
-template = "artists_long_songs_test.sql.j2"
+path = "artists_long_songs_test.sql.j2"
 # output file name is optional. If not specified, it will be generated
 # from the id by replacing the special characters with hyphens and
 # then suffixing `_test<n>`

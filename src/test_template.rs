@@ -10,7 +10,7 @@ use toml::Value;
 #[derive(Debug)]
 pub struct TestTemplate {
     pub query: String,
-    pub template: PathBuf,
+    pub path: PathBuf,
     output: Option<PathBuf>,
 }
 
@@ -27,8 +27,8 @@ impl TestTemplate {
                     .ok_or(parse_error!("Missing 'query' in 'test_templates' entry"))
                     .map(|v| decode_string(v, "test_templates[].query"))??;
                 let template = t
-                    .get("template")
-                    .ok_or(parse_error!("Missing 'template' in 'test_templates' entry"))
+                    .get("path")
+                    .ok_or(parse_error!("Missing 'path' in 'test_templates' entry"))
                     .map(|v| {
                         decode_pathbuf(
                             v,
@@ -45,8 +45,8 @@ impl TestTemplate {
                     None => None,
                 };
                 Ok(Self {
+                    path: template,
                     query,
-                    template,
                     output,
                 })
             }
@@ -62,11 +62,11 @@ impl TestTemplate {
         if queries.get(&self.query).is_none() {
             mistakes.push(ManifestMistake::QueryRefNotFound {
                 query_id: &self.query,
-                test_template: self.template.to_str().unwrap(),
+                test_template: self.path.to_str().unwrap(),
             });
         }
 
-        match validate_path(&self.template, "test_templates[].template") {
+        match validate_path(&self.path, "test_templates[].template") {
             Ok(()) => {}
             Err(m) => mistakes.push(m),
         }
@@ -85,7 +85,7 @@ impl TestTemplate {
     /// 2. If the path ends in `..`
     ///
     pub fn file_name(&self) -> &str {
-        self.template
+        self.path
             .file_name()
             .map(|ostr| ostr.to_str().unwrap())
             .unwrap()
@@ -147,8 +147,8 @@ impl TestTemplates {
         mistakes
     }
 
-    pub fn get(&self, template_path: &Path) -> Option<&Rc<TestTemplate>> {
-        self.inner.iter().find(|tt| tt.template == template_path)
+    pub fn get(&self, path: &Path) -> Option<&Rc<TestTemplate>> {
+        self.inner.iter().find(|tt| tt.path == path)
     }
 
     /// Returns all test templates for the given `query_id`

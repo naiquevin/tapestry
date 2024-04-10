@@ -74,7 +74,7 @@ fn main() {
                     Placeholder::Variables => None,
                 };
                 for tt in m.test_templates.find_by_query(qid) {
-                    let test_output = engine.render_test(&tt.template, ps).unwrap();
+                    let test_output = engine.render_test(&tt.path, ps).unwrap();
                     println!("{test_output}");
                     println!("---------------");
                 }
