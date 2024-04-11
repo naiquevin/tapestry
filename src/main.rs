@@ -90,7 +90,9 @@ fn main() {
                     println!("---------------");
                 }
             } else {
-                println!("{mistakes:?}");
+                for mistake in mistakes {
+                    println!("{}", mistake.err_msg())
+                }
             }
         }
         Err(e) => println!("{e:?}"),
