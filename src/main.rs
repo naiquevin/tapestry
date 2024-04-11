@@ -1,8 +1,12 @@
+use crate::error::Error;
 use crate::metadata::Metadata;
 use crate::placeholder::Placeholder;
 use crate::render::{placeholder, pos_args_mapping, variables_mapping, Engine};
+use clap::{Parser, Subcommand};
 use minijinja::context;
+use std::process;
 
+mod command;
 mod error;
 mod metadata;
 mod placeholder;
@@ -13,6 +17,45 @@ mod sql_format;
 mod test_template;
 mod toml;
 mod validation;
+
+#[derive(Subcommand)]
+enum Command {
+    Validate
+}
+
+#[derive(Parser)]
+#[command(version, about)]
+struct Cli {
+    #[command(subcommand)]
+    command: Option<Command>,
+}
+
+impl Cli {
+    fn execute(&self) -> Result<(), Error> {
+        match &self.command {
+            Some(Command::Validate) => command::validate(),
+            None => Err(Error::Cli("Please specify the command".to_owned()))
+        }
+    }
+}
+
+fn main() {
+    let cli = Cli::parse();
+    let result = cli.execute();
+    match result {
+        Ok(()) => process::exit(0),
+        Err(Error::Cli(msg)) => {
+            eprintln!("Command error: {}", msg);
+            process::exit(1);
+        },
+        Err(Error::InvalidManifest) => process::exit(1),
+        Err(e) => {
+            eprintln!("Error {:?}", e);
+            process::exit(1)
+        }
+    }
+}
+
 
 #[allow(dead_code)]
 fn main2() {
@@ -58,7 +101,8 @@ fn main2() {
     println!();
 }
 
-fn main() {
+#[allow(dead_code)]
+fn main3() {
     let path = std::path::Path::new("tapestry.toml");
     match Metadata::try_from(path) {
         Ok(m) => {

@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+clap = { version = "4.5.4", features = ["derive"] }
 minijinja = { version = "1.0.15", features = ["loader"] }
 regex = "1.10.4"
 toml = "0.8.12"

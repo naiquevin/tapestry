@@ -9,6 +9,8 @@ pub enum Error {
     UndefinedQueryTemplate(String),
     UndefinedTestTemplate(String),
     MiniJinja(minijinja::Error),
+    InvalidManifest,
+    Cli(String),
 }
 
 macro_rules! parse_error {
