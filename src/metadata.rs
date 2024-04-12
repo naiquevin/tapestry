@@ -11,15 +11,14 @@ use std::convert::TryFrom;
 use std::path::{Path, PathBuf};
 use toml::Table;
 
-#[allow(unused)]
 #[derive(Debug)]
 pub struct Metadata {
     pub placeholder: Placeholder,
     pub query_templates_dir: PathBuf,
     pub test_templates_dir: PathBuf,
     pub formatter: Option<Formatter>,
-    queries_output_dir: PathBuf,
-    tests_output_dir: PathBuf,
+    pub queries_output_dir: PathBuf,
+    pub tests_output_dir: PathBuf,
     pub query_templates: QueryTemplates,
     pub queries: Queries,
     pub test_templates: TestTemplates,

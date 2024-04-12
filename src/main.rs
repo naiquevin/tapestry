@@ -9,6 +9,7 @@ use std::process;
 mod command;
 mod error;
 mod metadata;
+mod output;
 mod placeholder;
 mod query;
 mod query_template;
@@ -20,7 +21,8 @@ mod validation;
 
 #[derive(Subcommand)]
 enum Command {
-    Validate
+    Validate,
+    Render,
 }
 
 #[derive(Parser)]
@@ -34,6 +36,7 @@ impl Cli {
     fn execute(&self) -> Result<(), Error> {
         match &self.command {
             Some(Command::Validate) => command::validate(),
+            Some(Command::Render) => command::render(),
             None => Err(Error::Cli("Please specify the command".to_owned()))
         }
     }

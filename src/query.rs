@@ -201,4 +201,8 @@ impl Queries {
     pub fn get(&self, id: &str) -> Option<&Rc<Query>> {
         self.index.get(id)
     }
+
+    pub fn iter(&self) -> std::slice::Iter<'_, Rc<Query>> {
+        self.inner.iter()
+    }
 }
