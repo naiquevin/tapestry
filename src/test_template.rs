@@ -7,11 +7,38 @@ use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use toml::Value;
 
+// path can be of the following format
+//
+//   1. with .sql.j2 extension
+//   2. with .sql extension
+//   3. with .j2 extension
+fn path_to_output(path: &Path, base_dir: &Path) -> Result<PathBuf, Error> {
+    let ext = path.extension()
+        .ok_or(parse_error!("Invalid 'path' in 'test_templates' entry"))?;
+    if ext == "j2" {
+        let stem = path.file_stem()
+            .ok_or(parse_error!("Invalid 'path' in 'test_templates' entry"))
+            .map(|s| s.to_str().unwrap())?;
+        if stem.ends_with(".sql") {
+            Ok(base_dir.join(stem))
+        } else {
+            Ok(base_dir.join(format!("{}.sql", stem)))
+        }
+    } else if ext == "sql" {
+        let filename = path.file_name()
+            .ok_or(parse_error!("Invalid 'path' in 'test_templates' entry"))
+            .map(|s| s.to_str().unwrap())?;
+        Ok(base_dir.join(filename))
+    } else {
+        Err(parse_error!("Invalid 'path' in 'test_templates' entry"))
+    }
+}
+
 #[derive(Debug)]
 pub struct TestTemplate {
     pub query: String,
     pub path: PathBuf,
-    output: Option<PathBuf>,
+    pub output: PathBuf,
 }
 
 impl TestTemplate {
@@ -26,7 +53,7 @@ impl TestTemplate {
                     .get("query")
                     .ok_or(parse_error!("Missing 'query' in 'test_templates' entry"))
                     .map(|v| decode_string(v, "test_templates[].query"))??;
-                let template = t
+                let path = t
                     .get("path")
                     .ok_or(parse_error!("Missing 'path' in 'test_templates' entry"))
                     .map(|v| {
@@ -37,18 +64,14 @@ impl TestTemplate {
                         )
                     })??;
                 let output = match t.get("output") {
-                    Some(v) => Some(decode_pathbuf(
+                    Some(v) => decode_pathbuf(
                         v,
                         Some(output_base_dir.as_ref()),
                         "test_templates[].output",
-                    )?),
-                    None => None,
+                    )?,
+                    None => path_to_output(&path, &output_base_dir.as_ref())?,
                 };
-                Ok(Self {
-                    path: template,
-                    query,
-                    output,
-                })
+                Ok(Self { path, query, output })
             }
             None => Err(parse_error!("Invalid 'test_templates' entry")),
         }
@@ -131,9 +154,7 @@ impl TestTemplates {
         let mut all_outputs: HashMap<&Path, usize> = HashMap::with_capacity(count);
         for tt in &self.inner {
             mistakes.append(&mut tt.validate(queries));
-            if let Some(o) = &tt.output {
-                all_outputs.entry(o).and_modify(|c| *c += 1).or_insert(1);
-            }
+            all_outputs.entry(&tt.output).and_modify(|c| *c += 1).or_insert(1);
         }
         for (key, val) in all_outputs.iter() {
             if val > &1 {
