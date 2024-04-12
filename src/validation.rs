@@ -6,6 +6,11 @@ pub enum ManifestMistake<'a> {
         path: &'a Path,
         key: &'a str,
     },
+    InvalidOutputDir {
+        path: &'a Path,
+        key: &'a str
+    },
+    NonUniqueDirs,
     QueryTemplateRefNotFound {
         query_id: &'a str,
         template: &'a str,
@@ -31,6 +36,12 @@ impl<'a> ManifestMistake<'a> {
             Self::PathDoesnotExist { path, key } => {
                 let path_str = path.to_str().unwrap();
                 format!("Path '{path_str}' does not exist; key: '{key}'")
+            },
+            Self::InvalidOutputDir { path, key } => {
+                format!("Invalid output dir path {key} = {} (must not be root or empty)", path.display())
+            },
+            Self::NonUniqueDirs => {
+                format!("Values for all '*_dir' keys in the manifest file must be unique")
             },
             Self::QueryTemplateRefNotFound { query_id, template } => {
                 format!("Query '{query_id}' refers to unknown template: '{template}'")

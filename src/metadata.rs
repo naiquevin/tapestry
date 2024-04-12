@@ -6,6 +6,7 @@ use crate::sql_format::Formatter;
 use crate::test_template::TestTemplates;
 use crate::toml::decode_pathbuf;
 use crate::validation::{validate_path, ManifestMistake};
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::path::{Path, PathBuf};
 use toml::Table;
@@ -104,6 +105,32 @@ impl Metadata {
             Ok(()) => {}
             Err(m) => mistakes.push(m),
         }
+
+        if self.queries_output_dir.parent().is_none() {
+            mistakes.push(ManifestMistake::InvalidOutputDir {
+                path: &self.queries_output_dir,
+                key: "queries_output_dir",
+            })
+        }
+
+        if self.tests_output_dir.parent().is_none() {
+            mistakes.push(ManifestMistake::InvalidOutputDir {
+                path: &self.tests_output_dir,
+                key: "tests_output_dir",
+            })
+        }
+
+        let all_dirs = HashSet::from([
+            &self.query_templates_dir,
+            &self.test_templates_dir,
+            &self.queries_output_dir,
+            &self.tests_output_dir,
+        ]);
+
+        if all_dirs.len() < 4 {
+            mistakes.push(ManifestMistake::NonUniqueDirs);
+        }
+
         mistakes.append(&mut self.query_templates.validate());
         mistakes.append(&mut self.queries.validate(&self.query_templates));
         mistakes.append(&mut self.test_templates.validate(&self.queries));
