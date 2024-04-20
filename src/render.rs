@@ -60,6 +60,10 @@ pub fn variables_mapping(udvars: &HashSet<String>) -> HashMap<String, String> {
         .collect::<HashMap<String, String>>()
 }
 
+fn strip_trailing_semicolon(s: &str) -> &str {
+    s.strip_suffix(";").unwrap_or(s)
+}
+
 #[allow(unused)]
 pub struct Engine<'a> {
     metadata: &'a Metadata,
@@ -142,7 +146,7 @@ impl<'a> Engine<'a> {
             Some(s) => s.to_owned(),
             None => self.render_query(&test_template.query, Some(&Placeholder::PosArgs))?,
         };
-        let ctx = context! { prepared_statement => ps };
+        let ctx = context! { prepared_statement => strip_trailing_semicolon(&ps) };
         tmpl.render(ctx).map_err(Error::MiniJinja)
     }
 }
