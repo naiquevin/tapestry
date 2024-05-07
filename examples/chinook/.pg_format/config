@@ -1,0 +1,13 @@
+
+# Lines between markers 'start(noformat)' and 'end(noformat)' will not
+# be formatted. If you want to customize the markers, you may do so by
+# modifying the 'placeholder' config accordingly.
+placeholder=start\(noformat\).+end\(noformat\)
+
+# -- DANGER ZONE --
+#
+# Please donot change the following config parameters. Tapestry may
+# not work otherwise.
+multiline=1
+format=text
+output=

@@ -13,7 +13,7 @@ tests_output_dir = "output/tests"
 exec_path = "pg_format"
 ## Optionally, path to the pg_format conf file (relative to this
 ## manifest file) can be specified.
-# conf_path = "../../pg_format.conf"
+conf_path = "./.pg_format/config"
 
 [[query_templates]]
 path = "songs.sql.j2"

@@ -79,11 +79,16 @@ impl PgFormatter {
     pub fn format(&self, sql: &str) -> Vec<u8> {
         let mut default_args = vec!["-M", "-p", "start\\(noformat\\).+end\\(noformat\\)", "-"];
         let mut args = Vec::new();
-        if let Some(conf) = &self.conf_path {
-            args.push("-c");
-            args.push(conf.to_str().unwrap())
+        match &self.conf_path {
+            Some(conf) => {
+                args.push("-c");
+                args.push(conf.to_str().unwrap());
+                args.push("-");
+            }
+            None => {
+                args.append(&mut default_args);
+            }
         }
-        args.append(&mut default_args);
         let cmd = Cmd {
             exec: &self.exec_path,
             args,
