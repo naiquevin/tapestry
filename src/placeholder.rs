@@ -28,7 +28,6 @@ impl TryFrom<&Value> for Placeholder {
 }
 
 impl Placeholder {
-
     pub fn label(&self) -> &str {
         match self {
             Self::PosArgs => "posargs",

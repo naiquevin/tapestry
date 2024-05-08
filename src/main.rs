@@ -19,9 +19,7 @@ mod validation;
 
 #[derive(Subcommand)]
 enum Command {
-    Init {
-        path: PathBuf,
-    },
+    Init { path: PathBuf },
     Validate,
     Render,
 }
@@ -39,7 +37,7 @@ impl Cli {
             Some(Command::Init { path }) => command::init(path),
             Some(Command::Validate) => command::validate(),
             Some(Command::Render) => command::render(),
-            None => Err(Error::Cli("Please specify the command".to_owned()))
+            None => Err(Error::Cli("Please specify the command".to_owned())),
         }
     }
 }
@@ -52,7 +50,7 @@ fn main() {
         Err(Error::Cli(msg)) => {
             eprintln!("Command error: {}", msg);
             process::exit(1);
-        },
+        }
         Err(e) => {
             eprintln!("Error {:?}", e);
             process::exit(1)

@@ -94,7 +94,6 @@ impl TryFrom<&Path> for Metadata {
 }
 
 impl Metadata {
-
     pub fn default() -> Self {
         Self {
             placeholder: Placeholder::PosArgs,

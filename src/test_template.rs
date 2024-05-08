@@ -13,10 +13,12 @@ use toml::Value;
 //   2. with .sql extension
 //   3. with .j2 extension
 fn path_to_output(path: &Path, base_dir: &Path) -> Result<PathBuf, Error> {
-    let ext = path.extension()
+    let ext = path
+        .extension()
         .ok_or(parse_error!("Invalid 'path' in 'test_templates' entry"))?;
     if ext == "j2" {
-        let stem = path.file_stem()
+        let stem = path
+            .file_stem()
             .ok_or(parse_error!("Invalid 'path' in 'test_templates' entry"))
             .map(|s| s.to_str().unwrap())?;
         if stem.ends_with(".sql") {
@@ -25,7 +27,8 @@ fn path_to_output(path: &Path, base_dir: &Path) -> Result<PathBuf, Error> {
             Ok(base_dir.join(format!("{}.sql", stem)))
         }
     } else if ext == "sql" {
-        let filename = path.file_name()
+        let filename = path
+            .file_name()
             .ok_or(parse_error!("Invalid 'path' in 'test_templates' entry"))
             .map(|s| s.to_str().unwrap())?;
         Ok(base_dir.join(filename))
@@ -71,7 +74,11 @@ impl TestTemplate {
                     )?,
                     None => path_to_output(&path, &output_base_dir.as_ref())?,
                 };
-                Ok(Self { path, query, output })
+                Ok(Self {
+                    path,
+                    query,
+                    output,
+                })
             }
             None => Err(parse_error!("Invalid 'test_templates' entry")),
         }
@@ -154,7 +161,10 @@ impl TestTemplates {
         let mut all_outputs: HashMap<&Path, usize> = HashMap::with_capacity(count);
         for tt in &self.inner {
             mistakes.append(&mut tt.validate(queries));
-            all_outputs.entry(&tt.output).and_modify(|c| *c += 1).or_insert(1);
+            all_outputs
+                .entry(&tt.output)
+                .and_modify(|c| *c += 1)
+                .or_insert(1);
         }
         for (key, val) in all_outputs.iter() {
             if val > &1 {

@@ -2,8 +2,8 @@ use crate::error::{parse_error, Error};
 use crate::query_template::QueryTemplates;
 use crate::toml::{decode_pathbuf, decode_string, decode_strset};
 use crate::validation::ManifestMistake;
-use std::borrow::Cow;
 use regex::Regex;
+use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
@@ -51,11 +51,9 @@ impl Query {
                     .ok_or(parse_error!("Missing 'conds' in 'query' entry"))
                     .map(|v| decode_strset(v, "queries[].conds"))??;
                 let output = match t.get("option") {
-                    Some(v) => decode_pathbuf(
-                        v,
-                        Some(output_base_dir.as_ref()),
-                        "queries[].output",
-                    )?,
+                    Some(v) => {
+                        decode_pathbuf(v, Some(output_base_dir.as_ref()), "queries[].output")?
+                    }
                     None => id_to_output(&id, &output_base_dir.as_ref()),
                 };
                 Ok(Self {
@@ -175,7 +173,10 @@ impl Queries {
                 .entry(&query.id)
                 .and_modify(|c| *c += 1)
                 .or_insert(1);
-            all_outputs.entry(&query.output).and_modify(|c| *c += 1).or_insert(1);
+            all_outputs
+                .entry(&query.output)
+                .and_modify(|c| *c += 1)
+                .or_insert(1);
         }
         for (key, val) in all_ids.iter() {
             if val > &1 {

@@ -65,7 +65,7 @@ pub fn init(dir: &Path) -> Result<i32, Error> {
             eprintln!("Error initializing new tapestry project");
             eprintln!("Reason: {emsg}");
             Ok(1)
-        },
-        Err(e) => Err(e)
+        }
+        Err(e) => Err(e),
     }
 }

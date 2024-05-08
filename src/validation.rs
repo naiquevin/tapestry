@@ -8,7 +8,7 @@ pub enum ManifestMistake<'a> {
     },
     InvalidOutputDir {
         path: &'a Path,
-        key: &'a str
+        key: &'a str,
     },
     NonUniqueDirs,
     QueryTemplateRefNotFound {
@@ -30,28 +30,33 @@ pub enum ManifestMistake<'a> {
 }
 
 impl<'a> ManifestMistake<'a> {
-
     pub fn err_msg(&self) -> String {
         match self {
             Self::PathDoesnotExist { path, key } => {
                 let path_str = path.to_str().unwrap();
                 format!("Path '{path_str}' does not exist; key: '{key}'")
-            },
+            }
             Self::InvalidOutputDir { path, key } => {
-                format!("Invalid output dir path {key} = {} (must not be root or empty)", path.display())
-            },
+                format!(
+                    "Invalid output dir path {key} = {} (must not be root or empty)",
+                    path.display()
+                )
+            }
             Self::NonUniqueDirs => {
                 format!("Values for all '*_dir' keys in the manifest file must be unique")
-            },
+            }
             Self::QueryTemplateRefNotFound { query_id, template } => {
                 format!("Query '{query_id}' refers to unknown template: '{template}'")
-            },
-            Self::QueryRefNotFound { query_id, test_template } => {
+            }
+            Self::QueryRefNotFound {
+                query_id,
+                test_template,
+            } => {
                 format!("Test template '{test_template}' refers to unknown query '{query_id}'")
-            },
+            }
             Self::InvalidConds { query_id, conds } => {
                 format!("Invalid 'conds': {conds:?} defined for query: '{query_id}'")
-            },
+            }
             Self::Duplicates { key, value } => {
                 format!("Duplicates found; key: '{key}', value: '{value}'")
             }

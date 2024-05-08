@@ -87,7 +87,6 @@ impl TryFrom<&Value> for PgFormatter {
 }
 
 impl PgFormatter {
-
     pub fn new_if_exists() -> Option<Self> {
         let mut command = Command::new("pg_format");
         let status = command
@@ -150,7 +149,7 @@ impl Formatter {
     pub fn discover() -> Option<Self> {
         let pg_format = PgFormatter::new_if_exists().map(Self::PgFormatter);
         if pg_format.is_some() {
-            return pg_format
+            return pg_format;
         } else {
             // Check for more formatting tools here when support for
             // them is added.
@@ -169,11 +168,23 @@ mod tests {
     fn test_pg_format_args() {
         let args = pg_format_args(None);
         let expected = vec!["-M", "-p", "start\\(noformat\\).+end\\(noformat\\)", "-"];
-        assert_eq!(expected.into_iter().map(String::from).collect::<Vec<String>>(), args);
+        assert_eq!(
+            expected
+                .into_iter()
+                .map(String::from)
+                .collect::<Vec<String>>(),
+            args
+        );
 
         let conf_path = Path::new("./.pg_format/config");
         let args = pg_format_args(Some(&conf_path));
         let expected = vec!["-c", "./.pg_format/config", "-"];
-        assert_eq!(expected.into_iter().map(String::from).collect::<Vec<String>>(), args);
+        assert_eq!(
+            expected
+                .into_iter()
+                .map(String::from)
+                .collect::<Vec<String>>(),
+            args
+        );
     }
 }

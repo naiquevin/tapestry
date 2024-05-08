@@ -13,8 +13,8 @@ fn create_project_dir(path: &Path) -> Result<(), Error> {
         Ok(false) => {
             fs::create_dir(path).map_err(Error::Io)?;
             Ok(())
-        },
-        Err(e) => Err(Error::Io(e))
+        }
+        Err(e) => Err(Error::Io(e)),
     }
 }
 
@@ -45,10 +45,8 @@ struct DefaultManifestContext<'a> {
 
 impl<'a> From<&'a Metadata> for DefaultManifestContext<'a> {
     fn from(m: &'a Metadata) -> Self {
-        let pg_format = m.formatter.as_ref().and_then(|formatter| {
-            match formatter {
-                Formatter::PgFormatter(pgf) => Some(PgFormatterContext::from(pgf))
-            }
+        let pg_format = m.formatter.as_ref().and_then(|formatter| match formatter {
+            Formatter::PgFormatter(pgf) => Some(PgFormatterContext::from(pgf)),
         });
         Self {
             placeholder: m.placeholder.label(),
@@ -111,4 +109,3 @@ pub fn init_project(dir: &Path) -> Result<(), Error> {
 
     Ok(())
 }
-
