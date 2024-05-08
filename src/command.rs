@@ -3,6 +3,7 @@ use crate::metadata::Metadata;
 use crate::output;
 use crate::placeholder::Placeholder;
 use crate::render::Engine;
+use crate::scaffolding;
 use std::path::Path;
 
 pub fn validate() -> Result<(), Error> {
@@ -51,5 +52,20 @@ pub fn render() -> Result<(), Error> {
             println!("{}", mistake.err_msg())
         }
         Err(Error::InvalidManifest)
+    }
+}
+
+pub fn init(dir: &Path) -> Result<(), Error> {
+    match scaffolding::init_project(dir) {
+        Ok(()) => {
+            println!("New tapestry project initialized at: {}", dir.display());
+            Ok(())
+        }
+        Err(Error::Scaffolding(emsg)) => {
+            eprintln!("Error initializing new tapestry project");
+            eprintln!("Reason: {emsg}");
+            Err(Error::Scaffolding(emsg))
+        },
+        Err(e) => Err(e)
     }
 }

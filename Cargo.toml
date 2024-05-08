@@ -9,4 +9,5 @@ edition = "2021"
 clap = { version = "4.5.4", features = ["derive"] }
 minijinja = { version = "1.0.15", features = ["loader"] }
 regex = "1.10.4"
+serde = { version = "1.0.201", features = ["derive"] }
 toml = "0.8.12"

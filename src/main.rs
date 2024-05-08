@@ -4,6 +4,7 @@ use crate::placeholder::Placeholder;
 use crate::render::{placeholder, pos_args_mapping, variables_mapping, Engine};
 use clap::{Parser, Subcommand};
 use minijinja::context;
+use std::path::PathBuf;
 use std::process;
 
 mod command;
@@ -14,6 +15,7 @@ mod placeholder;
 mod query;
 mod query_template;
 mod render;
+mod scaffolding;
 mod sql_format;
 mod test_template;
 mod toml;
@@ -21,6 +23,9 @@ mod validation;
 
 #[derive(Subcommand)]
 enum Command {
+    Init {
+        path: PathBuf,
+    },
     Validate,
     Render,
 }
@@ -35,6 +40,7 @@ struct Cli {
 impl Cli {
     fn execute(&self) -> Result<(), Error> {
         match &self.command {
+            Some(Command::Init { path }) => command::init(path),
             Some(Command::Validate) => command::validate(),
             Some(Command::Render) => command::render(),
             None => Err(Error::Cli("Please specify the command".to_owned()))
@@ -51,7 +57,7 @@ fn main() {
             eprintln!("Command error: {}", msg);
             process::exit(1);
         },
-        Err(Error::InvalidManifest) => process::exit(1),
+        Err(Error::InvalidManifest) | Err(Error::Scaffolding(_)) => process::exit(1),
         Err(e) => {
             eprintln!("Error {:?}", e);
             process::exit(1)

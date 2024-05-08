@@ -94,6 +94,21 @@ impl TryFrom<&Path> for Metadata {
 }
 
 impl Metadata {
+
+    pub fn default() -> Self {
+        Self {
+            placeholder: Placeholder::PosArgs,
+            query_templates_dir: PathBuf::from("templates/queries"),
+            test_templates_dir: PathBuf::from("templates/tests"),
+            formatter: None,
+            queries_output_dir: PathBuf::from("output/queries"),
+            tests_output_dir: PathBuf::from("output/tests"),
+            query_templates: QueryTemplates::new(),
+            queries: Queries::new(),
+            test_templates: TestTemplates::new(),
+        }
+    }
+
     pub fn validate(&self) -> Vec<ManifestMistake> {
         let mut mistakes = vec![];
         match validate_path(&self.query_templates_dir, "query_templates_dir") {

@@ -43,8 +43,8 @@ impl<'a> Cmd<'a> {
 /// (a.k.a `pg_format`) tool
 #[derive(Debug)]
 pub struct PgFormatter {
-    exec_path: PathBuf,
-    _conf_path: Option<PathBuf>,
+    pub exec_path: PathBuf,
+    pub conf_path: Option<PathBuf>,
     args: Vec<String>,
 }
 
@@ -68,14 +68,14 @@ impl TryFrom<&Value> for PgFormatter {
                         "Missing 'exec_path' in 'formatter.pgFormatter"
                     ))
                     .map(|v| decode_pathbuf(v, None, "formatter.pgFormatter.exec_path"))??;
-                let _conf_path = match t.get("conf_path") {
+                let conf_path = match t.get("conf_path") {
                     Some(cp) => Some(decode_pathbuf(cp, None, "formatter.pgFormatter.conf_path")?),
                     None => None,
                 };
-                let args = pg_format_args(_conf_path.as_ref().map(|p| p.as_path()));
+                let args = pg_format_args(conf_path.as_ref().map(|p| p.as_path()));
                 Ok(Self {
                     exec_path,
-                    _conf_path,
+                    conf_path,
                     args,
                 })
             }
@@ -87,6 +87,25 @@ impl TryFrom<&Value> for PgFormatter {
 }
 
 impl PgFormatter {
+
+    pub fn new_if_exists() -> Option<Self> {
+        let mut command = Command::new("pg_format");
+        let status = command
+            .arg("-v")
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .status()
+            .expect("Failed to spawn child process");
+        if status.success() {
+            Some(Self {
+                exec_path: PathBuf::from(command.get_program()),
+                conf_path: Some(PathBuf::from("./.pg_format/config")),
+                args: pg_format_args(None),
+            })
+        } else {
+            None
+        }
+    }
 
     pub fn format(&self, sql: &str) -> Vec<u8> {
         let args = self.args.iter().map(|a| a.as_str()).collect();
@@ -125,6 +144,17 @@ impl Formatter {
     pub fn format(&self, sql: &str) -> Vec<u8> {
         match self {
             Self::PgFormatter(p) => p.format(sql),
+        }
+    }
+
+    pub fn discover() -> Option<Self> {
+        let pg_format = PgFormatter::new_if_exists().map(Self::PgFormatter);
+        if pg_format.is_some() {
+            return pg_format
+        } else {
+            // Check for more formatting tools here when support for
+            // them is added.
+            None
         }
     }
 }

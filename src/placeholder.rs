@@ -27,6 +27,16 @@ impl TryFrom<&Value> for Placeholder {
     }
 }
 
+impl Placeholder {
+
+    pub fn label(&self) -> &str {
+        match self {
+            Self::PosArgs => "posargs",
+            Self::Variables => "variables",
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
 
