@@ -9,7 +9,6 @@ pub enum Error {
     UndefinedQueryTemplate(String),
     UndefinedTestTemplate(String),
     MiniJinja(minijinja::Error),
-    InvalidManifest,
     Scaffolding(String),
     Cli(String),
 }

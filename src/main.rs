@@ -38,7 +38,7 @@ struct Cli {
 }
 
 impl Cli {
-    fn execute(&self) -> Result<(), Error> {
+    fn execute(&self) -> Result<i32, Error> {
         match &self.command {
             Some(Command::Init { path }) => command::init(path),
             Some(Command::Validate) => command::validate(),
@@ -52,12 +52,11 @@ fn main() {
     let cli = Cli::parse();
     let result = cli.execute();
     match result {
-        Ok(()) => process::exit(0),
+        Ok(status) => process::exit(status),
         Err(Error::Cli(msg)) => {
             eprintln!("Command error: {}", msg);
             process::exit(1);
         },
-        Err(Error::InvalidManifest) | Err(Error::Scaffolding(_)) => process::exit(1),
         Err(e) => {
             eprintln!("Error {:?}", e);
             process::exit(1)

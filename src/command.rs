@@ -6,23 +6,23 @@ use crate::render::Engine;
 use crate::scaffolding;
 use std::path::Path;
 
-pub fn validate() -> Result<(), Error> {
+pub fn validate() -> Result<i32, Error> {
     let path = Path::new("tapestry.toml");
     let metadata = Metadata::try_from(path)?;
     let mistakes = metadata.validate();
     if mistakes.is_empty() {
         println!("All Ok: Manifest file '{}' is valid", path.display());
-        Ok(())
+        Ok(0)
     } else {
         println!("Invalid manifest file: '{}'", path.display());
         for mistake in mistakes {
             println!("{}", mistake.err_msg())
         }
-        Err(Error::InvalidManifest)
+        Ok(1)
     }
 }
 
-pub fn render() -> Result<(), Error> {
+pub fn render() -> Result<i32, Error> {
     let path = Path::new("tapestry.toml");
     let metadata = Metadata::try_from(path)?;
     let mistakes = metadata.validate();
@@ -45,26 +45,26 @@ pub fn render() -> Result<(), Error> {
                 output::write(&tt.output, formatter.as_ref(), &test_output)?;
             }
         }
-        Ok(())
+        Ok(0)
     } else {
         println!("Invalid manifest file: '{}'", path.display());
         for mistake in mistakes {
             println!("{}", mistake.err_msg())
         }
-        Err(Error::InvalidManifest)
+        Ok(1)
     }
 }
 
-pub fn init(dir: &Path) -> Result<(), Error> {
+pub fn init(dir: &Path) -> Result<i32, Error> {
     match scaffolding::init_project(dir) {
         Ok(()) => {
             println!("New tapestry project initialized at: {}", dir.display());
-            Ok(())
+            Ok(0)
         }
         Err(Error::Scaffolding(emsg)) => {
             eprintln!("Error initializing new tapestry project");
             eprintln!("Reason: {emsg}");
-            Err(Error::Scaffolding(emsg))
+            Ok(1)
         },
         Err(e) => Err(e)
     }
