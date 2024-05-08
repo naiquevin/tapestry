@@ -17,7 +17,7 @@ struct Cmd<'a> {
 
 impl<'a> Cmd<'a> {
     fn execute(&self, input: &str) -> Vec<u8> {
-        let mut child = Command::new(&self.exec)
+        let mut child = Command::new(self.exec)
             .args(&self.args)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
@@ -72,7 +72,7 @@ impl TryFrom<&Value> for PgFormatter {
                     Some(cp) => Some(decode_pathbuf(cp, None, "formatter.pgFormatter.conf_path")?),
                     None => None,
                 };
-                let args = pg_format_args(conf_path.as_ref().map(|p| p.as_path()));
+                let args = pg_format_args(conf_path.as_deref());
                 Ok(Self {
                     exec_path,
                     conf_path,
@@ -149,7 +149,7 @@ impl Formatter {
     pub fn discover() -> Option<Self> {
         let pg_format = PgFormatter::new_if_exists().map(Self::PgFormatter);
         if pg_format.is_some() {
-            return pg_format;
+            pg_format
         } else {
             // Check for more formatting tools here when support for
             // them is added.

@@ -72,7 +72,7 @@ impl TestTemplate {
                         Some(output_base_dir.as_ref()),
                         "test_templates[].output",
                     )?,
-                    None => path_to_output(&path, &output_base_dir.as_ref())?,
+                    None => path_to_output(&path, output_base_dir.as_ref())?,
                 };
                 Ok(Self {
                     path,

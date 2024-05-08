@@ -61,7 +61,7 @@ pub fn variables_mapping(udvars: &HashSet<String>) -> HashMap<String, String> {
 }
 
 fn strip_trailing_semicolon(s: &str) -> &str {
-    s.strip_suffix(";").unwrap_or(s)
+    s.strip_suffix(';').unwrap_or(s)
 }
 
 #[allow(unused)]

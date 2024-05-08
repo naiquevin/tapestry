@@ -43,7 +43,7 @@ impl<'a> ManifestMistake<'a> {
                 )
             }
             Self::NonUniqueDirs => {
-                format!("Values for all '*_dir' keys in the manifest file must be unique")
+                "Values for all '*_dir' keys in the manifest file must be unique".to_string()
             }
             Self::QueryTemplateRefNotFound { query_id, template } => {
                 format!("Query '{query_id}' refers to unknown template: '{template}'")

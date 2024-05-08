@@ -17,7 +17,7 @@ fn slugify_id(id: &str) -> Cow<'_, str> {
 fn id_to_output(id: &str, base_dir: &Path) -> PathBuf {
     let filename = format!("{}.sql", &slugify_id(id));
     let filepath = PathBuf::from(filename);
-    base_dir.join(&filepath)
+    base_dir.join(filepath)
 }
 
 #[derive(Debug)]
@@ -54,7 +54,7 @@ impl Query {
                     Some(v) => {
                         decode_pathbuf(v, Some(output_base_dir.as_ref()), "queries[].output")?
                     }
-                    None => id_to_output(&id, &output_base_dir.as_ref()),
+                    None => id_to_output(&id, output_base_dir.as_ref()),
                 };
                 Ok(Self {
                     id,

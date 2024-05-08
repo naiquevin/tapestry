@@ -28,7 +28,7 @@ impl<'a> From<&'a PgFormatter> for PgFormatterContext<'a> {
     fn from(source: &'a PgFormatter) -> Self {
         Self {
             exec_path: source.exec_path.as_path(),
-            conf_path: source.conf_path.as_ref().map(|p| p.as_path()),
+            conf_path: source.conf_path.as_deref(),
         }
     }
 }
@@ -45,8 +45,8 @@ struct DefaultManifestContext<'a> {
 
 impl<'a> From<&'a Metadata> for DefaultManifestContext<'a> {
     fn from(m: &'a Metadata) -> Self {
-        let pg_format = m.formatter.as_ref().and_then(|formatter| match formatter {
-            Formatter::PgFormatter(pgf) => Some(PgFormatterContext::from(pgf)),
+        let pg_format = m.formatter.as_ref().map(|formatter| match formatter {
+            Formatter::PgFormatter(pgf) => PgFormatterContext::from(pgf),
         });
         Self {
             placeholder: m.placeholder.label(),
