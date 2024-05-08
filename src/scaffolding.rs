@@ -63,7 +63,7 @@ impl<'a> From<&'a Metadata> for DefaultManifestContext<'a> {
 
 fn write_manifest(path: &Path, metadata: &Metadata) -> Result<(), Error> {
     let mut env = Environment::new();
-    env.add_template("manifest", include_str!("../templates/manifest_default.toml"))
+    env.add_template("manifest", include_str!("../defaults/manifest.toml.jinja"))
         .map_err(Error::MiniJinja)?;
     let template = env.get_template("manifest").map_err(Error::MiniJinja)?;
     let ctx = DefaultManifestContext::from(metadata);
