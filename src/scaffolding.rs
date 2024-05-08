@@ -72,6 +72,22 @@ fn write_manifest(path: &Path, metadata: &Metadata) -> Result<(), Error> {
     Ok(())
 }
 
+fn write_formatter_configs(dir: &Path, formatter: Option<&Formatter>) -> Result<(), Error> {
+    if let Some(f) = formatter {
+        match f {
+            Formatter::PgFormatter(pgf) => {
+                if let Some(p) = &pgf.conf_path {
+                    let conf_path = dir.join(p);
+                    fs::create_dir(conf_path.parent().unwrap()).map_err(Error::Io)?;
+                    fs::write(conf_path, include_str!("../defaults/pg_format.config"))
+                        .map_err(Error::Io)?;
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
 pub fn init_project(dir: &Path) -> Result<(), Error> {
     // Create the project root dir
     create_project_dir(dir)?;
@@ -89,6 +105,9 @@ pub fn init_project(dir: &Path) -> Result<(), Error> {
     // Create subdirs
     fs::create_dir_all(dir.join(&metadata.query_templates_dir)).map_err(Error::Io)?;
     fs::create_dir_all(dir.join(&metadata.test_templates_dir)).map_err(Error::Io)?;
+
+    // Create formatter config files if applicable
+    write_formatter_configs(dir, metadata.formatter.as_ref())?;
 
     Ok(())
 }
