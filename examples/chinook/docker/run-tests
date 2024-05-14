@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -e
-
-pguser="${PGUSER:-postgres}"
-
-set -x
-pg_prove -h $PGHOST -U $pguser -d chinook_serial --verbose /tmp/tests/*.sql
-set +x

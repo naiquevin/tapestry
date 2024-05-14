@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+
+# /usr/local/bin/
+
+set -e
+
+data_dir=/tmp/tapestry-data
+
+pghost=
+pguser=
+pgdatabase=
+is_create_db=0
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -U | --username )       shift
+                                pguser=$1
+                                ;;
+        -h | --host )           shift
+                                pghost=$1
+                                ;;
+        -d | --dbname )         shift
+                                pgdatabase=$1
+                                ;;
+        -c | --create-db )      is_create_db=1
+                                ;;
+    esac
+    shift
+done
+
+if [ -z "$pghost" ]; then
+    if [ -n "$PGHOST" ]; then
+        pghost=$PGHOST
+    else
+        echo "Either --host option or env var PGHOST must be set" >&2
+        exit 1
+    fi
+fi
+
+if [ -z "$pguser" ]; then
+    pguser=${PGUSER:-postgres}
+fi
+
+if [ -z "$pgdatabase" ]; then
+    if [ -n "$PGDATABASE" ]; then
+        pgdatabase=$PGDATABASE
+    else
+        echo "Either --dbname option or env var PGDATABASE must be set" >&2
+        exit 1
+    fi
+fi
+
+# Create the database if required
+if [ $is_create_db -eq 1 ]; then
+    echo "==== Creating database '$pgdatabase' ===="
+    createdb $pgdatabase
+fi
+
+# Execute sql in all schema files in alphabetical order
+echo "==== Executing commands in schema files ===="
+schema_files=$(ls $data_dir/schema/*.sql | sort)
+for f in $schema_files; do
+    if grep -iq "create database $pgdatabase;" $f; then
+        psql -h $pghost -U $pguser -f $f -q
+    else
+        psql -h $pghost -U $pguser -d $pgdatabase -f $f -q
+    fi
+done
+
+# Create pgtap extension
+echo "==== Creating pgtap extension ===="
+psql -h $pghost -U $pguser -d $pgdatabase -c "create extension pgtap;"
+
+# Execute sql in fixture files (if any) in alphabetical order
+if [ -d $data_dir/fixtures ]; then
+    echo "Executing commands in fixtures files"
+    fixture_files=$(ls $data_dir/fixtures/*.sql | sort)
+    for f in $fixture_files; do
+        psql -h $pghost -U $pguser -d $pgdatabase -f $f
+    done
+fi
+
+echo "==== Running pg_prove ===="
+set -x
+pg_prove -h $pghost -U $pguser -d $pgdatabase --verbose $data_dir/tests/*.sql
+set +x
