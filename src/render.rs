@@ -64,7 +64,6 @@ fn strip_trailing_semicolon(s: &str) -> &str {
     s.strip_suffix(';').unwrap_or(s)
 }
 
-#[allow(unused)]
 pub struct Engine<'a> {
     metadata: &'a Metadata,
     query_templates_env: Environment<'static>,
