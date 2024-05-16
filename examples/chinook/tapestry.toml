@@ -63,3 +63,8 @@ path = "artists_long_songs_test.sql.j2"
 # then suffixing `_test<n>`
 output = "artists_long_songs-genre-limit_test01.sql"
 
+[[test_templates]]
+query = "artists_long_songs"
+path = "all_artists_long_songs_test.sql.j2"
+output = "all_artists_long_songs_test.sql"
+
