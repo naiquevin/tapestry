@@ -4,6 +4,7 @@ use crate::output;
 use crate::placeholder::Placeholder;
 use crate::render::Engine;
 use crate::scaffolding;
+use comfy_table::Table;
 use std::path::Path;
 
 pub fn validate() -> Result<i32, Error> {
@@ -67,5 +68,39 @@ pub fn init(dir: &Path) -> Result<i32, Error> {
             Ok(1)
         }
         Err(e) => Err(e),
+    }
+}
+
+pub fn summary() -> Result<i32, Error> {
+    let path = Path::new("tapestry.toml");
+    let metadata = Metadata::try_from(path)?;
+    let mistakes = metadata.validate();
+    if mistakes.is_empty() {
+        let header = vec!["Id", "Query", "Template", "Tests"];
+        let mut rows: Vec<Vec<String>> = Vec::with_capacity(metadata.queries.len());
+        for query in metadata.queries.iter() {
+            let id = query.id.clone();
+            let path = query.output.display().to_string();
+            let template_path = query.template.display().to_string();
+            let tests = metadata
+                .test_templates
+                .find_by_query(&id)
+                .iter()
+                .map(|t| t.output.display().to_string())
+                .collect::<Vec<String>>()
+                .join("\n");
+
+            rows.push(vec![id, path, template_path, tests]);
+        }
+        let mut table = Table::new();
+        table.set_header(header).add_rows(rows);
+        println!("{table}");
+        Ok(0)
+    } else {
+        println!("Invalid manifest file: '{}'", path.display());
+        for mistake in mistakes {
+            println!("{}", mistake.err_msg())
+        }
+        Ok(1)
     }
 }

@@ -22,6 +22,7 @@ enum Command {
     Init { path: PathBuf },
     Validate,
     Render,
+    Summary,
 }
 
 #[derive(Parser)]
@@ -37,6 +38,7 @@ impl Cli {
             Some(Command::Init { path }) => command::init(path),
             Some(Command::Validate) => command::validate(),
             Some(Command::Render) => command::render(),
+            Some(Command::Summary) => command::summary(),
             None => Err(Error::Cli("Please specify the command".to_owned())),
         }
     }

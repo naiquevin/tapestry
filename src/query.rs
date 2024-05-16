@@ -206,4 +206,8 @@ impl Queries {
     pub fn iter(&self) -> std::slice::Iter<'_, Rc<Query>> {
         self.inner.iter()
     }
+
+    pub fn len(&self) -> usize {
+        self.inner.len()
+    }
 }
