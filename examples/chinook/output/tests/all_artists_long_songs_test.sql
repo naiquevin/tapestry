@@ -9,7 +9,6 @@ CREATE OR REPLACE FUNCTION all_artists_long_songs ()
         track t
         INNER JOIN album al USING (album_id)
         INNER JOIN artist ar USING (artist_id)
-        INNER JOIN genre g USING (genre_id)
     GROUP BY
         ar.artist_id
     ORDER BY

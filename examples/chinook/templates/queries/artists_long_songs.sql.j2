@@ -6,8 +6,8 @@ FROM
     track t
     INNER JOIN album al USING (album_id)
     INNER JOIN artist ar USING (artist_id)
-    INNER JOIN genre g USING (genre_id)
 {% if cond__genre %}
+    INNER JOIN genre g USING (genre_id)
   WHERE
   g.name = {{ placeholder('genre') }}
 {% endif %}
