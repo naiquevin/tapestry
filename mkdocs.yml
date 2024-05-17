@@ -1,0 +1,18 @@
+site_name: tapestry
+theme:
+  name: material
+  features:
+    - navigation.tabs
+
+nav:
+  - Home: index.md
+  - User Guide:
+      - user-guide/index.md
+      - Installation: user-guide/install.md
+      - Getting started: user-guide/getting-started.md
+  - Rationale: rationale.md
+
+
+markdown_extensions:
+  - mdx_truly_sane_lists
+
