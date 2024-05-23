@@ -11,14 +11,14 @@ For many years, I've believed that,
 2. it's ok to add reasonable amount of business logic in the SQL
    queries, rather than using SQL merely for data access.
 
-Still, I had some concerns about using these ideas in practice,
+Still, I've had concerns about using these ideas in practice,
 specially in serious projects.
 
 ### Unit testing SQL queries
 
 Typically, unit tests are written against application code. As more
 and more business logic gets moved out of the application and into SQL
-queries, the queries become longer and more complex. Whereas the
+queries, the queries become longer and more complex. In contrast, the
 application code is reduced to just making db calls using the
 driver/client library. At this point, it makes more sense to test the
 queries than the application code.

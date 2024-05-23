@@ -14,5 +14,9 @@ nav:
 
 
 markdown_extensions:
+  - admonition
   - mdx_truly_sane_lists
-
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
