@@ -1,0 +1,20 @@
+# Lines between markers 'start(noformat)' and 'end(noformat)' will not
+# be formatted. If you want to customize the markers, you may do so by
+# modifying this parameter.
+placeholder=start\(noformat\).+end\(noformat\)
+
+# Add a list of function to be formatted as PG internal
+# functions. Paths relative to the 'tapestry.toml' file will also work
+#extra-function=./.pg_format/functions.lst
+
+# Add a list of keywords to be formatted as PG internal keywords.
+# Paths relative to the 'tapestry.toml' file will also work
+#extra-keyword=./.pg_format/keywords.lst
+
+# -- DANGER ZONE --
+#
+# Please donot change the following config parameters. Tapestry may
+# not work otherwise.
+multiline=1
+format=text
+output=

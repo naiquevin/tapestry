@@ -1,0 +1,21 @@
+CREATE OR REPLACE FUNCTION all_artists_long_songs ()
+RETURNS SETOF record
+AS $$
+{{ prepared_statement }}
+$$ LANGUAGE sql;
+
+BEGIN;
+SELECT
+    plan (1);
+
+-- start(noformat)
+-- Run the tests.
+SELECT is(count(*), 204::bigint) from all_artists_long_songs() AS (artist_id int, name text, duration interval);
+-- Finish the tests and clean up.
+-- end(noformat)
+
+SELECT
+    *
+FROM
+    finish ();
+ROLLBACK;
