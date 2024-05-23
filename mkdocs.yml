@@ -10,6 +10,7 @@ nav:
       - user-guide/index.md
       - Installation: user-guide/install.md
       - Getting started: user-guide/getting-started.md
+      - Docker: user-guide/docker.md
   - Rationale: rationale.md
 
 
@@ -20,3 +21,7 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+
+plugins:
+  - include-markdown:
+      preserve_includer_indent: true
