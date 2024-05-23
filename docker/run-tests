@@ -1,8 +1,35 @@
 #!/usr/bin/env bash
 
-# /usr/local/bin/
-
 set -e
+
+function usage() {
+    echo "Usage: $0 [-c] [-U <USERNAME>] [-h <HOST>] [-d <DBNAME>]"
+    echo ""
+    echo "Options:"
+    echo "-U <USERNAME>, --username <USERNAME>"
+    echo "    pg user to connect to the db"
+    echo "    May also be specified by setting the PGUSER env var"
+    echo "    Default: postgres"
+    echo ""
+    echo "-h <HOST>, --host <HOST>"
+    echo "    database host to connect to"
+    echo "    May also be specified by setting the PGHOST env var"
+    echo "    Required to be specified either as an option of env var"
+    echo ""
+    echo "-d <DBNAME>, --dbname <DBNAME>"
+    echo "    name of the db to connect to"
+    echo "    May also be specified by setting the PGDATABASE env var"
+    echo "    Required to be specified either as an option of env var"
+    echo ""
+    echo "-c, --createdb"
+    echo "    whether the script should attempt to create the db"
+    echo "    If not set, it's assumed that the schema files will ensure that the db is created"
+    echo "    Default: false"
+    echo ""
+    echo "--help"
+    echo "    show help and exit successfully"
+    echo ""
+}
 
 data_dir=/tmp/tapestry-data
 
@@ -10,6 +37,7 @@ pghost=
 pguser=
 pgdatabase=
 is_create_db=0
+display_help=0
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -24,9 +52,16 @@ while [ "$1" != "" ]; do
                                 ;;
         -c | --create-db )      is_create_db=1
                                 ;;
+        --help )                display_help=1
+                                ;;
     esac
     shift
 done
+
+if [ $display_help -eq 1 ]; then
+    usage
+    exit 0
+fi
 
 if [ -z "$pghost" ]; then
     if [ -n "$PGHOST" ]; then
