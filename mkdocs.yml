@@ -11,6 +11,9 @@ nav:
       - Installation: user-guide/install.md
       - Getting started: user-guide/getting-started.md
       - Manifest: user-guide/manifest.md
+      - Query templates: user-guide/query-templates.md
+      - Test templates: user-guide/test-templates.md
+      - pg_format: user-guide/pg-format.md
       - Docker: user-guide/docker.md
   - Rationale: rationale.md
 

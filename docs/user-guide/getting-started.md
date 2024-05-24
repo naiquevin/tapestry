@@ -98,7 +98,8 @@ is called for the first time.
 
 The `init` command has also created a `pg_format` config file for
 us. This is because it found the `pg_format` executable on
-`PATH`. Refer to the [`pg_format`](todo) section for more details.
+`PATH`. Refer to the [`pg_format`](pg-format.md) section for more
+details.
 
 ## Adding a query_template to generate queries
 

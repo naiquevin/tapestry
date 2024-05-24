@@ -11,9 +11,11 @@ following entities:
 
 The various sections or top level `TOML` keys are described in detail
 below. When going through this doc, you may find it helpful to refer
-to the [chinook example](todo) in the github repo. If you haven't
-checked the [Getting started](getting-started.md) section, it's
-recommended to read it first.
+to the [chinook
+example](https://github.com/naiquevin/tapestry/tree/main/examples/chinook)
+in the github repo. If you haven't checked the [Getting
+started](getting-started.md) section, it's recommended to read it
+first.
 
 ## placeholder
 
@@ -92,6 +94,14 @@ Examples
         email = :email
         AND department = :department;
     ```
+
+!!! note
+
+    Note that the `prepared_statement` Jinja variable available in
+    [test templates](test-templates.md) will always have `posargs` based
+    placeholders even if the `placeholder` config in manifest file is set
+    to `variables`. That's the reason the Jinja var is named
+    `prepared_statement`.
 
 ## query\_templates\_dir
 
@@ -186,7 +196,8 @@ included in the auto-generated manifest file only if the executable
 config file will also be created.
 
 To read more about configuring `pg_format` in the context of
-`tapestry`, refer to the [pg_format](todo) section of the docs.
+`tapestry`, refer to the [pg_format](pg-format.md) section of the
+docs.
 
 ## query\_templates
 
@@ -213,7 +224,7 @@ variables that can be referenced inside the template. Note that they
 are defined in the manifest without the `cond__` suffix.
 
 For documentation on how to write a `query_template`, refer to
-[Writing query templates](todo)
+[Writing query templates](query-templates.md)
 
 Example: 
 
@@ -260,7 +271,7 @@ of the output file will be derived by _slugifying_ the `id`. This
 property allows us to use certain [Naming conventions](todo) for
 giving suitable and consistent names to the queries.
 
-Example: 
+Example:
 
 ```toml
 [[queries]]
@@ -297,3 +308,6 @@ must be relative to the `tests_output_dir`.
 Specifying `output` for `test_templates` is optional. If not
 specified, it will be derived from the file stem of `path` i.e. by
 removing the `.j2` extension.
+
+For detailed documentation on how to write a `test_template`, refer to
+[Writing test templates](test-templates.md)
