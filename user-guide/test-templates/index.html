@@ -1,0 +1,856 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../query-templates/">
+      
+      
+        <link rel="next" href="../naming-conventions/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.23">
+    
+    
+      
+        <title>Test templates - tapestry</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.6543a935.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#test-templates" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="tapestry" class="md-header__button md-logo" aria-label="tapestry" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            tapestry
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Test templates
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../rationale/" class="md-tabs__link">
+        
+  
+    
+  
+  Rationale
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="tapestry" class="md-nav__button md-logo" aria-label="tapestry" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    tapestry
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    User Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../manifest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manifest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../query-templates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Query templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Test templates
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Test templates
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#function-instead-of-ps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Function instead of PS
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-fixtures" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test fixtures
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../naming-conventions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Naming conventions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../commands/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Commands
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pg-format/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pg_format
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../docker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Docker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rationale/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rationale
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#function-instead-of-ps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Function instead of PS
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test-fixtures" class="md-nav__link">
+    <span class="md-ellipsis">
+      Test fixtures
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="test-templates">Test templates</h1>
+<p>Just like <a href="../query-templates/"><code>query_templates</code></a>, <code>test_templates</code>
+are also Jinja template files. But while one query template could be
+used to generate several queries, one test template can be used to
+generate only one <code>pgTAP</code> test file.</p>
+<p>However, many test templates can be associated with a single query. In
+other words, if multiple <code>pgTAP</code> test suites are to be written for the
+same query, that's possible.</p>
+<p>The test syntax is SQL only but with some additional functions
+installed by <code>pgTAP</code>. If you are not familiar with <code>pgTAP</code> you can go
+through it's documentation. Important thing to note is that the Jinja
+variable <code>{{ prepared_statement }}</code> is made available to every test
+template, and at the time of rendering, it will expand to the actual
+query.</p>
+<p>Let's look at a templates from the <a href="https://github.com/naiquevin/tapestry/tree/main/examples/chinook">chinook
+example</a>.</p>
+<p>Refer to the test template
+<a href="https://github.com/naiquevin/tapestry/blob/main/examples/chinook/templates/tests/songs_formats-afa_test.sql.j2"><code>songs_formats-afa_test.sql.j2</code></a>. The
+first few lines are:</p>
+<div class="highlight"><pre><span></span><code><span class="k">PREPARE</span><span class="w"> </span><span class="n">song_formats</span><span class="w"> </span><span class="p">(</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="nb">varchar</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span>
+<span class="err">{{</span><span class="w"> </span><span class="n">prepared_statement</span><span class="w"> </span><span class="err">}}</span><span class="p">;</span>
+</code></pre></div>
+<p>Here we're using the <code>prepared_statement</code> Jinja variable to create a
+prepared statement for the user session. The name of the prepared
+statement is <code>song_formats</code> and it takes two positional args, both of
+type <code>varchar</code>.</p>
+<p>Later in the same file, the prepared statement is executed as part of
+a <code>pgTAP</code> test case,</p>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">results_eq</span><span class="p">(</span>
+<span class="w">    </span><span class="s1">&#39;EXECUTE song_formats(&#39;&#39;Iron Maiden&#39;&#39;, &#39;&#39;Protected AAC audio file&#39;&#39;)&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="err">$$</span><span class="k">VALUES</span>
+<span class="w">      </span><span class="p">...</span>
+<span class="w">      </span><span class="p">...</span>
+<span class="w">    </span><span class="err">$$</span><span class="p">,</span>
+<span class="w">    </span><span class="s1">&#39;Verify return value&#39;</span>
+<span class="p">);</span>
+</code></pre></div>
+<p>Check the
+<a href="https://github.com/naiquevin/tapestry/blob/main/examples/chinook/output/tests/songs_formats-afa_test.sql"><code>songs_formats-afa_test.sql</code></a>
+output file to see how the actual test file looks like.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note that the SQL query that <code>prepared_statement</code> Jinja var
+expands to will always have <code>posargs</code> based placeholders, even if the
+<a href="../manifest/#placeholder"><code>placeholder</code></a> config in manifest file is
+set to <code>variables</code>. That's the reason why the Jinja var is named
+<code>prepared_statement</code></p>
+</div>
+<h2 id="function-instead-of-ps">Function instead of PS</h2>
+<p>Sometimes it's tedious to test for result sets returned by the
+query. In such cases, it helps to manipulate the result returned by
+the query and compare a derived property. E.g. If a query results too
+many rows, it's easier to compare the count than the actual values in
+the rows.</p>
+<p>One limitation of prepared statements and the <code>EXECUTE</code> syntax for
+executing them is that it's not sub-query friendly i.e. it's not
+possible to execute a prepared statement as part of another query.</p>
+<p>The following is <strong>NOT</strong> valid SQL</p>
+<div class="highlight"><pre><span></span><code><span class="k">SELECT</span>
+<span class="w">    </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+<span class="k">FROM</span><span class="w"> </span><span class="p">(</span><span class="k">EXECUTE</span><span class="w"> </span><span class="n">song_formats</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;Iron Maiden&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Protected AAC audio file&#39;</span><span class="p">));</span>
+</code></pre></div>
+<p>In such cases, we can define a SQL function using the same
+<code>prepared_statement</code> Jinja variable.</p>
+<p>An example of this can be found in the chinook example -
+<a href="https://github.com/naiquevin/tapestry/blob/main/examples/chinook/templates/tests/all_artists_long_songs_test.sql.j2"><code>all_artists_long_songs_test.sql.j2</code></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">REPLACE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">all_artists_long_songs</span><span class="w"> </span><span class="p">()</span>
+<span class="k">RETURNS</span><span class="w"> </span><span class="k">SETOF</span><span class="w"> </span><span class="n">record</span>
+<span class="k">AS</span><span class="w"> </span><span class="err">$$</span>
+<span class="err">{{</span><span class="w"> </span><span class="n">prepared_statement</span><span class="w"> </span><span class="err">}}</span>
+<span class="err">$$</span><span class="w"> </span><span class="k">LANGUAGE</span><span class="w"> </span><span class="k">sql</span><span class="p">;</span>
+
+<span class="k">BEGIN</span><span class="p">;</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">plan</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="c1">-- start(noformat)</span>
+<span class="c1">-- Run the tests.</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="k">is</span><span class="p">(</span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">),</span><span class="w"> </span><span class="mi">204</span><span class="p">::</span><span class="nb">bigint</span><span class="p">)</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">all_artists_long_songs</span><span class="p">()</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="p">(</span><span class="n">artist_id</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="nb">text</span><span class="p">,</span><span class="w"> </span><span class="n">duration</span><span class="w"> </span><span class="nb">interval</span><span class="p">);</span>
+<span class="c1">-- Finish the tests and clean up.</span>
+<span class="c1">-- end(noformat)</span>
+
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="o">*</span>
+<span class="k">FROM</span>
+<span class="w">    </span><span class="n">finish</span><span class="w"> </span><span class="p">();</span>
+<span class="k">ROLLBACK</span><span class="p">;</span>
+</code></pre></div>
+<h2 id="test-fixtures">Test fixtures</h2>
+<p>When it comes to automated tests, It's a very common requirement to
+setup some test data to be able to write test cases. <code>pgTAP</code> tests are
+not any different. In case of <code>pgTAP</code> one needs to create test data in
+the database.</p>
+<p>Since <code>pgTAP</code> tests are just SQL files, test data creation can be done
+using SQL itself in the same file. Reusable setup code can also be
+extracted into SQL functions that can be created as part of importing
+the database schema.</p>
+<p>The chinook directory doesn't include an example of this. But here's
+an example from one of my real projects that uses <code>tapestry</code>.</p>
+<p>In my project, there are two entities <code>categories</code> and <code>items</code> (having
+tables of the same names) with <code>one-to-many</code> relationship i.e. one
+category can have multiple items.</p>
+<p>In several <code>pgTAP</code> tests, a few categories and items need to be
+created. To do this, a function is defined as follows,</p>
+<div class="highlight"><pre><span></span><code><span class="k">CREATE</span><span class="w"> </span><span class="k">OR</span><span class="w"> </span><span class="k">REPLACE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">tapestry</span><span class="p">.</span><span class="n">setup_category_n_items</span><span class="w"> </span><span class="p">(</span><span class="n">cat_id</span><span class="w"> </span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="n">item_idx_start</span><span class="w"> </span><span class="nb">integer</span><span class="p">,</span><span class="w"> </span><span class="n">item_idx_end</span><span class="w"> </span><span class="nb">integer</span><span class="p">)</span>
+<span class="w">    </span><span class="k">RETURNS</span><span class="w"> </span><span class="n">void</span>
+<span class="w">    </span><span class="k">AS</span><span class="w"> </span><span class="err">$$</span>
+<span class="w">    </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">categories</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">)</span>
+<span class="w">        </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="n">cat_id</span><span class="p">,</span><span class="w"> </span><span class="n">initcap</span><span class="p">(</span><span class="k">replace</span><span class="p">(</span><span class="n">cat_id</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;-&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">)));</span>
+<span class="w">    </span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">items</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">category_id</span><span class="p">)</span>
+<span class="w">    </span><span class="k">SELECT</span>
+<span class="w">        </span><span class="s1">&#39;item-&#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">id</span><span class="p">,</span>
+<span class="w">        </span><span class="s1">&#39;Item &#39;</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">        </span><span class="n">cat_id</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">category_id</span>
+<span class="w">    </span><span class="k">FROM</span>
+<span class="w">        </span><span class="n">generate_series</span><span class="p">(</span><span class="n">item_idx_start</span><span class="p">,</span><span class="w"> </span><span class="n">item_idx_end</span><span class="p">)</span><span class="w"> </span><span class="n">t</span><span class="p">;</span>
+<span class="err">$$</span>
+<span class="k">LANGUAGE</span><span class="w"> </span><span class="k">sql</span><span class="p">;</span>
+</code></pre></div>
+<p>And then it's used in <code>pgTAP</code> tests like this, </p>
+<div class="highlight"><pre><span></span><code><span class="p">...</span>
+
+<span class="k">BEGIN</span><span class="p">;</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="n">plan</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="c1">-- Fixtures</span>
+<span class="c1">-- create 2 categories, &#39;cat-a&#39; and &#39;cat-b&#39; each having 5 items</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">tapestry</span><span class="p">.</span><span class="n">setup_category_n_items</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;cat-a&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+<span class="k">SELECT</span>
+<span class="w">    </span><span class="n">tapestry</span><span class="p">.</span><span class="n">setup_category_n_items</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;cat-b&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span>
+
+<span class="c1">-- Test cases</span>
+
+<span class="p">...</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.ebd0bdb7.min.js"></script>
+      
+    
+  </body>
+</html>

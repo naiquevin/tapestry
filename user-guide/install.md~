@@ -1,0 +1,14 @@
+# Installation
+
+Until tapestry is published to crates.io, you can install it directly
+from github,
+
+```shell
+    cargo install --git https://github.com/naiquevin/tapestry.git
+```
+
+### Additional dependencies
+
+Tapestry depends on [pg_format](https://github.com/darold/pgFormatter)
+for formatting the generated SQL files. It's a recommended but not a
+hard requirement.
