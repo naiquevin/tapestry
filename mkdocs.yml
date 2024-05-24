@@ -1,4 +1,9 @@
 site_name: tapestry
+site_description: Framework for writing and maintaining (postgres)SQL queries and (pgTAP) tests
+repo_name: naiquevin/tapestry
+repo_url: https://github.com/naiquevin/tapestry
+copyright: Copyright &copy; 2024 Vineet Naik
+
 theme:
   name: material
   features:
