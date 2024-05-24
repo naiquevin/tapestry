@@ -41,7 +41,7 @@ pub fn pos_args_mapping(template: &str, udvars: &HashSet<String>) -> HashMap<Str
             continue;
         }
         for var in capture_udvars(line, &re, udvars) {
-            if result.get(var).is_none() {
+            if !result.contains_key(var) {
                 result.insert(var.to_owned(), counter);
                 counter += 1;
             }
