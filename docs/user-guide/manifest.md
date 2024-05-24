@@ -37,7 +37,7 @@ queries in prepared statements
 syntax. E.g. [sqlx](https://github.com/launchbadge/sqlx) (Rust).
 
 Default: The manifest file auto-generated upon running the [`tapestry
-init`](todo) command will have,
+init`](commands.md/#init) command will have,
 
 ```toml
 placeholder = posargs
@@ -109,7 +109,7 @@ Path where the query templates are located. The path is always
 relative to the manifest file.
 
 Default: The manifest file auto-generated upon running the [`tapestry
-init`](todo) command will have,
+init`](commands.md/#init) command will have,
 
 ```toml
 query_templates_dir = "templates/queries"
@@ -121,7 +121,7 @@ Path where the query templates are located. The path is always
 relative to the manifest file.
 
 Default: The manifest file auto-generated upon running the [`tapestry
-init`](todo) command will have,
+init`](commands.md/#init) command will have,
 
 ```toml
 test_templates_dir = "templates/tests"
@@ -133,7 +133,7 @@ Path to the output dir for the rendered queries. This path also needs
 to be defined relative to the manifest file.
 
 Default: The manifest file auto-generated upon running the [`tapestry
-init`](todo) command will have,
+init`](commands.md/#init) command will have,
 
 ```toml
 queries_output_dir = "output/queries"
@@ -155,7 +155,7 @@ Path to the output dir for rendered `pgTAP` tests. The path is always
 relative to the manifest file.
 
 Default: The manifest file auto-generated upon running the [`tapestry
-init`](todo) command will have,
+init`](commands.md/#init) command will have,
 
 ```toml
 tests_output_dir = "output/tests"
@@ -190,10 +190,10 @@ conf_path = "./.pg_format/config"
 As mentioned in the installation guide, `pg_format` is not a mandatory
 requirement but it's recommended.
 
-Upon running the [`tapestry init`](todo) command, this section will be
-included in the auto-generated manifest file only if the executable
-`pg_format` is found on `PATH`. In that case, a default `pg_format`
-config file will also be created.
+Upon running the [`tapestry init`](commands.md/#init) command, this
+section will be included in the auto-generated manifest file only if
+the executable `pg_format` is found on `PATH`. In that case, a default
+`pg_format` config file will also be created.
 
 To read more about configuring `pg_format` in the context of
 `tapestry`, refer to the [pg_format](pg-format.md) section of the
@@ -253,7 +253,7 @@ A query can be defined using the following keys,
 
 ### template
 
-`template` is a reference to a [`query_template`](#query_template)
+`template` is a reference to a [`query_template`](#query_templates)
 defined previously in the manifest.
 
 ### conds
@@ -268,8 +268,9 @@ rendered. It must be relative to the `queries_output_dir` config.
 
 It's optional to specify the `output`. If not specified, the filename
 of the output file will be derived by _slugifying_ the `id`. This
-property allows us to use certain [Naming conventions](todo) for
-giving suitable and consistent names to the queries.
+property allows us to use certain [Naming
+conventions](naming-conventions.md) for giving suitable and consistent
+names to the queries.
 
 Example:
 

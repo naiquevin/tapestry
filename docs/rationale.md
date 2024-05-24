@@ -79,6 +79,7 @@ SQL.
 
 ### Naming conventions
 
-Tapestry suggests some conventions for naming queries consistently but
-they are not mandatory. More about query and test naming conventions
-in the user guide.
+Tapestry suggests some [conventions for naming
+queries](user-guide/naming-conventions.md) consistently but they are
+not mandatory. More about query and test naming conventions in the
+user guide.

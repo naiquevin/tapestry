@@ -204,7 +204,7 @@ To define a query, we need to specify 3 keys,
 
 1. `id` is an identifier for the query. Notice that we're following a
    naming convention by using special chars `@` and `*`. Read more
-   about [Query naming conventions](todo).
+   about [Query naming conventions](naming-conventions.md).
 
 2. `template` is reference to the query template that we defined
    earlier.
