@@ -4,7 +4,7 @@ Until tapestry is published to crates.io, you can install it directly
 from github,
 
 ```shell
-    cargo install --git https://github.com/naiquevin/tapestry.git
+cargo install --git https://github.com/naiquevin/tapestry.git
 ```
 
 ### Additional dependencies
@@ -16,7 +16,7 @@ but recommended.
 On MacOS, it can be installed using homebrew,
 
 ```shell
-    brew install pgformatter
+brew install pgformatter
 ```
 
 Note that you need to install `pg_format` on the machine where you'd

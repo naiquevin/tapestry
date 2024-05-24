@@ -18,17 +18,19 @@ Here is a high level overview of how you'd use tapestry in your
 project:
 
 1. Create a directory inside your project where the templates will be
-   located. The `tapestry init` command does this for you.
+   located. The [`tapestry init`](commands.md/#init) command does this
+   for you.
 
-2. Add some information in the `tapestry.toml` manifest file:
+2. Add some information in the `tapestry.toml` [manifest](manifest.md)
+   file:
    1. Lists of query templates, queries and test templates along with
       the mappings between them
    2. Location of query templates and test templates (input files)
    3. Location of where the output files are to be created
    4. etc...
 
-3. Run `tapestry render` command to generate the SQL files, both for
-   queries as well as tests.
+3. Run [`tapestry render`](commands.md/#render) command to generate
+   the SQL files, both for queries as well as tests.
 
 4. Use a lib such as yesql, aiosql etc. to load the queries rendered
    by the previous step into the application runtime.

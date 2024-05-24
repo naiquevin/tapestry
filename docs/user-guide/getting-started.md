@@ -23,12 +23,12 @@ psql -d chinook -f /tmp/Chinook_PostgreSql_SerialPKs.sql
 
 ## Init
 
-We'll start by running the `tapestry init` command, which will create
-the directory structure and also write a bare minimum manifest file
-for us. In a real project, you'd run this command from within the main
-project directory, so that the files can be committed to the same
-repo. But for this tutorial, you can run it from any suitable location
-e.g. the home dir `~/`
+We'll start by running the [`tapestry init`](commands.md/#init)
+command, which will create the directory structure and also write a
+bare minimum [manifest](manifest.md) file for us. In a real project,
+you'd run this command from within the main project directory, so that
+the files can be committed to the same repo. But for this tutorial,
+you can run it from any suitable location e.g. the home dir `~/`
 
 ```shell
 cd ~/
@@ -49,8 +49,8 @@ $ tree -a --charset=ascii .
     `-- tests
 ```
 
-Let's look at the `tapestry.toml` manifest file that has been created
-(I've stripped out some comments for conciseness)
+Let's look at the `tapestry.toml` [manifest](manifest.md) file that
+has been created (I've stripped out some comments for conciseness)
 
 ```shell
 $ cat tapestry.toml
@@ -73,10 +73,10 @@ conf_path = "./.pg_format/config"
 # [[test_templates]]
 ```
 
-`placeholder` defines the style of generated queries. Default is
-`posargs` (positional arguments) which will generate queries with
-`$1`, `$2` etc as the placeholders. These are suitable for defining
-prepared statements.
+[`placeholder`](manifest.md/#placeholder) defines the style of
+generated queries. Default is `posargs` (positional arguments) which
+will generate queries with `$1`, `$2` etc as the placeholders. These
+are suitable for defining prepared statements.
 
 Then there are four toml keys for defining directories,
 

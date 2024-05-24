@@ -19,6 +19,8 @@ that can render multiple SQL queries. This is possible with a
 combination of Jinja variables and `{% if .. %}...{% endif %}`
 blocks. This is pretty much the main idea behind query templates.
 
+## "cond" variables
+
 Query templates need to be defined in the
 [manifest](manifest.md/#query_templates) where we specify
 [`all_conds`](manifest.md/#all_conds) which is a set of "cond" vars
