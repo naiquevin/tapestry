@@ -21,7 +21,7 @@ of code to implement a simple file loader. In Rust apps, I simply use
 the `include_str!` macro.
 
 One limitation is that tapestry can be used with PostgreSQL only,
-because of the tight coupling with pgTAP.
+because of the tight coupling with `pgTAP`.
 
 Installation
 ------------
@@ -39,10 +39,17 @@ Tapestry depends on [pg_format](https://github.com/darold/pgFormatter)
 for formatting the generated SQL files. It's a recommended but not a
 hard requirement.
 
-User guide
-----------
+Read the docs
+-------------
 
-// TODO: Link to the documentation (Material for Mkdocs + Github pages)
+Detailed documentation about `tapestry` can be found
+[here](https://naiquevin.github.io/tapestry/)
+
+Notable sections:
+
+- [Rationale](https://naiquevin.github.io/tapestry/rationale/)
+- [Installation](https://naiquevin.github.io/tapestry/user-guide/install/)
+- [Getting started](https://naiquevin.github.io/tapestry/user-guide/getting-started/)
 
 LICENSE
 -------
