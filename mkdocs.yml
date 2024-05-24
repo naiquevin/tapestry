@@ -10,6 +10,7 @@ nav:
       - user-guide/index.md
       - Installation: user-guide/install.md
       - Getting started: user-guide/getting-started.md
+      - Manifest: user-guide/manifest.md
       - Docker: user-guide/docker.md
   - Rationale: rationale.md
 
@@ -23,5 +24,6 @@ markdown_extensions:
       alternate_style: true
 
 plugins:
+  - search
   - include-markdown:
       preserve_includer_indent: true

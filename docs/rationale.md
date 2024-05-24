@@ -60,19 +60,19 @@ SQL.
 * You write query templates instead of raw queries
 * Multiple queries can be mapped to the same query template. Mapping
   is defined in the `tapestry.toml` manifest file.
-* User defined jinja variables can be used for conditionally adding or
+* User defined Jinja variables can be used for conditionally adding or
   omitting parts of the query e.g. a `WHERE` condition or column to
-  return. These jinja vars are also defined in the manifest file.
+  return. These Jinja vars are also defined in the manifest file.
 * Thus, it's easy to generate and maintain multiple queries that are
   similar enough to be defined using a single query template.
 
 ### Test templates
 
-* pgTAP tests are also written as jinja templates
+* pgTAP tests are also written as Jinja templates
 * Test templates are mapped to queries, again in the manifest
   file. One query can be mapped to multiple test templates.
 * When tapestry renders the final test file from a test template, a
-  special jinja variable `{{ prepared_statement }}` gets expanded to
+  special Jinja variable `{{ prepared_statement }}` gets expanded to
   the actual query that the test template is mapped to.
 * This way, the generated test SQL file is guaranteed to have the
   exact same query which is used by the application code.

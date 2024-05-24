@@ -174,7 +174,7 @@ To define a `query_template` we need to specify 2 keys:
    template.
 
 2. `all_conds` is a set of values that will be converted to `cond__`
-   Jinja variables. In this case it means there are two `cond__` jinja
+   Jinja variables. In this case it means there are two `cond__` Jinja
    templates supported by the template - `cond__genre` and
    `cond__limit`. Note that they are defined in the manifest without
    the `cond__` suffix.
@@ -391,7 +391,7 @@ And now you should see the pgTAP test file created at
     Here the file
     stem of the test template `path` itself was used as the output file
     name. But it's also possible to explicitly specify it in the manifest
-    file (see [output](todo) in `text_templates` docs).
+    file (see [output](manifest.md#output_1) in `test_templates` docs).
 
 This is how the rendered test file looks like,
 
@@ -469,7 +469,7 @@ Result: PASS
 
 If you've reached this far, you should now have a basic understanding
 of what `tapestry` is and how to use it. Next, it'd be a good idea to
-understand the [manifest file](todo) in more detail.
+understand the [manifest file](manifest.md) in more detail.
 
 !!! note
 

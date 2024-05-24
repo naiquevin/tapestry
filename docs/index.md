@@ -5,7 +5,7 @@ queries and ([pgTAP](https://pgtap.org/)) tests using Jinja templates.
 
 Tapestry is written in Rust but it can be used with applications
 written in any programming language. It's purely a command line tool
-that renders jinja templates into SQL files. How to load the resulting
+that renders Jinja templates into SQL files. How to load the resulting
 SQL code into memory and use it at runtime is entirely up to the
 application.
 
