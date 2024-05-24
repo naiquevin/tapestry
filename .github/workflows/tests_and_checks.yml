@@ -1,0 +1,66 @@
+name: Tests and checks
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  test-linux:
+    name: Run tests on linux (ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+      - name: Compile
+        run: cargo check
+      - name: Run tests
+        run: cargo test -- --nocapture
+
+  test-macos:
+    name: Run tests on MacOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+      - name: Compile
+        run: cargo check
+      - name: Run tests
+        run: cargo test -- --nocapture
+
+  check-linux:
+    name: Run checks on linux (ubuntu)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+      - name: Check formatting
+        run: cargo fmt -- --check
+      - name: Lint
+        run: cargo clippy -- -D warnings
+
+  check-macos:
+    name: Run checks on MacOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+      - name: Check formatting
+        run: cargo fmt -- --check
+      - name: Lint
+        run: cargo clippy -- -D warnings
