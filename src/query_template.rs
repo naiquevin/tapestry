@@ -157,7 +157,7 @@ mod tests {
             all_conds: strset(vec!["genre", "limit"]),
         };
         let qt_2 = QueryTemplate {
-            path: PathBuf::from("examples/chinook/templates/queries/songs.sql.j2"),
+            path: PathBuf::from("examples/chinook/templates/queries/songs_formats.sql.j2"),
             all_conds: strset(vec!["artist", "file_format", "album_name"]),
         };
         let qt_3 = QueryTemplate {
