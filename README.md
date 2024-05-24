@@ -23,11 +23,23 @@ the `include_str!` macro.
 One limitation is that tapestry can be used with PostgreSQL only,
 because of the tight coupling with `pgTAP`.
 
+Current status
+--------------
+
+Tapestry is still a work in progress. But it works for the basic use
+case. A working [example](examples/chinook) is included in the repo
+which you can try out.
+
+I am presently using `tapestry` in my own project and have a list of
+improvements based on my own experience that I want to implement
+before creating and releasing the first tag.
+
+
 Installation
 ------------
 
-Until tapestry is published to crates.io, you can install it directly
-from github,
+Until the first version of `tapestry` is released and it's published
+to crates.io, you can install it directly from github,
 
 ``` shell
     cargo install --git https://github.com/naiquevin/tapestry.git
