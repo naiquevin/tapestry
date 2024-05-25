@@ -83,3 +83,53 @@ templates.
 
 The `summary` command prints a tabular summary of all queries along
 with their associated (query) templates and tests.
+
+## coverage
+
+The `coverage` command prints a list of queries along with the no. of
+tests (i.e. `pgTAP` test files) for them. It also prints a coverage
+`score` which is calculated as the percentage of queries that have at
+least 1 test.
+
+Example: Following is the output of running `tapestry coverage` inside
+the
+[examples/chinook](https://github.com/naiquevin/tapestry/tree/main/examples/chinook)
+dir.
+
+```shell
+$ tapestry coverage
++----------------------------------------+------------------------------------+
+| Query                                  | Has tests?                         |
++=============================================================================+
+| artists_long_songs                     | Yes (1)                            |
+|----------------------------------------+------------------------------------|
+| artists_long_songs*limit               | No                                 |
+|----------------------------------------+------------------------------------|
+| artists_long_songs@genre*limit         | Yes (1)                            |
+|----------------------------------------+------------------------------------|
+| songs_formats@artist+album             | No                                 |
+|----------------------------------------+------------------------------------|
+| songs_formats@artist&file_format+album | Yes (1)                            |
+|----------------------------------------+------------------------------------|
+| Total                                  | 60.00%                             |
+|                                        | (3/5 queries have at least 1 test) |
++----------------------------------------+------------------------------------+
+```
+
+### `--fail-under`
+
+By specifying the `--fail-under` option, the `coverage` command can be
+made to exit with non-zero return code if the percentage coverage is
+below a threshold.
+
+```shell
+$ tapestry coverage --fail-under=90 > /dev/null
+$ echo $?
+1
+```
+
+The value of `--fail-under` option must be an integer between 0 and
+100.
+
+This above can be run as part of CD/CI to ensure that the test
+coverage doesn't fall below a certain threshold.

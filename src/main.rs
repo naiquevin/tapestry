@@ -31,6 +31,14 @@ enum Command {
         )]
         assert_no_changes: bool,
     },
+    Coverage {
+        #[arg(
+            long,
+            help = "Exit with non-zero code if coverage is under specified percentage",
+            value_parser = command::cov_threshold_parser,
+        )]
+        fail_under: Option<u8>
+    }
 }
 
 #[derive(Parser)]
@@ -48,6 +56,7 @@ impl Cli {
             Some(Command::Render) => command::render(),
             Some(Command::Summary) => command::summary(),
             Some(Command::Status { assert_no_changes }) => command::status(*assert_no_changes),
+            Some(Command::Coverage { fail_under }) => command::coverage(*fail_under),
             None => Err(Error::Cli("Please specify the command".to_owned())),
         }
     }
