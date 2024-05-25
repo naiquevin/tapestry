@@ -23,6 +23,14 @@ enum Command {
     Validate,
     Render,
     Summary,
+    Status {
+        #[arg(
+            long,
+            default_value_t = false,
+            help = "Exit with non-zero code if any templates have unrendered changes"
+        )]
+        assert_no_changes: bool,
+    },
 }
 
 #[derive(Parser)]
@@ -39,6 +47,7 @@ impl Cli {
             Some(Command::Validate) => command::validate(),
             Some(Command::Render) => command::render(),
             Some(Command::Summary) => command::summary(),
+            Some(Command::Status { assert_no_changes }) => command::status(*assert_no_changes),
             None => Err(Error::Cli("Please specify the command".to_owned())),
         }
     }

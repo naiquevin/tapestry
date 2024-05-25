@@ -93,7 +93,7 @@ impl<'a> Engine<'a> {
     pub fn render_query(
         &self,
         query_id: &str,
-        placeholder: Option<&Placeholder>,
+        placeholder_override: Option<&Placeholder>,
     ) -> Result<String, Error> {
         let query = self
             .metadata
@@ -116,7 +116,7 @@ impl<'a> Engine<'a> {
             .template_from_str(&intermediate_output)
             .map_err(Error::MiniJinja)?;
         let udvars = intermediate_tmpl.undeclared_variables(false);
-        let placeholder = placeholder.unwrap_or(&self.metadata.placeholder);
+        let placeholder = placeholder_override.unwrap_or(&self.metadata.placeholder);
         let vars = match placeholder {
             Placeholder::PosArgs => pos_args_mapping(&intermediate_output, &udvars),
             Placeholder::Variables => variables_mapping(&udvars),
