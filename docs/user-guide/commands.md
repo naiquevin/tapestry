@@ -1,6 +1,12 @@
 # Commands
 
-The `tapestry` CLI provides the following commands:
+This page documents all commands in the `tapestry` CLI.
+
+Note that for all commands except [`init`](#init), this tool will try
+to read the `tapestry.toml` [manifest](manifest.md) file in the
+current directory and will fail if it's not found. This implies that
+all `tapestry` commands except [`init`](#init) must be executed from
+within the "tapestry project" root dir.
 
 ## init
 

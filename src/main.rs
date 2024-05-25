@@ -58,6 +58,11 @@ fn main() {
     let result = cli.execute();
     match result {
         Ok(status) => process::exit(status),
+        Err(Error::ManifestNotFound) => {
+            eprintln!("Manifest file 'tapestry.toml' not found");
+            eprintln!("Tip: Ensure you're inside the correct directory");
+            process::exit(1);
+        }
         Err(Error::Cli(msg)) => {
             eprintln!("Command error: {}", msg);
             process::exit(1);

@@ -24,11 +24,17 @@ pub struct Metadata {
     pub test_templates: TestTemplates,
 }
 
+/// `try_from` method for initializing `Metadata` from path to the
+/// manifest file.
 impl TryFrom<&Path> for Metadata {
     type Error = Error;
 
     fn try_from(p: &Path) -> Result<Self, Self::Error> {
-        let contents = std::fs::read_to_string(p).map_err(Error::Io)?;
+        let contents = std::fs::read_to_string(p).map_err(|_| {
+            // @TODO: Log the underlying `std::io::Error` at debug
+            // error here
+            Error::ManifestNotFound
+        })?;
         let table: Table = contents.parse().map_err(Error::Toml)?;
         let placeholder = table
             .get("placeholder")

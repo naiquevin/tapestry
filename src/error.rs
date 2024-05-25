@@ -10,6 +10,7 @@ pub enum Error {
     UndefinedTestTemplate(String),
     MiniJinja(minijinja::Error),
     Scaffolding(String),
+    ManifestNotFound,
     Cli(String),
 }
 
