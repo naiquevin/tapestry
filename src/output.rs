@@ -34,16 +34,14 @@ pub enum Status {
 }
 
 impl Status {
-
     pub fn label(&self) -> &str {
         match &self {
             Self::Added => "added",
             Self::Modified => "modified",
-            Self::Unchanged => "unchanged"
+            Self::Unchanged => "unchanged",
         }
     }
 }
-
 
 /// Returns status of an output file
 ///
@@ -84,14 +82,14 @@ pub fn status<P: AsRef<Path>>(
                 } else {
                     Ok(Status::Unchanged)
                 }
-            },
+            }
             None => {
-                if rendered_output.as_bytes() != &contents {
+                if rendered_output.as_bytes() != contents {
                     Ok(Status::Modified)
                 } else {
                     Ok(Status::Unchanged)
                 }
-            },
+            }
         }
     } else {
         Ok(Status::Added)

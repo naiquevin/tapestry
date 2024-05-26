@@ -133,9 +133,14 @@ pub fn status(assert_no_changes: bool) -> Result<i32, Error> {
             }
         }
         let exit_code = if assert_no_changes {
-            let no_changes = stats.values()
+            let no_changes = stats
+                .values()
                 .all(|status| *status == output::Status::Unchanged);
-            if no_changes { 0 } else { 1 }
+            if no_changes {
+                0
+            } else {
+                1
+            }
         } else {
             0
         };
@@ -152,7 +157,7 @@ pub fn status(assert_no_changes: bool) -> Result<i32, Error> {
 pub fn cov_threshold_parser(value: &str) -> Result<u8, String> {
     let threshold: usize = value.parse().map_err(|_| "threshold is not a number")?;
     if threshold > 100 {
-        Err(format!("threshold not in range 0..100"))
+        Err("threshold not in range 0..100".to_string())
     } else {
         Ok(threshold as u8)
     }
@@ -177,16 +182,13 @@ pub fn coverage(fail_under: Option<u8>) -> Result<i32, Error> {
             } else {
                 format!("Yes ({})", tts.len())
             };
-            rows.push(vec![
-                query.id.clone(),
-                has_tests.to_owned()
-            ]);
+            rows.push(vec![query.id.clone(), has_tests.to_owned()]);
         }
 
         // Calculate coverage summary
         let num_untested = untested.len();
         let num_tested = num_queries - num_untested;
-        let pcent_cov = (num_tested as f32 / num_queries as f32) * 100 as f32;
+        let pcent_cov = (num_tested as f32 / num_queries as f32) * 100_f32;
         rows.push(vec![
             "Total".to_owned(),
             format!("{pcent_cov:.02}%\n({num_tested}/{num_queries} queries have at least 1 test)"),
@@ -198,8 +200,14 @@ pub fn coverage(fail_under: Option<u8>) -> Result<i32, Error> {
         println!("{table}");
 
         let exit_code = match fail_under {
-            Some(threshold) => if pcent_cov < (threshold as f32) { 1 } else { 0 },
-            None => 0
+            Some(threshold) => {
+                if pcent_cov < (threshold as f32) {
+                    1
+                } else {
+                    0
+                }
+            }
+            None => 0,
         };
         Ok(exit_code)
     } else {

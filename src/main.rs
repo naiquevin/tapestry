@@ -19,7 +19,9 @@ mod validation;
 
 #[derive(Subcommand)]
 enum Command {
-    Init { path: PathBuf },
+    Init {
+        path: PathBuf,
+    },
     Validate,
     Render,
     Summary,
@@ -37,8 +39,8 @@ enum Command {
             help = "Exit with non-zero code if coverage is under specified percentage",
             value_parser = command::cov_threshold_parser,
         )]
-        fail_under: Option<u8>
-    }
+        fail_under: Option<u8>,
+    },
 }
 
 #[derive(Parser)]
