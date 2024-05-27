@@ -20,9 +20,7 @@ mod validation;
 #[derive(Subcommand)]
 enum Command {
     #[command(about = "Initialize a new tapestry \"project\"")]
-    Init {
-        path: PathBuf,
-    },
+    Init { path: PathBuf },
     #[command(about = "Validate manifest and template files")]
     Validate,
     #[command(about = "Render templates into SQL files")]
