@@ -44,7 +44,7 @@ directory created above.
 rsync -r output/tests ~/tapestry-data/
 ```
 
-Now start another container from the same image
+Now start another container using the same image
 
 ```shell
 podman run -it \
@@ -60,5 +60,5 @@ podman run -it \
 Note that the chinook database schema file that we downloaded takes
 care of creating the database with the name `chinook_serial`. Hence
 we've omitted the `-c` flag for the `run-tests` command. Refer to the
-[docker workflow's README](../docker/README.md) for detailed
+[docker workflow's README](../../docker/README.md) for detailed
 information about this.

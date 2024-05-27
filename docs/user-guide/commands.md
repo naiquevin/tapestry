@@ -72,6 +72,8 @@ Query: unchanged: output/queries/songs_formats-artist-file_format-album.sql
 
 In a way, it's sort of a _dry run_ for the `render` command.
 
+### `--assert-no-changes`
+
 A more effective use of this command though is with the
 `--assert-no-changes` flag which will cause it to exit with non-zero
 code if it finds any output files that would get added or modified
@@ -131,5 +133,5 @@ $ echo $?
 The value of `--fail-under` option must be an integer between 0 and
 100.
 
-This above can be run as part of CD/CI to ensure that the test
+The above command can be run as part of CD/CI to ensure that the test
 coverage doesn't fall below a certain threshold.

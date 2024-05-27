@@ -23,9 +23,9 @@ application code is reduced to just making db calls using the
 driver/client library. At this point, it makes more sense to test the
 queries than the application code.
 
-Fortunately for PostgreSQL, we have the excellent PgTAP extension that
-makes it easy to write unit tests for raw queries. Just like the raw
-queries themselves, pgTap tests are typically defined in SQL
+Fortunately for PostgreSQL, we have the excellent `pgTAP` extension
+that makes it easy to write unit tests for raw queries. Just like the
+raw queries themselves, `pgTAP` tests are typically defined in SQL
 files. But since the query and the tests are in separate files, it's
 possible that one modifies the SQL query, but forgets to update the
 tests, and the tests could still pass!
@@ -51,7 +51,7 @@ them unique names can be tricky.
 ## How tapestry solves it?
 
 Tapestry was built to specifically address the above problems and
-concerns. It does so by generating actual queries as well as pgTAP
+concerns. It does so by generating actual queries as well as `pgTAP`
 test files from Jinja templates, instead of having the user write raw
 SQL.
 
@@ -68,7 +68,7 @@ SQL.
 
 ### Test templates
 
-* pgTAP tests are also written as Jinja templates
+* `pgTAP` tests are also written as Jinja templates
 * Test templates are mapped to queries, again in the manifest
   file. One query can be mapped to multiple test templates.
 * When tapestry renders the final test file from a test template, a
@@ -81,5 +81,4 @@ SQL.
 
 Tapestry suggests some [conventions for naming
 queries](user-guide/naming-conventions.md) consistently but they are
-not mandatory. More about query and test naming conventions in the
-user guide.
+not mandatory.
