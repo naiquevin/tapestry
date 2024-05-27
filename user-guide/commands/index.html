@@ -563,11 +563,59 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      status
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="status">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-assert-no-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      --assert-no-changes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       summary
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      coverage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="coverage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-fail-under" class="md-nav__link">
+    <span class="md-ellipsis">
+      --fail-under
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -703,11 +751,59 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#status" class="md-nav__link">
+    <span class="md-ellipsis">
+      status
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="status">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-assert-no-changes" class="md-nav__link">
+    <span class="md-ellipsis">
+      --assert-no-changes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#summary" class="md-nav__link">
     <span class="md-ellipsis">
       summary
     </span>
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      coverage
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="coverage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-fail-under" class="md-nav__link">
+    <span class="md-ellipsis">
+      --fail-under
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -730,7 +826,12 @@
 
 
 <h1 id="commands">Commands</h1>
-<p>The <code>tapestry</code> CLI provides the following commands:</p>
+<p>This page documents all commands in the <code>tapestry</code> CLI.</p>
+<p>Note that for all commands except <a href="#init"><code>init</code></a>, this tool will try
+to read the <code>tapestry.toml</code> <a href="../manifest/">manifest</a> file in the
+current directory and will fail if it's not found. This implies that
+all <code>tapestry</code> commands except <a href="#init"><code>init</code></a> must be executed from
+within the "tapestry project" root dir.</p>
 <h2 id="init">init</h2>
 <p>The <code>init</code> command can be used for scaffolding a new <code>tapestry</code>
 "project". It will create the directory structure and also write a
@@ -758,9 +859,74 @@ that the paths referenced in the manifest actually exist and are
 readable.</p>
 <h2 id="render">render</h2>
 <p>The <code>render</code> command renders all the template files into SQL files.</p>
+<h2 id="status">status</h2>
+<p>The <code>status</code> command can be used to preview the effect of running
+<a href="#render"><code>tapestry render</code></a> command. It will list which output files
+will be added, modified or remain unchanged if the <code>render</code> command is
+run. This command will not actually write the output files.</p>
+<p>Output of running <code>tapestry status</code> inside the
+<a href="https://github.com/naiquevin/tapestry/tree/main/examples/chinook">examples/chinook</a>
+directory:</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>tapestry<span class="w"> </span>status
+Query:<span class="w"> </span>unchanged:<span class="w"> </span>output/queries/artists_long_songs.sql
+<span class="w">  </span>Test:<span class="w"> </span>unchanged:<span class="w"> </span>output/tests/all_artists_long_songs_count_test.sql
+Query:<span class="w"> </span>unchanged:<span class="w"> </span>output/queries/artists_long_songs-limit.sql
+Query:<span class="w"> </span>unchanged:<span class="w"> </span>output/queries/artists_long_songs-genre-limit.sql
+<span class="w">  </span>Test:<span class="w"> </span>unchanged:<span class="w"> </span>output/tests/artists_long_songs-genre-limit_test.sql
+Query:<span class="w"> </span>unchanged:<span class="w"> </span>output/queries/songs_formats-artist-album.sql
+Query:<span class="w"> </span>unchanged:<span class="w"> </span>output/queries/songs_formats-artist-file_format-album.sql
+<span class="w">  </span>Test:<span class="w"> </span>unchanged:<span class="w"> </span>output/tests/songs_formats-afa_test.sql
+</code></pre></div>
+<p>In a way, it's sort of a <em>dry run</em> for the <code>render</code> command.</p>
+<h3 id="-assert-no-changes"><code>--assert-no-changes</code></h3>
+<p>A more effective use of this command though is with the
+<code>--assert-no-changes</code> flag which will cause it to exit with non-zero
+code if it finds any output files that would get added or modified
+upon rendering. It's recommended to be run as part of CD/CI, to
+prevent the user from mistakenly releasing code without rendering the
+templates.</p>
 <h2 id="summary">summary</h2>
 <p>The <code>summary</code> command prints a tabular summary of all queries along
 with their associated (query) templates and tests.</p>
+<h2 id="coverage">coverage</h2>
+<p>The <code>coverage</code> command prints a list of queries along with the no. of
+tests (i.e. <code>pgTAP</code> test files) for them. It also prints a coverage
+<code>score</code> which is calculated as the percentage of queries that have at
+least 1 test.</p>
+<p>Example: Following is the output of running <code>tapestry coverage</code> inside
+the
+<a href="https://github.com/naiquevin/tapestry/tree/main/examples/chinook">examples/chinook</a>
+dir.</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>tapestry<span class="w"> </span>coverage
++----------------------------------------+------------------------------------+
+<span class="p">|</span><span class="w"> </span>Query<span class="w">                                  </span><span class="p">|</span><span class="w"> </span>Has<span class="w"> </span>tests?<span class="w">                         </span><span class="p">|</span>
++<span class="o">=============================================================================</span>+
+<span class="p">|</span><span class="w"> </span>artists_long_songs<span class="w">                     </span><span class="p">|</span><span class="w"> </span>Yes<span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span><span class="w">                            </span><span class="p">|</span>
+<span class="p">|</span>----------------------------------------+------------------------------------<span class="p">|</span>
+<span class="p">|</span><span class="w"> </span>artists_long_songs*limit<span class="w">               </span><span class="p">|</span><span class="w"> </span>No<span class="w">                                 </span><span class="p">|</span>
+<span class="p">|</span>----------------------------------------+------------------------------------<span class="p">|</span>
+<span class="p">|</span><span class="w"> </span>artists_long_songs@genre*limit<span class="w">         </span><span class="p">|</span><span class="w"> </span>Yes<span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span><span class="w">                            </span><span class="p">|</span>
+<span class="p">|</span>----------------------------------------+------------------------------------<span class="p">|</span>
+<span class="p">|</span><span class="w"> </span>songs_formats@artist+album<span class="w">             </span><span class="p">|</span><span class="w"> </span>No<span class="w">                                 </span><span class="p">|</span>
+<span class="p">|</span>----------------------------------------+------------------------------------<span class="p">|</span>
+<span class="p">|</span><span class="w"> </span>songs_formats@artist<span class="p">&amp;</span>file_format+album<span class="w"> </span><span class="p">|</span><span class="w"> </span>Yes<span class="w"> </span><span class="o">(</span><span class="m">1</span><span class="o">)</span><span class="w">                            </span><span class="p">|</span>
+<span class="p">|</span>----------------------------------------+------------------------------------<span class="p">|</span>
+<span class="p">|</span><span class="w"> </span>Total<span class="w">                                  </span><span class="p">|</span><span class="w"> </span><span class="m">60</span>.00%<span class="w">                             </span><span class="p">|</span>
+<span class="p">|</span><span class="w">                                        </span><span class="p">|</span><span class="w"> </span><span class="o">(</span><span class="m">3</span>/5<span class="w"> </span>queries<span class="w"> </span>have<span class="w"> </span>at<span class="w"> </span>least<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="nb">test</span><span class="o">)</span><span class="w"> </span><span class="p">|</span>
++----------------------------------------+------------------------------------+
+</code></pre></div>
+<h3 id="-fail-under"><code>--fail-under</code></h3>
+<p>By specifying the <code>--fail-under</code> option, the <code>coverage</code> command can be
+made to exit with non-zero return code if the percentage coverage is
+below a threshold.</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>tapestry<span class="w"> </span>coverage<span class="w"> </span>--fail-under<span class="o">=</span><span class="m">90</span><span class="w"> </span>&gt;<span class="w"> </span>/dev/null
+$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$?</span>
+<span class="m">1</span>
+</code></pre></div>
+<p>The value of <code>--fail-under</code> option must be an integer between 0 and
+100.</p>
+<p>The above command can be run as part of CD/CI to ensure that the test
+coverage doesn't fall below a certain threshold.</p>
 
 
 

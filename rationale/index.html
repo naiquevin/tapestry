@@ -823,9 +823,9 @@ queries, the queries become longer and more complex. In contrast, the
 application code is reduced to just making db calls using the
 driver/client library. At this point, it makes more sense to test the
 queries than the application code.</p>
-<p>Fortunately for PostgreSQL, we have the excellent PgTAP extension that
-makes it easy to write unit tests for raw queries. Just like the raw
-queries themselves, pgTap tests are typically defined in SQL
+<p>Fortunately for PostgreSQL, we have the excellent <code>pgTAP</code> extension
+that makes it easy to write unit tests for raw queries. Just like the
+raw queries themselves, <code>pgTAP</code> tests are typically defined in SQL
 files. But since the query and the tests are in separate files, it's
 possible that one modifies the SQL query, but forgets to update the
 tests, and the tests could still pass!</p>
@@ -845,7 +845,7 @@ an identifier. Since the queries differ only slightly, trying to give
 them unique names can be tricky. </p>
 <h2 id="how-tapestry-solves-it">How tapestry solves it?</h2>
 <p>Tapestry was built to specifically address the above problems and
-concerns. It does so by generating actual queries as well as pgTAP
+concerns. It does so by generating actual queries as well as <code>pgTAP</code>
 test files from Jinja templates, instead of having the user write raw
 SQL.</p>
 <h3 id="query-templates">Query templates</h3>
@@ -861,7 +861,7 @@ SQL.</p>
 </ul>
 <h3 id="test-templates">Test templates</h3>
 <ul>
-<li>pgTAP tests are also written as Jinja templates</li>
+<li><code>pgTAP</code> tests are also written as Jinja templates</li>
 <li>Test templates are mapped to queries, again in the manifest
   file. One query can be mapped to multiple test templates.</li>
 <li>When tapestry renders the final test file from a test template, a
@@ -873,8 +873,7 @@ SQL.</p>
 <h3 id="naming-conventions">Naming conventions</h3>
 <p>Tapestry suggests some <a href="../user-guide/naming-conventions/">conventions for naming
 queries</a> consistently but they are
-not mandatory. More about query and test naming conventions in the
-user guide.</p>
+not mandatory.</p>
 
 
 

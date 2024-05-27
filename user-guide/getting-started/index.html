@@ -802,12 +802,12 @@ createdb<span class="w"> </span>chinook
 psql<span class="w"> </span>-d<span class="w"> </span>chinook<span class="w"> </span>-f<span class="w"> </span>/tmp/Chinook_PostgreSql_SerialPKs.sql
 </code></pre></div>
 <h2 id="init">Init</h2>
-<p>We'll start by running the <code>tapestry init</code> command, which will create
-the directory structure and also write a bare minimum manifest file
-for us. In a real project, you'd run this command from within the main
-project directory, so that the files can be committed to the same
-repo. But for this tutorial, you can run it from any suitable location
-e.g. the home dir <code>~/</code></p>
+<p>We'll start by running the <a href="../commands/#init"><code>tapestry init</code></a>
+command, which will create the directory structure and also write a
+bare minimum <a href="../manifest/">manifest</a> file for us. In a real project,
+you'd run this command from within the main project directory, so that
+the files can be committed to the same repo. But for this tutorial,
+you can run it from any suitable location e.g. the home dir <code>~/</code></p>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/
 tapestry<span class="w"> </span>init<span class="w"> </span>chinook
 </code></pre></div>
@@ -822,8 +822,8 @@ $<span class="w"> </span>tree<span class="w"> </span>-a<span class="w"> </span>-
 <span class="w">    </span><span class="p">|</span>--<span class="w"> </span>queries
 <span class="w">    </span><span class="sb">`</span>--<span class="w"> </span>tests
 </code></pre></div>
-<p>Let's look at the <code>tapestry.toml</code> manifest file that has been created
-(I've stripped out some comments for conciseness)</p>
+<p>Let's look at the <code>tapestry.toml</code> <a href="../manifest/">manifest</a> file that
+has been created (I've stripped out some comments for conciseness)</p>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span>cat<span class="w"> </span>tapestry.toml
 <span class="nv">placeholder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;posargs&quot;</span>
 
@@ -843,10 +843,10 @@ $<span class="w"> </span>tree<span class="w"> </span>-a<span class="w"> </span>-
 
 <span class="c1"># [[test_templates]]</span>
 </code></pre></div>
-<p><code>placeholder</code> defines the style of generated queries. Default is
-<code>posargs</code> (positional arguments) which will generate queries with
-<code>$1</code>, <code>$2</code> etc as the placeholders. These are suitable for defining
-prepared statements.</p>
+<p><a href="../manifest/#placeholder"><code>placeholder</code></a> defines the style of
+generated queries. Default is <code>posargs</code> (positional arguments) which
+will generate queries with <code>$1</code>, <code>$2</code> etc as the placeholders. These
+are suitable for defining prepared statements.</p>
 <p>Then there are four toml keys for defining directories,</p>
 <ol>
 <li>
