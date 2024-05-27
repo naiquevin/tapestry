@@ -19,12 +19,17 @@ mod validation;
 
 #[derive(Subcommand)]
 enum Command {
+    #[command(about = "Initialize a new tapestry \"project\"")]
     Init {
         path: PathBuf,
     },
+    #[command(about = "Validate manifest and template files")]
     Validate,
+    #[command(about = "Render templates into SQL files")]
     Render,
+    #[command(about = "Print tabular summary of queries and tests")]
     Summary,
+    #[command(about = "Preview changes without rendering")]
     Status {
         #[arg(
             long,
@@ -33,6 +38,7 @@ enum Command {
         )]
         assert_no_changes: bool,
     },
+    #[command(about = "Print a summary of test coverage")]
     Coverage {
         #[arg(
             long,
