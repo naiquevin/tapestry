@@ -4,10 +4,10 @@ use crate::output;
 use crate::placeholder::Placeholder;
 use crate::render::Engine;
 use crate::scaffolding;
+use crate::util::ls_files;
 use comfy_table::Table;
 use std::collections::{HashMap, HashSet};
-use std::path::{Path, PathBuf};
-use std::{fs, io};
+use std::path::Path;
 
 pub fn validate() -> Result<i32, Error> {
     let path = Path::new("tapestry.toml");
@@ -71,19 +71,6 @@ pub fn init(dir: &Path) -> Result<i32, Error> {
         }
         Err(e) => Err(e),
     }
-}
-
-/// Returns list of files (and not dirs) inside a directory
-fn ls_files<P: AsRef<Path>>(path: P) -> Result<Vec<PathBuf>, io::Error> {
-    let mut result: Vec<PathBuf> = Vec::new();
-    for entry in fs::read_dir(path)? {
-        let entry = entry?;
-        let path = entry.path();
-        if path.is_file() {
-            result.push(path);
-        }
-    }
-    Ok(result)
 }
 
 pub fn summary(include_all: bool) -> Result<i32, Error> {

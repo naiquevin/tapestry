@@ -5,7 +5,9 @@ use crate::query_template::QueryTemplates;
 use crate::sql_format::Formatter;
 use crate::test_template::TestTemplates;
 use crate::toml::decode_pathbuf;
+use crate::util::ls_files;
 use crate::validation::{validate_path, ManifestMistake};
+use log::warn;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::path::{Path, PathBuf};
@@ -114,6 +116,61 @@ impl Metadata {
         }
     }
 
+    /// Logs warnings when certain conditions where we don't want to
+    /// invalidate the command, but simply let the user know that
+    /// something may not be as per expectation
+    fn warnings(&self) -> Result<(), Error> {
+        // Warn regarding unused query templates (i.e. when a query
+        // template is defined in the manifest but there's no query
+        // defined that uses it)
+        let qt_defined: HashSet<&Path> = self
+            .query_templates
+            .iter()
+            .map(|qt| qt.path.as_ref())
+            .collect();
+        let qt_used: HashSet<&Path> = self.queries.iter().map(|q| q.template.as_ref()).collect();
+        let qt_unused = qt_defined.difference(&qt_used);
+        for qt in qt_unused {
+            warn!("Unused query template found in manifest: {}", qt.display());
+        }
+
+        // Warn regarding undefined query template files i.e. the
+        // query template files that exist in the
+        // `query_templates_dir` but not defined in the manifest. This
+        // will happen when the user creates query template file but
+        // forgets to specify it in the manifest
+        let qt_files = ls_files(&self.query_templates_dir).map_err(Error::Io)?;
+        let qt_actual: HashSet<&Path> = qt_files.iter().map(|p| p.as_ref()).collect();
+        let qt_undefined = qt_actual.difference(&qt_defined);
+        for qt in qt_undefined {
+            warn!(
+                "Did you miss defining query template in manifest? {}",
+                qt.display()
+            );
+        }
+
+        // Warn regarding undefined test template files i.e. the test
+        // template files that exist in the `test_templates_dir` but
+        // not defined in the manifest. This will happen when the user
+        // creates a test template file but forgets to specify it in
+        // the manifest.
+        let tt_defined: HashSet<&Path> = self
+            .test_templates
+            .iter()
+            .map(|tt| tt.path.as_ref())
+            .collect();
+        let tt_files = ls_files(&self.test_templates_dir).map_err(Error::Io)?;
+        let tt_actual: HashSet<&Path> = tt_files.iter().map(|p| p.as_ref()).collect();
+        let tt_undefined = tt_actual.difference(&tt_defined);
+        for tt in tt_undefined {
+            warn!(
+                "Did you miss defining test template in manifest? {}",
+                tt.display()
+            );
+        }
+        Ok(())
+    }
+
     pub fn validate(&self) -> Vec<ManifestMistake> {
         let mut mistakes = vec![];
         match validate_path(&self.query_templates_dir, "query_templates_dir") {
@@ -153,6 +210,10 @@ impl Metadata {
         mistakes.append(&mut self.query_templates.validate());
         mistakes.append(&mut self.queries.validate(&self.query_templates));
         mistakes.append(&mut self.test_templates.validate(&self.queries));
+
+        // Log warnings if any
+        let _ = self.warnings();
+
         mistakes
     }
 }

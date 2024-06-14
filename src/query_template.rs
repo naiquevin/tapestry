@@ -8,7 +8,7 @@ use toml::Value;
 
 #[derive(Debug)]
 pub struct QueryTemplate {
-    path: PathBuf,
+    pub path: PathBuf,
     pub all_conds: HashSet<String>,
 }
 
@@ -137,6 +137,10 @@ impl QueryTemplates {
     pub fn get(&self, path: &Path) -> Option<&Rc<QueryTemplate>> {
         let key = path.to_str().unwrap().to_owned();
         self.index.get(&key)
+    }
+
+    pub fn iter(&self) -> std::slice::Iter<'_, Rc<QueryTemplate>> {
+        self.inner.iter()
     }
 }
 

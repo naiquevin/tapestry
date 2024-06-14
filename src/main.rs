@@ -16,6 +16,7 @@ mod scaffolding;
 mod sql_format;
 mod test_template;
 mod toml;
+mod util;
 mod validation;
 
 #[derive(Subcommand)]
