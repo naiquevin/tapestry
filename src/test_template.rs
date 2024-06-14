@@ -196,4 +196,8 @@ impl TestTemplates {
             .filter(|tt| tt.query.as_str() == query_id)
             .collect()
     }
+
+    pub fn iter(&self) -> std::slice::Iter<'_, Rc<TestTemplate>> {
+        self.inner.iter()
+    }
 }

@@ -26,7 +26,14 @@ enum Command {
     #[command(about = "Render templates into SQL files")]
     Render,
     #[command(about = "Print tabular summary of queries and tests")]
-    Summary,
+    Summary {
+        #[arg(
+            long,
+            default_value_t = false,
+            help = "Include queries and tests not defined in manifest"
+        )]
+        all: bool,
+    },
     #[command(about = "Preview changes without rendering")]
     Status {
         #[arg(
@@ -60,7 +67,7 @@ impl Cli {
             Some(Command::Init { path }) => command::init(path),
             Some(Command::Validate) => command::validate(),
             Some(Command::Render) => command::render(),
-            Some(Command::Summary) => command::summary(),
+            Some(Command::Summary { all }) => command::summary(*all),
             Some(Command::Status { assert_no_changes }) => command::status(*assert_no_changes),
             Some(Command::Coverage { fail_under }) => command::coverage(*fail_under),
             None => Err(Error::Cli("Please specify the command".to_owned())),
