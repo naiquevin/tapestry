@@ -5,6 +5,7 @@ use std::process;
 
 mod command;
 mod error;
+mod logging;
 mod metadata;
 mod output;
 mod placeholder;
@@ -57,12 +58,16 @@ enum Command {
 #[derive(Parser)]
 #[command(version, about)]
 struct Cli {
+    #[arg(short, global = true, action = clap::ArgAction::Count, help = "Verbosity level (can be specified multiple times)")]
+    verbosity: u8,
     #[command(subcommand)]
     command: Option<Command>,
 }
 
 impl Cli {
     fn execute(&self) -> Result<i32, Error> {
+        // Initialize logging based on verbosity flag
+        logging::init(self.verbosity);
         match &self.command {
             Some(Command::Init { path }) => command::init(path),
             Some(Command::Validate) => command::validate(),
