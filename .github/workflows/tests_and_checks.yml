@@ -11,7 +11,7 @@ jobs:
     name: Run tests on linux (ubuntu)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
@@ -25,7 +25,7 @@ jobs:
     name: Run tests on MacOS
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
@@ -39,7 +39,7 @@ jobs:
     name: Run checks on linux (ubuntu)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
@@ -54,7 +54,7 @@ jobs:
     name: Run checks on MacOS
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
