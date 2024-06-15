@@ -68,7 +68,7 @@ impl TryFrom<&Path> for Metadata {
             None => {
                 warn!("TOML key 'query_templates' not found in manifest");
                 QueryTemplates::new()
-            },
+            }
         };
 
         let queries = match table.get("queries") {
@@ -76,7 +76,7 @@ impl TryFrom<&Path> for Metadata {
             None => {
                 warn!("TOML key 'queries' not found in manifest");
                 Queries::new()
-            },
+            }
         };
 
         let test_templates = match table.get("test_templates") {
@@ -84,7 +84,7 @@ impl TryFrom<&Path> for Metadata {
             None => {
                 warn!("TOML key 'test_templates' not found in manifest");
                 TestTemplates::new()
-            },
+            }
         };
 
         let m = Self {
