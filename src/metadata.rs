@@ -7,7 +7,7 @@ use crate::test_template::TestTemplates;
 use crate::toml::decode_pathbuf;
 use crate::util::ls_files;
 use crate::validation::{validate_path, ManifestMistake};
-use log::warn;
+use log::{error, warn};
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::path::{Path, PathBuf};
@@ -32,9 +32,8 @@ impl TryFrom<&Path> for Metadata {
     type Error = Error;
 
     fn try_from(p: &Path) -> Result<Self, Self::Error> {
-        let contents = std::fs::read_to_string(p).map_err(|_| {
-            // @TODO: Log the underlying `std::io::Error` at debug
-            // error here
+        let contents = std::fs::read_to_string(p).map_err(|e| {
+            error!("Unable to read manifest file {}: {}", p.display(), e);
             Error::ManifestNotFound
         })?;
         let table: Table = contents.parse().map_err(Error::Toml)?;
@@ -66,23 +65,26 @@ impl TryFrom<&Path> for Metadata {
 
         let query_templates = match table.get("query_templates") {
             Some(v) => QueryTemplates::decode(&query_templates_dir, v)?,
-            // @TODO: Log a warning here as there is nothing to be
-            // done if no templates are defined.
-            None => QueryTemplates::new(),
+            None => {
+                warn!("TOML key 'query_templates' not found in manifest");
+                QueryTemplates::new()
+            },
         };
 
         let queries = match table.get("queries") {
             Some(v) => Queries::decode(&query_templates_dir, &queries_output_dir, v)?,
-            // @TODO: Log a warning here as there is nothing to be
-            // done if no queries are defined.
-            None => Queries::new(),
+            None => {
+                warn!("TOML key 'queries' not found in manifest");
+                Queries::new()
+            },
         };
 
         let test_templates = match table.get("test_templates") {
             Some(v) => TestTemplates::decode(&test_templates_dir, &tests_output_dir, v)?,
-            // @TODO: Log a warning here as there is nothing to be
-            // done if no queries are defined.
-            None => TestTemplates::new(),
+            None => {
+                warn!("TOML key 'test_templates' not found in manifest");
+                TestTemplates::new()
+            },
         };
 
         let m = Self {
