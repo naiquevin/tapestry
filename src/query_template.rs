@@ -148,9 +148,65 @@ impl QueryTemplates {
 mod tests {
 
     use super::*;
+    use toml;
 
     fn strset(xs: Vec<&str>) -> HashSet<String> {
         xs.iter().map(|s| String::from(*s)).collect()
+    }
+
+    #[test]
+    fn test_decode_query_template() {
+        let table = r#"
+path = 'my_query_template.sql.j2'
+all_conds = [ 'foo', 'bar' ]
+"#
+        .parse::<toml::Table>()
+        .unwrap();
+        let value = toml::Value::Table(table);
+        match QueryTemplate::decode("base", &value) {
+            Ok(qt) => {
+                assert_eq!(PathBuf::from("base/my_query_template.sql.j2"), qt.path);
+                assert_eq!(strset(vec!["foo", "bar"]), qt.all_conds);
+            }
+            Err(_) => assert!(false),
+        }
+
+        let table = r#"
+all_conds = [ 'foo', 'bar' ]
+"#
+        .parse::<toml::Table>()
+        .unwrap();
+        let value = toml::Value::Table(table);
+        match QueryTemplate::decode("base", &value) {
+            Ok(_) => assert!(false),
+            Err(Error::Parsing(msg)) => {
+                assert_eq!("Query template path missing", msg);
+            }
+            Err(_) => assert!(false),
+        }
+
+        let table = r#"
+path = 'my_query_template.sql.j2'
+"#
+        .parse::<toml::Table>()
+        .unwrap();
+        let value = toml::Value::Table(table);
+        match QueryTemplate::decode("base", &value) {
+            Ok(_) => assert!(false),
+            Err(Error::Parsing(msg)) => {
+                assert_eq!("Missing 'all_conds' in 'query_template'", msg);
+            }
+            Err(_) => assert!(false),
+        }
+
+        let value = toml::Value::String(String::from("hello"));
+        match QueryTemplate::decode("base", &value) {
+            Ok(_) => assert!(false),
+            Err(Error::Parsing(msg)) => {
+                assert_eq!("Invalid 'query_template' entry", msg);
+            }
+            Err(_) => assert!(false),
+        }
     }
 
     #[test]

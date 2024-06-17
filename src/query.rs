@@ -50,7 +50,7 @@ impl Query {
                     .get("conds")
                     .ok_or(parse_error!("Missing 'conds' in 'query' entry"))
                     .map(|v| decode_strset(v, "queries[].conds"))??;
-                let output = match t.get("option") {
+                let output = match t.get("output") {
                     Some(v) => {
                         decode_pathbuf(v, Some(output_base_dir.as_ref()), "queries[].output")?
                     }
@@ -209,5 +209,109 @@ impl Queries {
 
     pub fn len(&self) -> usize {
         self.inner.len()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+    use toml;
+
+    fn strset(xs: Vec<&str>) -> HashSet<String> {
+        xs.iter().map(|s| String::from(*s)).collect()
+    }
+
+    #[test]
+    fn test_decode_query() {
+        // When all 4 fields are specified
+        let table = r#"
+id = 'my_query'
+template = 'my_query_template.sql.j2'
+conds = [ 'foo' ]
+output = 'my_query_explicit.sql'
+"#
+        .parse::<toml::Table>()
+        .unwrap();
+        let value = toml::Value::Table(table);
+        match Query::decode("base", "output", &value) {
+            Ok(q) => {
+                assert_eq!("my_query", q.id);
+                assert_eq!(PathBuf::from("base/my_query_template.sql.j2"), q.template);
+                assert_eq!(PathBuf::from("output/my_query_explicit.sql"), q.output);
+                assert_eq!(strset(vec!["foo"]), q.conds);
+            }
+            Err(_) => assert!(false),
+        }
+
+        // When output is not specified
+        let table = r#"
+id = 'my_query'
+template = 'my_query_template.sql.j2'
+conds = [ 'foo' ]
+"#
+        .parse::<toml::Table>()
+        .unwrap();
+        let value = toml::Value::Table(table);
+        match Query::decode("base", "output", &value) {
+            Ok(q) => {
+                assert_eq!("my_query", q.id);
+                assert_eq!(PathBuf::from("base/my_query_template.sql.j2"), q.template);
+                assert_eq!(PathBuf::from("output/my_query.sql"), q.output);
+                assert_eq!(strset(vec!["foo"]), q.conds);
+            }
+            Err(_) => assert!(false),
+        }
+
+        // When id is not specified
+        let table = r#"
+template = 'my_query_template.sql.j2'
+conds = [ 'foo' ]
+output = 'my_query_explicit.sql'
+"#
+        .parse::<toml::Table>()
+        .unwrap();
+        let value = toml::Value::Table(table);
+        match Query::decode("base", "output", &value) {
+            Ok(_) => assert!(false),
+            Err(Error::Parsing(msg)) => {
+                assert_eq!("Missing 'id' in 'query' entry", msg);
+            }
+            Err(_) => assert!(false),
+        }
+
+        // When template is not specified
+        let table = r#"
+id = 'my_query'
+conds = [ 'foo' ]
+output = 'my_query_explicit.sql'
+"#
+        .parse::<toml::Table>()
+        .unwrap();
+        let value = toml::Value::Table(table);
+        match Query::decode("base", "output", &value) {
+            Ok(_) => assert!(false),
+            Err(Error::Parsing(msg)) => {
+                assert_eq!("Missing 'template' in 'query' entry", msg);
+            }
+            Err(_) => assert!(false),
+        }
+
+        // When conds is not specified
+        let table = r#"
+id = 'my_query'
+template = 'my_query_template.sql.j2'
+output = 'my_query_explicit.sql'
+"#
+        .parse::<toml::Table>()
+        .unwrap();
+        let value = toml::Value::Table(table);
+        match Query::decode("base", "output", &value) {
+            Ok(_) => assert!(false),
+            Err(Error::Parsing(msg)) => {
+                assert_eq!("Missing 'conds' in 'query' entry", msg);
+            }
+            Err(_) => assert!(false),
+        }
     }
 }
