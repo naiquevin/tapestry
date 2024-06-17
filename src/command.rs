@@ -106,7 +106,8 @@ pub fn summary(include_all: bool) -> Result<i32, Error> {
             // managed queries to tapestry)
             let query_paths_defined: HashSet<&Path> =
                 metadata.queries.iter().map(|q| q.output.as_ref()).collect();
-            let query_output_files = ls_files(&metadata.queries_output_dir).map_err(Error::Io)?;
+            let query_output_files =
+                ls_files(&metadata.queries_output_dir, false).map_err(Error::Io)?;
             let query_paths_actual: HashSet<&Path> =
                 query_output_files.iter().map(|p| p.as_ref()).collect();
             let query_paths_undefined = query_paths_actual.difference(&query_paths_defined);
@@ -130,7 +131,8 @@ pub fn summary(include_all: bool) -> Result<i32, Error> {
                 .iter()
                 .map(|tt| tt.output.as_ref())
                 .collect();
-            let test_output_files = ls_files(&metadata.tests_output_dir).map_err(Error::Io)?;
+            let test_output_files =
+                ls_files(&metadata.tests_output_dir, false).map_err(Error::Io)?;
             let test_paths_actual: HashSet<&Path> =
                 test_output_files.iter().map(|p| p.as_ref()).collect();
             let test_paths_undefined = test_paths_actual.difference(&test_paths_defined);

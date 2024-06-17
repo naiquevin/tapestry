@@ -141,7 +141,7 @@ impl Metadata {
         // `query_templates_dir` but not defined in the manifest. This
         // will happen when the user creates query template file but
         // forgets to specify it in the manifest
-        let qt_files = ls_files(&self.query_templates_dir).map_err(Error::Io)?;
+        let qt_files = ls_files(&self.query_templates_dir, false).map_err(Error::Io)?;
         let qt_actual: HashSet<&Path> = qt_files.iter().map(|p| p.as_ref()).collect();
         let qt_undefined = qt_actual.difference(&qt_defined);
         for qt in qt_undefined {
@@ -161,7 +161,7 @@ impl Metadata {
             .iter()
             .map(|tt| tt.path.as_ref())
             .collect();
-        let tt_files = ls_files(&self.test_templates_dir).map_err(Error::Io)?;
+        let tt_files = ls_files(&self.test_templates_dir, false).map_err(Error::Io)?;
         let tt_actual: HashSet<&Path> = tt_files.iter().map(|p| p.as_ref()).collect();
         let tt_undefined = tt_actual.difference(&tt_defined);
         for tt in tt_undefined {
