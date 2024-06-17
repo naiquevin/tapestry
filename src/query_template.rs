@@ -22,11 +22,10 @@ impl QueryTemplate {
                     .map(|v| {
                         decode_pathbuf(v, Some(base_dir.as_ref()), "query_templates[].path")
                     })??;
-                let all_conds = t
-                    .get("all_conds")
-                    .ok_or(parse_error!("Missing 'all_conds' in 'query_template'"))
-                    .map(|v| decode_strset(v, "query_templates[].all_conds"))??;
-
+                let all_conds = match t.get("all_conds") {
+                    Some(v) => decode_strset(v, "query_templates[].all_conds")?,
+                    None => HashSet::new(),
+                };
                 Ok(Self { path, all_conds })
             }
             None => Err(parse_error!("Invalid 'query_template' entry")),
@@ -156,6 +155,7 @@ mod tests {
 
     #[test]
     fn test_decode_query_template() {
+        // When TOML is valid
         let table = r#"
 path = 'my_query_template.sql.j2'
 all_conds = [ 'foo', 'bar' ]
@@ -171,6 +171,7 @@ all_conds = [ 'foo', 'bar' ]
             Err(_) => assert!(false),
         }
 
+        // When `path` is missing
         let table = r#"
 all_conds = [ 'foo', 'bar' ]
 "#
@@ -185,6 +186,7 @@ all_conds = [ 'foo', 'bar' ]
             Err(_) => assert!(false),
         }
 
+        // When `all_conds` is missing
         let table = r#"
 path = 'my_query_template.sql.j2'
 "#
@@ -192,18 +194,38 @@ path = 'my_query_template.sql.j2'
         .unwrap();
         let value = toml::Value::Table(table);
         match QueryTemplate::decode("base", &value) {
-            Ok(_) => assert!(false),
-            Err(Error::Parsing(msg)) => {
-                assert_eq!("Missing 'all_conds' in 'query_template'", msg);
+            Ok(qt) => {
+                assert_eq!(PathBuf::from("base/my_query_template.sql.j2"), qt.path);
+                assert_eq!(HashSet::new(), qt.all_conds)
             }
             Err(_) => assert!(false),
         }
 
+        // When type of TOML value is not a table
         let value = toml::Value::String(String::from("hello"));
         match QueryTemplate::decode("base", &value) {
             Ok(_) => assert!(false),
             Err(Error::Parsing(msg)) => {
                 assert_eq!("Invalid 'query_template' entry", msg);
+            }
+            Err(_) => assert!(false),
+        }
+
+        // When `all_conds` is not of correct type
+        let table = r#"
+path = 'my_query_template.sql.j2'
+all_conds = [ 1, 2 ]
+"#
+        .parse::<toml::Table>()
+        .unwrap();
+        let value = toml::Value::Table(table);
+        match QueryTemplate::decode("base", &value) {
+            Ok(_) => assert!(false),
+            Err(Error::Parsing(msg)) => {
+                assert_eq!(
+                    "Value of 'query_templates[].all_conds' is expected to be array of strings",
+                    msg
+                );
             }
             Err(_) => assert!(false),
         }

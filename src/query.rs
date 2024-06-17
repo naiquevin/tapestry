@@ -46,10 +46,10 @@ impl Query {
                     .map(|v| {
                         decode_pathbuf(v, Some(templates_base_dir.as_ref()), "queries[].template")
                     })??;
-                let conds = t
-                    .get("conds")
-                    .ok_or(parse_error!("Missing 'conds' in 'query' entry"))
-                    .map(|v| decode_strset(v, "queries[].conds"))??;
+                let conds = match t.get("conds") {
+                    Some(v) => decode_strset(v, "queries[].conds")?,
+                    None => HashSet::new(),
+                };
                 let output = match t.get("output") {
                     Some(v) => {
                         decode_pathbuf(v, Some(output_base_dir.as_ref()), "queries[].output")?
@@ -244,6 +244,25 @@ output = 'my_query_explicit.sql'
             Err(_) => assert!(false),
         }
 
+        // When conds is not specified
+        let table = r#"
+id = 'my_query'
+template = 'my_query_template.sql.j2'
+output = 'my_query_explicit.sql'
+"#
+        .parse::<toml::Table>()
+        .unwrap();
+        let value = toml::Value::Table(table);
+        match Query::decode("base", "output", &value) {
+            Ok(q) => {
+                assert_eq!("my_query", q.id);
+                assert_eq!(PathBuf::from("base/my_query_template.sql.j2"), q.template);
+                assert_eq!(PathBuf::from("output/my_query_explicit.sql"), q.output);
+                assert_eq!(HashSet::new(), q.conds);
+            }
+            Err(_) => assert!(false),
+        }
+
         // When output is not specified
         let table = r#"
 id = 'my_query'
@@ -297,10 +316,11 @@ output = 'my_query_explicit.sql'
             Err(_) => assert!(false),
         }
 
-        // When conds is not specified
+        // When `all_conds` is not of correct type
         let table = r#"
 id = 'my_query'
 template = 'my_query_template.sql.j2'
+conds = [ 0 ]
 output = 'my_query_explicit.sql'
 "#
         .parse::<toml::Table>()
@@ -309,7 +329,10 @@ output = 'my_query_explicit.sql'
         match Query::decode("base", "output", &value) {
             Ok(_) => assert!(false),
             Err(Error::Parsing(msg)) => {
-                assert_eq!("Missing 'conds' in 'query' entry", msg);
+                assert_eq!(
+                    "Value of 'queries[].conds' is expected to be array of strings",
+                    msg
+                );
             }
             Err(_) => assert!(false),
         }
