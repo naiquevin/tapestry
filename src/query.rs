@@ -290,14 +290,45 @@ impl Queries {
 }
 
 #[cfg(test)]
-mod tests {
+mod test_util {
 
     use super::*;
-    use toml;
 
-    fn strset(xs: Vec<&str>) -> HashSet<String> {
+    pub fn strset(xs: Vec<&str>) -> HashSet<String> {
         xs.iter().map(|s| String::from(*s)).collect()
     }
+
+    // Setup queries from &'static str input to be used in tests
+    //
+    // Argument `data` is a vector of tuple with following type of
+    // values (in order):
+    //
+    //   id: &str, template: &str, conds: Vec<&str>, output: &str
+    pub fn setup_queries(data: Vec<(&str, &str, Vec<&str>, &str)>) -> Queries {
+        let mut qs = Queries::new();
+        for (id, template, conds, output) in data {
+            let q = Rc::new(Query {
+                id: String::from(id),
+                template: PathBuf::from(template),
+                conds: strset(conds),
+                output: PathBuf::from(output),
+            });
+            let idx_key = q.id.clone();
+            let idx_val = q.clone();
+            qs.inner.push(q);
+            qs.index.insert(idx_key, idx_val);
+        }
+        qs
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::test_util::*;
+    use super::*;
+    use crate::query_template;
+    use toml;
 
     #[test]
     fn test_decode_query() {
@@ -444,19 +475,162 @@ output = 'my_query_explicit.sql'
 
     #[test]
     fn test_queries_validate() {
+        let qts = query_template::test_util::setup_query_templates(vec![
+            (
+                "examples/chinook/templates/queries/artists_long_songs.sql.j2",
+                vec!["genre", "limit"],
+            ),
+            (
+                "examples/chinook/templates/queries/songs_formats.sql.j2",
+                vec!["artist", "file_format", "album_name"],
+            ),
+        ]);
+
         // When everything is fine
+        let qs_good = setup_queries(vec![
+            (
+                "artists_long_songs",
+                "examples/chinook/templates/queries/artists_long_songs.sql.j2",
+                vec![],
+                "examples/chinook/output/queries/artists_long_songs.sql",
+            ),
+            (
+                "songs_formats",
+                "examples/chinook/templates/queries/songs_formats.sql.j2",
+                vec!["artist", "album_name"],
+                "examples/chinook/output/queries/song_formats.sql",
+            ),
+        ]);
+        let mistakes = qs_good.validate(&qts, &Layout::OneFileOneQuery);
+        assert!(mistakes.is_empty());
 
         // When one of the queries is invalid
+        let qs = setup_queries(vec![
+            (
+                "artists_long_songs",
+                "examples/chinook/templates/queries/artists_long_songs.sql.j2",
+                vec![],
+                "examples/chinook/output/queries/artists_long_songs.sql",
+            ),
+            (
+                "songs_formats",
+                "examples/chinook/templates/queries/undefined.sql.j2",
+                vec!["artist", "album_name"],
+                "examples/chinook/output/queries/song_formats.sql",
+            ),
+        ]);
+        let mistakes = qs.validate(&qts, &Layout::OneFileOneQuery);
+        assert_eq!(1, mistakes.len());
+        match mistakes[0] {
+            ManifestMistake::QueryTemplateRefNotFound { query_id, template } => {
+                assert_eq!("songs_formats", query_id);
+                assert_eq!(
+                    "examples/chinook/templates/queries/undefined.sql.j2",
+                    template
+                );
+            }
+            _ => assert!(false),
+        }
 
         // When 'queries[].id' are not unique
+        let qs = setup_queries(vec![
+            (
+                "artists_long_songs",
+                "examples/chinook/templates/queries/artists_long_songs.sql.j2",
+                vec![],
+                "examples/chinook/output/queries/artists_long_songs.sql",
+            ),
+            (
+                "artists_long_songs",
+                "examples/chinook/templates/queries/songs_formats.sql.j2",
+                vec!["artist", "album_name"],
+                "examples/chinook/output/queries/song_formats.sql",
+            ),
+        ]);
+        let mistakes = qs.validate(&qts, &Layout::OneFileOneQuery);
+        assert_eq!(1, mistakes.len());
+        match mistakes[0] {
+            ManifestMistake::Duplicates { key, value } => {
+                assert_eq!("queries[].id", key);
+                assert_eq!("artists_long_songs", value);
+            }
+            _ => assert!(false),
+        }
 
         // When layout = OneFileOneQuery and 'queries[].output' are
         // not unique
+        let qs = setup_queries(vec![
+            (
+                "artists_long_songs",
+                "examples/chinook/templates/queries/artists_long_songs.sql.j2",
+                vec![],
+                "examples/chinook/output/queries/artists_long_songs.sql",
+            ),
+            (
+                "song_formats",
+                "examples/chinook/templates/queries/songs_formats.sql.j2",
+                vec!["artist", "album_name"],
+                "examples/chinook/output/queries/artists_long_songs.sql",
+            ),
+        ]);
+        let mistakes = qs.validate(&qts, &Layout::OneFileOneQuery);
+        assert_eq!(1, mistakes.len());
+        match mistakes[0] {
+            ManifestMistake::Duplicates { key, value } => {
+                assert_eq!("queries[].output", key);
+                assert_eq!(
+                    "examples/chinook/output/queries/artists_long_songs.sql",
+                    value
+                );
+            }
+            _ => assert!(false),
+        }
 
-        // When layout = OneFileAllQueries and 'queries[].output' are
+        // When layout = OneFileAllQueries(None) and 'queries[].output' are
         // not the same
+        let layout = Layout::OneFileAllQueries(None);
+        let mistakes = qs_good.validate(&qts, &layout);
+        assert_eq!(1, mistakes.len());
+        match mistakes[0] {
+            ManifestMistake::DisparateQueryOutputs => {
+                assert!(true);
+            }
+            _ => assert!(false),
+        }
 
-        // When layout = OneFileAllQueries and 'queries[].output' are
-        // not the same as 'query_output_file'
+        // When layout = OneFileAllQueries(Some(qof)) and 'queries[].output' are
+        // not the same as qof ('query_output_file' in manifest)
+
+        let qs = setup_queries(vec![
+            (
+                "artists_long_songs",
+                "examples/chinook/templates/queries/artists_long_songs.sql.j2",
+                vec![],
+                "examples/chinook/output/queries.sql",
+            ),
+            (
+                "songs_formats",
+                "examples/chinook/templates/queries/songs_formats.sql.j2",
+                vec!["artist", "album_name"],
+                "examples/chinook/output/queries/song_formats.sql",
+            ),
+        ]);
+        let layout =
+            Layout::OneFileAllQueries(Some(PathBuf::from("examples/chinook/output/queries.sql")));
+        let mistakes = qs.validate(&qts, &layout);
+        assert_eq!(1, mistakes.len());
+        match mistakes[0] {
+            ManifestMistake::InvalidQueryOutput {
+                query_id,
+                output_path,
+            } => {
+                assert_eq!("songs_formats", query_id);
+                assert_eq!(
+                    Path::new("examples/chinook/output/queries/song_formats.sql"),
+                    output_path
+                );
+            }
+            _ => assert!(false),
+        }
     }
 }
