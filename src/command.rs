@@ -33,21 +33,49 @@ pub fn render() -> Result<i32, Error> {
         let engine = Engine::from(&metadata);
         let formatter = &metadata.formatter;
         output::ensure_output_dirs(&metadata.queries_output_dir, &metadata.tests_output_dir)?;
+        let mut queries_to_write: Vec<output::FileToWrite> =
+            Vec::with_capacity(metadata.queries.len());
+        let mut tests_to_write: Vec<output::FileToWrite> = Vec::new();
         for query in metadata.queries.iter() {
-            // render and process query
+            // render query output and collect in a vec
             let query_output = engine.render_query(&query.id, None)?;
-            output::write(&query.output, formatter.as_ref(), &query_output)?;
 
-            // render and process tests
+            // process and render tests output, then collect in a vec
             let prep_stmt = match metadata.placeholder {
                 Placeholder::PosArgs => Some(query_output.as_str()),
                 Placeholder::Variables => None,
             };
             for tt in metadata.test_templates.find_by_query(&query.id) {
                 let test_output = engine.render_test(&tt.path, prep_stmt)?;
-                output::write(&tt.output, formatter.as_ref(), &test_output)?;
+                // output::write(&tt.output, formatter.as_ref(), &test_output)?;
+                let ttw = output::FileToWrite {
+                    path: &tt.output,
+                    contents: test_output,
+                };
+                tests_to_write.push(ttw);
+            }
+
+            let qtw = output::FileToWrite {
+                path: &query.output,
+                contents: query_output,
+            };
+            queries_to_write.push(qtw);
+        }
+
+        // Write all queries, in a single file or separate files based
+        // on the layout
+        match metadata.query_output_layout {
+            output::Layout::OneFileOneQuery => {
+                output::write_separately(&queries_to_write, formatter.as_ref())?;
+            }
+            output::Layout::OneFileAllQueries(_) => {
+                output::write_combined(&queries_to_write, formatter.as_ref())?;
             }
         }
+
+        // Write all tests
+        output::write_separately(&tests_to_write, formatter.as_ref())?;
+
         Ok(0)
     } else {
         println!("Invalid manifest file: '{}'", path.display());

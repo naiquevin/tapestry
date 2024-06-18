@@ -1,4 +1,5 @@
 use crate::error::{parse_error, Error};
+use crate::output::Layout;
 use crate::placeholder::Placeholder;
 use crate::query::Queries;
 use crate::query_template::QueryTemplates;
@@ -7,7 +8,7 @@ use crate::test_template::TestTemplates;
 use crate::toml::decode_pathbuf;
 use crate::util::ls_files;
 use crate::validation::{validate_path, ManifestMistake};
-use log::{error, warn};
+use log::{error, info, warn};
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::path::{Path, PathBuf};
@@ -21,6 +22,7 @@ pub struct Metadata {
     pub formatter: Option<Formatter>,
     pub queries_output_dir: PathBuf,
     pub tests_output_dir: PathBuf,
+    pub query_output_layout: Layout,
     pub query_templates: QueryTemplates,
     pub queries: Queries,
     pub test_templates: TestTemplates,
@@ -63,6 +65,14 @@ impl TryFrom<&Path> for Metadata {
             None => None,
         };
 
+        let query_output_layout = match table.get("query_output_layout") {
+            Some(v) => Layout::decode(v, table.get("query_output_file"), &queries_output_dir)?,
+            None => {
+                info!("Key 'query_output_layout' not found in manifest. Using 'one-file-one-query' as the default");
+                Layout::default()
+            }
+        };
+
         let query_templates = match table.get("query_templates") {
             Some(v) => QueryTemplates::decode(&query_templates_dir, v)?,
             None => {
@@ -72,7 +82,12 @@ impl TryFrom<&Path> for Metadata {
         };
 
         let queries = match table.get("queries") {
-            Some(v) => Queries::decode(&query_templates_dir, &queries_output_dir, v)?,
+            Some(v) => Queries::decode(
+                &query_templates_dir,
+                &queries_output_dir,
+                &query_output_layout,
+                v,
+            )?,
             None => {
                 warn!("TOML key 'queries' not found in manifest");
                 Queries::new()
@@ -94,6 +109,7 @@ impl TryFrom<&Path> for Metadata {
             queries_output_dir,
             tests_output_dir,
             formatter,
+            query_output_layout,
             query_templates,
             queries,
             test_templates,
@@ -112,6 +128,7 @@ impl Metadata {
             formatter: None,
             queries_output_dir: PathBuf::from("output/queries"),
             tests_output_dir: PathBuf::from("output/tests"),
+            query_output_layout: Layout::default(),
             query_templates: QueryTemplates::new(),
             queries: Queries::new(),
             test_templates: TestTemplates::new(),
@@ -210,7 +227,11 @@ impl Metadata {
         }
 
         mistakes.append(&mut self.query_templates.validate());
-        mistakes.append(&mut self.queries.validate(&self.query_templates));
+        mistakes.append(
+            &mut self
+                .queries
+                .validate(&self.query_templates, &self.query_output_layout),
+        );
         mistakes.append(&mut self.test_templates.validate(&self.queries));
 
         // Log warnings if any

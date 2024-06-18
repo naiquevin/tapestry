@@ -1,4 +1,5 @@
 use crate::error::{parse_error, Error};
+use crate::output::Layout;
 use crate::query_template::QueryTemplates;
 use crate::toml::{decode_pathbuf, decode_string, decode_strset};
 use crate::validation::ManifestMistake;
@@ -20,6 +21,34 @@ fn id_to_output(id: &str, base_dir: &Path) -> PathBuf {
     base_dir.join(filepath)
 }
 
+/// Computes the fallback value for 'output' field when one is not
+/// explicitly specified.
+///
+/// The fallback value depends on the kind of `output_layout`.
+///
+///   - OneFileOneQuery: derive output file name from `id` field
+///   - OneFileAllQueries: use the value associated with the enum
+///     i.e. `query_output_file` set in manifest.
+///
+/// # Error:
+/// Returns `Error::Parsing` if output_layout = `OneFileAllQueries'
+/// and `query_output_file` key is not set in the manifest
+fn fallback_output<P: AsRef<Path>>(
+    id: &str,
+    base_dir: P,
+    output_layout: &Layout,
+) -> Result<PathBuf, Error> {
+    match output_layout {
+        Layout::OneFileOneQuery => Ok(id_to_output(id, base_dir.as_ref())),
+        Layout::OneFileAllQueries(output_file) => match output_file {
+            Some(f) => Ok(f.to_path_buf()),
+            None => Err(parse_error!(
+                "Either 'queries[].output' or 'query_output_file' must be specified in case of 'one-file-all-queries' layout"
+            )),
+        },
+    }
+}
+
 #[derive(Debug)]
 pub struct Query {
     pub id: String,
@@ -32,6 +61,7 @@ impl Query {
     fn decode<P: AsRef<Path>>(
         templates_base_dir: P,
         output_base_dir: P,
+        output_layout: &Layout,
         value: &Value,
     ) -> Result<Self, Error> {
         match value.as_table() {
@@ -52,9 +82,18 @@ impl Query {
                 };
                 let output = match t.get("output") {
                     Some(v) => {
+                        // @NOTE: When `output` is specified, it's
+                        // added to the struct without considering the
+                        // `output_layout`. For e.g. it may happen
+                        // that `output_layout` is of the kind
+                        // `OneFileAllQueries` and the specified
+                        // `output` doesn't match the
+                        // `query_output_file` in the
+                        // manifest. Parsing will overlook such
+                        // discrepancy but validation will catch it.
                         decode_pathbuf(v, Some(output_base_dir.as_ref()), "queries[].output")?
                     }
-                    None => id_to_output(&id, output_base_dir.as_ref()),
+                    None => fallback_output(&id, output_base_dir.as_ref(), output_layout)?,
                 };
                 Ok(Self {
                     id,
@@ -128,6 +167,7 @@ impl Queries {
     pub fn decode<P: AsRef<Path>>(
         templates_base_dir: P,
         output_base_dir: P,
+        output_layout: &Layout,
         value: &Value,
     ) -> Result<Self, Error> {
         // @NOTE: The index is populated at the time of initialization
@@ -140,7 +180,12 @@ impl Queries {
             Some(xs) => {
                 let mut res = Vec::with_capacity(xs.len());
                 for x in xs {
-                    let q = Rc::new(Query::decode(&templates_base_dir, &output_base_dir, x)?);
+                    let q = Rc::new(Query::decode(
+                        &templates_base_dir,
+                        &output_base_dir,
+                        output_layout,
+                        x,
+                    )?);
                     let idx_key = q.id.clone();
                     let idx_val = q.clone();
                     res.push(q);
@@ -159,6 +204,7 @@ impl Queries {
     pub fn validate<'a, 'b>(
         &'a self,
         query_templates: &'b QueryTemplates,
+        output_layout: &Layout,
     ) -> Vec<ManifestMistake<'a>>
     where
         'b: 'a,
@@ -178,6 +224,8 @@ impl Queries {
                 .and_modify(|c| *c += 1)
                 .or_insert(1);
         }
+
+        // Validate that all 'queries[].id' values are unique
         for (key, val) in all_ids.iter() {
             if val > &1 {
                 let m = ManifestMistake::Duplicates {
@@ -187,13 +235,42 @@ impl Queries {
                 mistakes.push(m)
             }
         }
-        for (key, val) in all_outputs.iter() {
-            if val > &1 {
-                let m = ManifestMistake::Duplicates {
-                    key: "query_templates[].path",
-                    value: key.to_str().unwrap(),
-                };
-                mistakes.push(m)
+
+        // Validation for 'queries[].output' depends on the layout
+        match output_layout {
+            Layout::OneFileOneQuery => {
+                // Validate that all query entries have unique value
+                // for `output`
+                for (key, val) in all_outputs.iter() {
+                    if val > &1 {
+                        let m = ManifestMistake::Duplicates {
+                            key: "queries[].output",
+                            value: key.to_str().unwrap(),
+                        };
+                        mistakes.push(m)
+                    }
+                }
+            }
+            Layout::OneFileAllQueries(output_file) => {
+                // Validate that all query entries have the same value
+                // for `output` and it's the same as
+                // `query_output_file` (p) if specified in the manifest
+                if all_outputs.len() > 1 {
+                    match output_file {
+                        Some(p) => {
+                            for query in &self.inner {
+                                if &query.output != p {
+                                    let m = ManifestMistake::InvalidQueryOutput {
+                                        query_id: &query.id,
+                                        output_path: &query.output,
+                                    };
+                                    mistakes.push(m)
+                                }
+                            }
+                        }
+                        None => mistakes.push(ManifestMistake::DisparateQueryOutputs),
+                    }
+                }
             }
         }
         mistakes
@@ -234,7 +311,7 @@ output = 'my_query_explicit.sql'
         .parse::<toml::Table>()
         .unwrap();
         let value = toml::Value::Table(table);
-        match Query::decode("base", "output", &value) {
+        match Query::decode("base", "output", &Layout::OneFileOneQuery, &value) {
             Ok(q) => {
                 assert_eq!("my_query", q.id);
                 assert_eq!(PathBuf::from("base/my_query_template.sql.j2"), q.template);
@@ -253,7 +330,7 @@ output = 'my_query_explicit.sql'
         .parse::<toml::Table>()
         .unwrap();
         let value = toml::Value::Table(table);
-        match Query::decode("base", "output", &value) {
+        match Query::decode("base", "output", &Layout::OneFileOneQuery, &value) {
             Ok(q) => {
                 assert_eq!("my_query", q.id);
                 assert_eq!(PathBuf::from("base/my_query_template.sql.j2"), q.template);
@@ -272,7 +349,7 @@ conds = [ 'foo' ]
         .parse::<toml::Table>()
         .unwrap();
         let value = toml::Value::Table(table);
-        match Query::decode("base", "output", &value) {
+        match Query::decode("base", "output", &Layout::OneFileOneQuery, &value) {
             Ok(q) => {
                 assert_eq!("my_query", q.id);
                 assert_eq!(PathBuf::from("base/my_query_template.sql.j2"), q.template);
@@ -291,7 +368,7 @@ output = 'my_query_explicit.sql'
         .parse::<toml::Table>()
         .unwrap();
         let value = toml::Value::Table(table);
-        match Query::decode("base", "output", &value) {
+        match Query::decode("base", "output", &Layout::OneFileOneQuery, &value) {
             Ok(_) => assert!(false),
             Err(Error::Parsing(msg)) => {
                 assert_eq!("Missing 'id' in 'query' entry", msg);
@@ -308,7 +385,7 @@ output = 'my_query_explicit.sql'
         .parse::<toml::Table>()
         .unwrap();
         let value = toml::Value::Table(table);
-        match Query::decode("base", "output", &value) {
+        match Query::decode("base", "output", &Layout::OneFileOneQuery, &value) {
             Ok(_) => assert!(false),
             Err(Error::Parsing(msg)) => {
                 assert_eq!("Missing 'template' in 'query' entry", msg);
@@ -326,7 +403,7 @@ output = 'my_query_explicit.sql'
         .parse::<toml::Table>()
         .unwrap();
         let value = toml::Value::Table(table);
-        match Query::decode("base", "output", &value) {
+        match Query::decode("base", "output", &Layout::OneFileOneQuery, &value) {
             Ok(_) => assert!(false),
             Err(Error::Parsing(msg)) => {
                 assert_eq!(
@@ -336,5 +413,50 @@ output = 'my_query_explicit.sql'
             }
             Err(_) => assert!(false),
         }
+    }
+
+    #[test]
+    fn test_fallback_output() {
+        // When output_layout = OneFileOneQuery
+        match fallback_output("foo", "base", &Layout::OneFileOneQuery) {
+            Ok(p) => assert_eq!(PathBuf::from("base/foo.sql"), p),
+            Err(_) => assert!(false),
+        }
+
+        // When output layout = OneFileAllQueries and output_file is
+        // specified
+        let layout = Layout::OneFileAllQueries(Some(PathBuf::from("base/queries.sql")));
+        match fallback_output("foo", "base", &layout) {
+            Ok(p) => assert_eq!(PathBuf::from("base/queries.sql"), p),
+            Err(_) => assert!(false),
+        }
+
+        // When output layout = OneFileAllQueries and output_file is
+        // not specified
+        let layout = Layout::OneFileAllQueries(None);
+        match fallback_output("foo", "base", &layout) {
+            Err(Error::Parsing(msg)) => {
+                assert_eq!("Either 'queries[].output' or 'query_output_file' must be specified in case of 'one-file-all-queries' layout", msg);
+            }
+            _ => assert!(false),
+        }
+    }
+
+    #[test]
+    fn test_queries_validate() {
+        // When everything is fine
+
+        // When one of the queries is invalid
+
+        // When 'queries[].id' are not unique
+
+        // When layout = OneFileOneQuery and 'queries[].output' are
+        // not unique
+
+        // When layout = OneFileAllQueries and 'queries[].output' are
+        // not the same
+
+        // When layout = OneFileAllQueries and 'queries[].output' are
+        // not the same as 'query_output_file'
     }
 }

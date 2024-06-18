@@ -27,6 +27,11 @@ pub enum ManifestMistake<'a> {
         key: &'a str,
         value: &'a str,
     },
+    InvalidQueryOutput {
+        query_id: &'a str,
+        output_path: &'a Path,
+    },
+    DisparateQueryOutputs,
 }
 
 impl<'a> ManifestMistake<'a> {
@@ -59,6 +64,15 @@ impl<'a> ManifestMistake<'a> {
             }
             Self::Duplicates { key, value } => {
                 format!("Duplicates found; key: '{key}', value: '{value}'")
+            }
+            Self::InvalidQueryOutput { query_id, output_path } => {
+                format!(
+                    "Query output for '{query_id}' is {}; Expected to be same as 'query_output_file' when layout = one-file-all-queries",
+                    output_path.display(),
+                )
+            },
+            Self::DisparateQueryOutputs => {
+                String::from("Disparate query outputs found. All expected to be same as 'query_output_file' when layout = one-file-all-queries")
             }
         }
     }

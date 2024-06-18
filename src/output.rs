@@ -1,7 +1,12 @@
-use crate::error::Error;
+use log::warn;
+use toml::Value;
+
+use crate::error::{parse_error, Error};
 use crate::sql_format::Formatter;
+use crate::toml::decode_pathbuf;
+use std::collections::HashSet;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 pub fn ensure_output_dirs<P: AsRef<Path>>(queries_dir: P, tests_dir: P) -> Result<(), Error> {
     fs::create_dir_all(queries_dir.as_ref()).map_err(Error::Io)?;
@@ -9,7 +14,7 @@ pub fn ensure_output_dirs<P: AsRef<Path>>(queries_dir: P, tests_dir: P) -> Resul
     Ok(())
 }
 
-pub fn write<P: AsRef<Path>>(
+fn write<P: AsRef<Path>>(
     path: P,
     formatter: Option<&Formatter>,
     content: &str,
@@ -93,5 +98,174 @@ pub fn status<P: AsRef<Path>>(
         }
     } else {
         Ok(Status::Added)
+    }
+}
+
+#[derive(Debug)]
+pub enum Layout {
+    OneFileOneQuery,
+    OneFileAllQueries(Option<PathBuf>),
+}
+
+impl Layout {
+    pub fn default() -> Self {
+        Self::OneFileOneQuery
+    }
+
+    pub fn decode<P: AsRef<Path>>(
+        value: &Value,
+        output_file: Option<&Value>,
+        output_base_dir: P,
+    ) -> Result<Self, Error> {
+        match value.as_str() {
+            Some(s) => {
+                if s == "one-file-one-query" {
+                    // @TODO: warn if output file is specified
+                    Ok(Self::OneFileOneQuery)
+                } else if s == "one-file-all-queries" {
+                    let filepath = match output_file {
+                        Some(v) => Some(decode_pathbuf(
+                            v,
+                            Some(output_base_dir.as_ref()),
+                            "queries_output_file",
+                        )?),
+                        None => None,
+                    };
+                    Ok(Self::OneFileAllQueries(filepath))
+                } else {
+                    Err(parse_error!(
+                        "Invalid value for 'query_output_layout': '{s}'"
+                    ))
+                }
+            }
+            None => {
+                warn!("Invalid value for 'query_output_layout' in the manifest. Using 'one-file-one-query' as the default.");
+                Ok(Self::OneFileOneQuery)
+            }
+        }
+    }
+}
+
+// Struct for representing output files that need to written
+pub struct FileToWrite<'a> {
+    pub path: &'a Path,
+    pub contents: String,
+}
+
+// Combines file contents and writes to a single file
+//
+// # Panics!
+// This function is only supposed to be called when all paths in the
+// passed Vec<FileToWrite> are equal i.e. all the content is to be
+// written to the same file (Layout = OneFileAllQueries). If this
+// condition is not satisfied, this functions panics.
+//
+// @TODO: This function currently concatenates Strings in memory and
+// then writes in a single call. A more memory efficient approach
+// would be to keep the file open and write to it one after another.
+pub fn write_combined(
+    files: &Vec<FileToWrite>,
+    formatter: Option<&Formatter>,
+) -> Result<(), Error> {
+    let mut combined_output = String::new();
+    let mut paths = Vec::with_capacity(files.len());
+    for file in files {
+        combined_output.push_str("\n\n");
+        combined_output.push_str(file.contents.as_str());
+        paths.push(file.path);
+    }
+    let mut path_set: HashSet<&Path> = HashSet::from_iter(paths);
+    if path_set.len() > 1 {
+        panic!("write_combined function called with disparate file paths. Please report this bug");
+    }
+    let filepath = path_set.drain().next().unwrap();
+    write(filepath, formatter, &combined_output)
+}
+
+// Writes file contents to separate files in a loop
+pub fn write_separately(
+    files: &Vec<FileToWrite>,
+    formatter: Option<&Formatter>,
+) -> Result<(), Error> {
+    for file in files {
+        write(file.path, formatter, &file.contents)?;
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use toml::Table;
+
+    #[test]
+    fn test_layout_decode() {
+        // When layout = 'one-file-one-query' AND output file is not
+        // specified
+        let manifest = "query_output_layout = 'one-file-one-query'";
+        let table: Table = manifest.parse().unwrap();
+        let layout = Layout::decode(
+            table.get("query_output_layout").unwrap(),
+            table.get("query_output_file"),
+            "base",
+        );
+        match layout {
+            Ok(Layout::OneFileOneQuery) => assert!(true),
+            _ => assert!(false),
+        }
+
+        // When layout = 'one-file-one-query' AND output file is
+        // specified, the output file is ignored
+        let manifest = r#"
+query_output_layout = 'one-file-one-query'
+query_output_file = 'queries.sql'
+"#;
+        let table: Table = manifest.parse().unwrap();
+        let layout = Layout::decode(
+            table.get("query_output_layout").unwrap(),
+            table.get("query_output_file"),
+            "base",
+        );
+        match layout {
+            Ok(Layout::OneFileOneQuery) => assert!(true),
+            _ => assert!(false),
+        }
+
+        // When layout = 'one-file-all-queries' AND output file is not
+        // specified
+        let manifest = "query_output_layout = 'one-file-all-queries'";
+        let table: Table = manifest.parse().unwrap();
+        let layout = Layout::decode(
+            table.get("query_output_layout").unwrap(),
+            table.get("query_output_file"),
+            "base",
+        );
+        match layout {
+            Ok(Layout::OneFileAllQueries(p)) => {
+                assert!(true);
+                assert_eq!(None, p);
+            }
+            _ => assert!(false),
+        };
+
+        // When layout = 'one-file-all-queries' AND output file is
+        // specified
+        let manifest = r#"
+query_output_layout = 'one-file-all-queries'
+query_output_file = 'queries.sql'
+"#;
+        let table: Table = manifest.parse().unwrap();
+        let layout = Layout::decode(
+            table.get("query_output_layout").unwrap(),
+            table.get("query_output_file"),
+            "base",
+        );
+        match layout {
+            Ok(Layout::OneFileAllQueries(p)) => {
+                assert!(true);
+                assert_eq!(Some(PathBuf::from("base/queries.sql")), p);
+            }
+            _ => assert!(false),
+        };
     }
 }
