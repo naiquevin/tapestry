@@ -144,14 +144,43 @@ impl QueryTemplates {
 }
 
 #[cfg(test)]
-mod tests {
+pub mod test_util {
 
     use super::*;
-    use toml;
 
-    fn strset(xs: Vec<&str>) -> HashSet<String> {
+    pub fn strset(xs: Vec<&str>) -> HashSet<String> {
         xs.iter().map(|s| String::from(*s)).collect()
     }
+
+    // Setup query_templates from &'static str input to be used in
+    // tests
+    //
+    // Argument `data` is a vector of tuple with following type of
+    // values (in order):
+    //
+    //   path: &str, all_conds: Vec<&str>
+    pub fn setup_query_templates(data: Vec<(&str, Vec<&str>)>) -> QueryTemplates {
+        let mut qts = QueryTemplates::new();
+        for (p, ac) in data {
+            let qt = Rc::new(QueryTemplate {
+                path: PathBuf::from(p),
+                all_conds: strset(ac),
+            });
+            let idx_key = qt.id().to_owned();
+            let idx_val = qt.clone();
+            qts.inner.push(qt);
+            qts.index.insert(idx_key, idx_val);
+        }
+        qts
+    }
+}
+
+#[cfg(test)]
+mod tests {
+
+    use super::test_util::*;
+    use super::*;
+    use toml;
 
     #[test]
     fn test_decode_query_template() {
@@ -233,22 +262,20 @@ all_conds = [ 1, 2 ]
 
     #[test]
     fn test_validation_duplicates() {
-        let mut qts = QueryTemplates::new();
-        let qt_1 = QueryTemplate {
-            path: PathBuf::from("examples/chinook/templates/queries/artists_long_songs.sql.j2"),
-            all_conds: strset(vec!["genre", "limit"]),
-        };
-        let qt_2 = QueryTemplate {
-            path: PathBuf::from("examples/chinook/templates/queries/songs_formats.sql.j2"),
-            all_conds: strset(vec!["artist", "file_format", "album_name"]),
-        };
-        let qt_3 = QueryTemplate {
-            path: PathBuf::from("examples/chinook/templates/queries/artists_long_songs.sql.j2"),
-            all_conds: strset(vec!["limit"]),
-        };
-        qts.inner.push(Rc::new(qt_1));
-        qts.inner.push(Rc::new(qt_2));
-        qts.inner.push(Rc::new(qt_3));
+        let qts = setup_query_templates(vec![
+            (
+                "examples/chinook/templates/queries/artists_long_songs.sql.j2",
+                vec!["genre", "limit"],
+            ),
+            (
+                "examples/chinook/templates/queries/songs_formats.sql.j2",
+                vec!["genre", "limit"],
+            ),
+            (
+                "examples/chinook/templates/queries/artists_long_songs.sql.j2",
+                vec!["limit"],
+            ),
+        ]);
 
         let mistakes = qts.validate();
         assert_eq!(1, mistakes.len());
