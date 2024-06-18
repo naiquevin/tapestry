@@ -106,10 +106,7 @@ impl Query {
         }
     }
 
-    fn validate<'a, 'b>(&'a self, query_templates: &'b QueryTemplates) -> Vec<ManifestMistake<'a>>
-    where
-        'b: 'a,
-    {
+    fn validate<'a>(&'a self, query_templates: &'a QueryTemplates) -> Vec<ManifestMistake<'a>> {
         let mut mistakes = vec![];
         match query_templates.get(&self.template) {
             Some(qt) => {
@@ -201,14 +198,11 @@ impl Queries {
         })
     }
 
-    pub fn validate<'a, 'b>(
+    pub fn validate<'a>(
         &'a self,
-        query_templates: &'b QueryTemplates,
+        query_templates: &'a QueryTemplates,
         output_layout: &Layout,
-    ) -> Vec<ManifestMistake<'a>>
-    where
-        'b: 'a,
-    {
+    ) -> Vec<ManifestMistake<'a>> {
         let mut mistakes = vec![];
         let count = self.inner.len();
         let mut all_ids: HashMap<&str, usize> = HashMap::with_capacity(count);
