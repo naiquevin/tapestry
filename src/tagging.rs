@@ -5,6 +5,12 @@ use toml::Value;
 use crate::error::{parse_error, Error};
 
 #[derive(Debug)]
+pub enum NameTag {
+    DeriveFromId(String),
+    Custom(String),
+}
+
+#[derive(Debug)]
 pub enum NameTagStyle {
     SnakeCase,
     KebabCase,
@@ -78,12 +84,15 @@ impl NameTagger {
     // doesn't already exist
     //
     // Note that this function also trims any leading blank lines
-    pub fn ensure_name_tag<'a>(&self, sql: &'a str, id: &'a str) -> Cow<'a, str> {
+    pub fn ensure_name_tag<'a>(&self, sql: &'a str, name_tag: &'a NameTag) -> Cow<'a, str> {
         let sql = sql.trim_start();
         if has_name_tag(&sql) {
             Cow::from(sql)
         } else {
-            let tag = self.style.make_tag(id);
+            let tag = match name_tag {
+                NameTag::DeriveFromId(id) => self.style.make_tag(id),
+                NameTag::Custom(s) => Cow::from(s),
+            };
             let mut result = format!("-- name: {tag}");
             result.push_str("\n");
             result.push_str(sql);
@@ -104,10 +113,10 @@ mod tests {
 
         // When name tag doesn't exist
         let sql = "SELECT 1;";
-        let id = "simple-query";
+        let name_tag = NameTag::DeriveFromId("simple-query".to_owned());
         let expected = r#"-- name: simple_query
 SELECT 1;"#;
-        assert_eq!(expected, tagger.ensure_name_tag(sql, &id));
+        assert_eq!(expected, tagger.ensure_name_tag(sql, &name_tag));
 
         // When name tag exists (along with whitespace before the
         // pre_comments and additional comments/documentation)
@@ -122,7 +131,7 @@ SELECT 1;
 SELECT 1;
 
 "#;
-        assert_eq!(expected, tagger.ensure_name_tag(sql, &id));
+        assert_eq!(expected, tagger.ensure_name_tag(sql, &name_tag));
 
         // When a comment similar to the name tag is found somewhere
         // in the middle of the sql
@@ -136,7 +145,7 @@ WHERE
     email = 'email'
     AND department = 'department';
 "#;
-        let id = "find_employee@email+dept";
+        let name_tag = NameTag::DeriveFromId("find_employee@email+dept".to_owned());
         let expected = r#"-- name: find_employee_email_dept
 SELECT
     *
@@ -147,6 +156,6 @@ WHERE
     email = 'email'
     AND department = 'department';
 "#;
-        assert_eq!(expected, tagger.ensure_name_tag(sql, &id));
+        assert_eq!(expected, tagger.ensure_name_tag(sql, &name_tag));
     }
 }

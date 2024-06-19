@@ -51,7 +51,7 @@ pub fn render() -> Result<i32, Error> {
                 let ttw = output::FileToWrite {
                     path: &tt.output,
                     contents: test_output,
-                    id: tt.file_name(),
+                    name_tag: None,
                 };
                 tests_to_write.push(ttw);
             }
@@ -59,7 +59,7 @@ pub fn render() -> Result<i32, Error> {
             let qtw = output::FileToWrite {
                 path: &query.output,
                 contents: query_output,
-                id: &query.id,
+                name_tag: Some(&query.name_tag),
             };
             queries_to_write.push(qtw);
         }

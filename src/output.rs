@@ -3,7 +3,7 @@ use toml::Value;
 
 use crate::error::{parse_error, Error};
 use crate::sql_format::Formatter;
-use crate::tagging::NameTagger;
+use crate::tagging::{NameTag, NameTagger};
 use crate::toml::decode_pathbuf;
 use std::borrow::Cow;
 use std::collections::HashSet;
@@ -152,7 +152,24 @@ impl Layout {
 pub struct FileToWrite<'a> {
     pub path: &'a Path,
     pub contents: String,
-    pub id: &'a str,
+    pub name_tag: Option<&'a NameTag>,
+}
+
+impl<'a> FileToWrite<'a> {
+    // Returns tagged sql if applicable
+    //
+    // Tagging is done only if both the conditions are satisfied:
+    //   1. `tagger` is not None
+    //   2. `self.name_tag` is not None
+    fn tagged_contents(&'a self, tagger: Option<&NameTagger>) -> Cow<'a, str> {
+        match tagger {
+            Some(t) => match self.name_tag {
+                Some(nt) => t.ensure_name_tag(&self.contents, nt),
+                None => Cow::from(&self.contents),
+            },
+            None => Cow::from(&self.contents),
+        }
+    }
 }
 
 // Combines file contents and writes to a single file
@@ -176,10 +193,7 @@ pub fn write_combined(
     let mut paths = Vec::with_capacity(files.len());
     for file in files {
         combined_output.push_str("\n\n");
-        let sql = match tagger {
-            Some(t) => t.ensure_name_tag(&file.contents, &file.id),
-            None => Cow::from(&file.contents),
-        };
+        let sql = file.tagged_contents(tagger);
         combined_output.push_str(&sql);
         paths.push(file.path);
     }
@@ -198,10 +212,7 @@ pub fn write_separately(
     tagger: Option<&NameTagger>,
 ) -> Result<(), Error> {
     for file in files {
-        let sql = match tagger {
-            Some(t) => t.ensure_name_tag(&file.contents, &file.id),
-            None => Cow::from(&file.contents),
-        };
+        let sql = file.tagged_contents(tagger);
         write(file.path, formatter, &sql)?;
     }
     Ok(())

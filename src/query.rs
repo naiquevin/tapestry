@@ -1,6 +1,7 @@
 use crate::error::{parse_error, Error};
 use crate::output::Layout;
 use crate::query_template::QueryTemplates;
+use crate::tagging::NameTag;
 use crate::toml::{decode_pathbuf, decode_string, decode_strset};
 use crate::validation::ManifestMistake;
 use regex::Regex;
@@ -55,6 +56,7 @@ pub struct Query {
     pub template: PathBuf,
     pub conds: HashSet<String>,
     pub output: PathBuf,
+    pub name_tag: NameTag,
 }
 
 impl Query {
@@ -95,11 +97,16 @@ impl Query {
                     }
                     None => fallback_output(&id, output_base_dir.as_ref(), output_layout)?,
                 };
+                let name_tag = match t.get("name_tag") {
+                    Some(v) => NameTag::Custom(decode_string(v, "queries[].name_tag")?),
+                    None => NameTag::DeriveFromId(id.clone()),
+                };
                 Ok(Self {
                     id,
                     template,
                     conds,
                     output,
+                    name_tag,
                 })
             }
             None => Err(parse_error!("Invalid 'query' entry")),
@@ -298,14 +305,19 @@ mod test_util {
     // values (in order):
     //
     //   id: &str, template: &str, conds: Vec<&str>, output: &str
-    pub fn setup_queries(data: Vec<(&str, &str, Vec<&str>, &str)>) -> Queries {
+    pub fn setup_queries(data: Vec<(&str, &str, Vec<&str>, &str, Option<&str>)>) -> Queries {
         let mut qs = Queries::new();
-        for (id, template, conds, output) in data {
+        for (id, template, conds, output, name_tag) in data {
+            let name_tag = name_tag.map_or_else(
+                || NameTag::DeriveFromId(String::from(id)),
+                |s| NameTag::Custom(String::from(s)),
+            );
             let q = Rc::new(Query {
                 id: String::from(id),
                 template: PathBuf::from(template),
                 conds: strset(conds),
                 output: PathBuf::from(output),
+                name_tag,
             });
             let idx_key = q.id.clone();
             let idx_val = q.clone();
@@ -487,12 +499,14 @@ output = 'my_query_explicit.sql'
                 "examples/chinook/templates/queries/artists_long_songs.sql.j2",
                 vec![],
                 "examples/chinook/output/queries/artists_long_songs.sql",
+                None,
             ),
             (
                 "songs_formats",
                 "examples/chinook/templates/queries/songs_formats.sql.j2",
                 vec!["artist", "album_name"],
                 "examples/chinook/output/queries/song_formats.sql",
+                None,
             ),
         ]);
         let mistakes = qs_good.validate(&qts, &Layout::OneFileOneQuery);
@@ -505,12 +519,14 @@ output = 'my_query_explicit.sql'
                 "examples/chinook/templates/queries/artists_long_songs.sql.j2",
                 vec![],
                 "examples/chinook/output/queries/artists_long_songs.sql",
+                None,
             ),
             (
                 "songs_formats",
                 "examples/chinook/templates/queries/undefined.sql.j2",
                 vec!["artist", "album_name"],
                 "examples/chinook/output/queries/song_formats.sql",
+                None,
             ),
         ]);
         let mistakes = qs.validate(&qts, &Layout::OneFileOneQuery);
@@ -533,12 +549,14 @@ output = 'my_query_explicit.sql'
                 "examples/chinook/templates/queries/artists_long_songs.sql.j2",
                 vec![],
                 "examples/chinook/output/queries/artists_long_songs.sql",
+                None,
             ),
             (
                 "artists_long_songs",
                 "examples/chinook/templates/queries/songs_formats.sql.j2",
                 vec!["artist", "album_name"],
                 "examples/chinook/output/queries/song_formats.sql",
+                None,
             ),
         ]);
         let mistakes = qs.validate(&qts, &Layout::OneFileOneQuery);
@@ -559,12 +577,14 @@ output = 'my_query_explicit.sql'
                 "examples/chinook/templates/queries/artists_long_songs.sql.j2",
                 vec![],
                 "examples/chinook/output/queries/artists_long_songs.sql",
+                None,
             ),
             (
                 "song_formats",
                 "examples/chinook/templates/queries/songs_formats.sql.j2",
                 vec!["artist", "album_name"],
                 "examples/chinook/output/queries/artists_long_songs.sql",
+                None,
             ),
         ]);
         let mistakes = qs.validate(&qts, &Layout::OneFileOneQuery);
@@ -601,12 +621,14 @@ output = 'my_query_explicit.sql'
                 "examples/chinook/templates/queries/artists_long_songs.sql.j2",
                 vec![],
                 "examples/chinook/output/queries.sql",
+                None,
             ),
             (
                 "songs_formats",
                 "examples/chinook/templates/queries/songs_formats.sql.j2",
                 vec!["artist", "album_name"],
                 "examples/chinook/output/queries/song_formats.sql",
+                None,
             ),
         ]);
         let layout =
