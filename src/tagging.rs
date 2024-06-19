@@ -41,17 +41,16 @@ impl NameTagger {
     // doesn't already exist
     //
     // Note that this function also trims any leading blank lines
-    pub fn ensure_name_tag(&self, sql: &str, id: &str) -> String {
+    pub fn ensure_name_tag<'a>(&self, sql: &'a str, id: &'a str) -> Cow<'a, str> {
         let sql = sql.trim_start();
         if has_name_tag(&sql) {
-            // @TODO: Can clone be avoided using Cow?
-            sql.to_owned()
+            Cow::from(sql)
         } else {
             let tag = self.style.make_tag(id);
             let mut result = format!("-- name: {tag}");
             result.push_str("\n");
             result.push_str(sql);
-            result
+            Cow::from(result)
         }
     }
 }

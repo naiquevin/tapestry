@@ -5,6 +5,7 @@ use crate::error::{parse_error, Error};
 use crate::sql_format::Formatter;
 use crate::tagging::NameTagger;
 use crate::toml::decode_pathbuf;
+use std::borrow::Cow;
 use std::collections::HashSet;
 use std::fs;
 use std::path::{Path, PathBuf};
@@ -177,8 +178,7 @@ pub fn write_combined(
         combined_output.push_str("\n\n");
         let sql = match tagger {
             Some(t) => t.ensure_name_tag(&file.contents, &file.id),
-            // @TODO: Can clone be avoided using Cow?
-            None => file.contents.clone(),
+            None => Cow::from(&file.contents),
         };
         combined_output.push_str(&sql);
         paths.push(file.path);
@@ -200,8 +200,7 @@ pub fn write_separately(
     for file in files {
         let sql = match tagger {
             Some(t) => t.ensure_name_tag(&file.contents, &file.id),
-            // @TODO: Can clone be avoided using Cow?
-            None => file.contents.clone(),
+            None => Cow::from(&file.contents),
         };
         write(file.path, formatter, &sql)?;
     }
