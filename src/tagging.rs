@@ -73,7 +73,7 @@ impl NameTagger {
                 let style = t
                     .get("style")
                     .ok_or(parse_error!("Key 'name_tagger.style' is missing"))
-                    .map(|s| NameTagStyle::decode(s))??;
+                    .map(NameTagStyle::decode)??;
                 Ok(Some(Self { style }))
             }
             None => Ok(None),
@@ -86,7 +86,7 @@ impl NameTagger {
     // Note that this function also trims any leading blank lines
     pub fn ensure_name_tag<'a>(&self, sql: &'a str, name_tag: &'a NameTag) -> Cow<'a, str> {
         let sql = sql.trim_start();
-        if has_name_tag(&sql) {
+        if has_name_tag(sql) {
             Cow::from(sql)
         } else {
             let tag = match name_tag {
@@ -94,7 +94,7 @@ impl NameTagger {
                 NameTag::Custom(s) => Cow::from(s),
             };
             let mut result = format!("-- name: {tag}");
-            result.push_str("\n");
+            result.push('\n');
             result.push_str(sql);
             Cow::from(result)
         }
