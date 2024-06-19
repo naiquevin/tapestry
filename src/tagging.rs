@@ -1,5 +1,6 @@
 use regex::Regex;
 use std::borrow::Cow;
+use std::fmt;
 use toml::Value;
 
 use crate::error::{parse_error, Error};
@@ -47,6 +48,15 @@ impl NameTagStyle {
     pub fn make_tag<'a>(&self, id: &'a str) -> Cow<'a, str> {
         let re = Regex::new(r"_|-|@|\+|&|\*").unwrap();
         re.replace_all(id, self.separator())
+    }
+}
+
+impl fmt::Display for NameTagStyle {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            NameTagStyle::SnakeCase => write!(f, "snake_case"),
+            NameTagStyle::KebabCase => write!(f, "kebab-case"),
+        }
     }
 }
 

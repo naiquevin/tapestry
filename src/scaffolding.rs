@@ -1,6 +1,7 @@
 use crate::error::Error;
 use crate::metadata::Metadata;
 use crate::sql_format::{Formatter, PgFormatter};
+use crate::tagging::NameTagger;
 use minijinja::Environment;
 use serde::Serialize;
 use std::convert::From;
@@ -34,6 +35,19 @@ impl<'a> From<&'a PgFormatter> for PgFormatterContext<'a> {
 }
 
 #[derive(Serialize)]
+struct NameTaggerContext {
+    style: String,
+}
+
+impl From<&NameTagger> for NameTaggerContext {
+    fn from(tagger: &NameTagger) -> Self {
+        Self {
+            style: tagger.style.to_string(),
+        }
+    }
+}
+
+#[derive(Serialize)]
 struct DefaultManifestContext<'a> {
     placeholder: &'a str,
     query_templates_dir: &'a Path,
@@ -41,6 +55,7 @@ struct DefaultManifestContext<'a> {
     queries_output_dir: &'a Path,
     tests_output_dir: &'a Path,
     pg_format: Option<PgFormatterContext<'a>>,
+    name_tagger: Option<NameTaggerContext>,
 }
 
 impl<'a> From<&'a Metadata> for DefaultManifestContext<'a> {
@@ -48,6 +63,7 @@ impl<'a> From<&'a Metadata> for DefaultManifestContext<'a> {
         let pg_format = m.formatter.as_ref().map(|formatter| match formatter {
             Formatter::PgFormatter(pgf) => PgFormatterContext::from(pgf),
         });
+        let name_tagger = m.name_tagger.as_ref().map(NameTaggerContext::from);
         Self {
             placeholder: m.placeholder.label(),
             query_templates_dir: m.query_templates_dir.as_path(),
@@ -55,6 +71,7 @@ impl<'a> From<&'a Metadata> for DefaultManifestContext<'a> {
             queries_output_dir: m.queries_output_dir.as_path(),
             tests_output_dir: m.tests_output_dir.as_path(),
             pg_format,
+            name_tagger,
         }
     }
 }

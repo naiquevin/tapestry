@@ -4,7 +4,7 @@ use crate::placeholder::Placeholder;
 use crate::query::Queries;
 use crate::query_template::QueryTemplates;
 use crate::sql_format::Formatter;
-use crate::tagging::NameTagger;
+use crate::tagging::{NameTagStyle, NameTagger};
 use crate::test_template::TestTemplates;
 use crate::toml::decode_pathbuf;
 use crate::util::ls_files;
@@ -137,7 +137,9 @@ impl Metadata {
             queries_output_dir: PathBuf::from("output/queries"),
             tests_output_dir: PathBuf::from("output/tests"),
             query_output_layout: Layout::default(),
-            name_tagger: None,
+            name_tagger: Some(NameTagger {
+                style: NameTagStyle::KebabCase,
+            }),
             query_templates: QueryTemplates::new(),
             queries: Queries::new(),
             test_templates: TestTemplates::new(),

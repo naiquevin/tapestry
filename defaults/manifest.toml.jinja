@@ -34,6 +34,15 @@ conf_path = "{{ pg_format.conf_path }}"
 {%- endif %}
 {%- endif %}
 
+{% if name_tagger -%}
+## Whether or not the generated SQL is to be name-tagged. Name tagging
+## is required with libs such as yesql, aiosql. Remove this section to
+## disable name tagging
+[name_tagger]
+## Name tagging style. Supported options: 'kebab-case', 'snake_case'
+style = "{{ name_tagger.style }}"
+{%- endif %}
+
 ## Specify `query_templates`, `queries` and `test_templates` below
 ## this comment. Please refer to the manifest documentation and
 ## example provided in the github repo -
