@@ -34,9 +34,9 @@ pub fn render() -> Result<i32, Error> {
         let engine = Engine::from(&metadata);
         let formatter = &metadata.formatter;
         output::ensure_output_dirs(&metadata.queries_output_dir, &metadata.tests_output_dir)?;
-        let mut queries_to_write: Vec<output::FileToWrite> =
+        let mut queries_to_write: Vec<output::SqlToWrite> =
             Vec::with_capacity(metadata.queries.len());
-        let mut tests_to_write: Vec<output::FileToWrite> = Vec::new();
+        let mut tests_to_write: Vec<output::SqlToWrite> = Vec::new();
         for query in metadata.queries.iter() {
             // render query output and collect in a vec
             let query_output = engine.render_query(&query.id, None)?;
@@ -48,17 +48,17 @@ pub fn render() -> Result<i32, Error> {
             };
             for tt in metadata.test_templates.find_by_query(&query.id) {
                 let test_output = engine.render_test(&tt.path, prep_stmt)?;
-                let ttw = output::FileToWrite {
+                let ttw = output::SqlToWrite {
                     path: &tt.output,
-                    contents: test_output,
+                    sql: test_output,
                     name_tag: None,
                 };
                 tests_to_write.push(ttw);
             }
 
-            let qtw = output::FileToWrite {
+            let qtw = output::SqlToWrite {
                 path: &query.output,
-                contents: query_output,
+                sql: query_output,
                 name_tag: Some(&query.name_tag),
             };
             queries_to_write.push(qtw);

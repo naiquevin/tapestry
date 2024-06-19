@@ -16,23 +16,6 @@ pub fn ensure_output_dirs<P: AsRef<Path>>(queries_dir: P, tests_dir: P) -> Resul
     Ok(())
 }
 
-fn write<P: AsRef<Path>>(
-    path: P,
-    formatter: Option<&Formatter>,
-    content: &str,
-) -> Result<(), Error> {
-    match formatter {
-        Some(f) => {
-            let text = f.format(content);
-            fs::write(path, text).map_err(Error::Io)?;
-        }
-        None => {
-            fs::write(path, content).map_err(Error::Io)?;
-        }
-    }
-    Ok(())
-}
-
 #[derive(Debug, PartialEq, Eq)]
 pub enum Status {
     Added,
@@ -149,27 +132,44 @@ impl Layout {
 }
 
 // Struct for representing output files that need to written
-pub struct FileToWrite<'a> {
+pub struct SqlToWrite<'a> {
     pub path: &'a Path,
-    pub contents: String,
+    pub sql: String,
     pub name_tag: Option<&'a NameTag>,
 }
 
-impl<'a> FileToWrite<'a> {
+impl<'a> SqlToWrite<'a> {
     // Returns tagged sql if applicable
     //
     // Tagging is done only if both the conditions are satisfied:
     //   1. `tagger` is not None
     //   2. `self.name_tag` is not None
-    fn tagged_contents(&'a self, tagger: Option<&NameTagger>) -> Cow<'a, str> {
+    fn tagged_sql(&'a self, tagger: Option<&NameTagger>) -> Cow<'a, str> {
         match tagger {
             Some(t) => match self.name_tag {
-                Some(nt) => t.ensure_name_tag(&self.contents, nt),
-                None => Cow::from(&self.contents),
+                Some(nt) => t.ensure_name_tag(&self.sql, nt),
+                None => Cow::from(&self.sql),
             },
-            None => Cow::from(&self.contents),
+            None => Cow::from(&self.sql),
         }
     }
+}
+
+fn write<P: AsRef<Path>>(
+    path: P,
+    formatter: Option<&Formatter>,
+    content: &str,
+) -> Result<(), Error> {
+    match formatter {
+        Some(f) => {
+            let text = f.format(content);
+            fs::write(path, text).map_err(Error::Io)?;
+        }
+        None => {
+            fs::write(path, content).map_err(Error::Io)?;
+        }
+    }
+    Ok(())
 }
 
 // Combines file contents and writes to a single file
@@ -185,7 +185,7 @@ impl<'a> FileToWrite<'a> {
 // would be to keep the file open and write each query to it one by
 // one
 pub fn write_combined(
-    files: &Vec<FileToWrite>,
+    files: &Vec<SqlToWrite>,
     formatter: Option<&Formatter>,
     tagger: Option<&NameTagger>,
 ) -> Result<(), Error> {
@@ -193,7 +193,7 @@ pub fn write_combined(
     let mut paths = Vec::with_capacity(files.len());
     for file in files {
         combined_output.push_str("\n\n");
-        let sql = file.tagged_contents(tagger);
+        let sql = file.tagged_sql(tagger);
         combined_output.push_str(&sql);
         paths.push(file.path);
     }
@@ -207,12 +207,12 @@ pub fn write_combined(
 
 // Writes file contents to separate files in a loop
 pub fn write_separately(
-    files: &Vec<FileToWrite>,
+    files: &Vec<SqlToWrite>,
     formatter: Option<&Formatter>,
     tagger: Option<&NameTagger>,
 ) -> Result<(), Error> {
     for file in files {
-        let sql = file.tagged_contents(tagger);
+        let sql = file.tagged_sql(tagger);
         write(file.path, formatter, &sql)?;
     }
     Ok(())
