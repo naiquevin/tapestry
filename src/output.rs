@@ -3,6 +3,7 @@ use toml::Value;
 
 use crate::error::{parse_error, Error};
 use crate::sql_format::Formatter;
+use crate::tagging::NameTagger;
 use crate::toml::decode_pathbuf;
 use std::collections::HashSet;
 use std::fs;
@@ -150,6 +151,7 @@ impl Layout {
 pub struct FileToWrite<'a> {
     pub path: &'a Path,
     pub contents: String,
+    pub id: &'a str,
 }
 
 // Combines file contents and writes to a single file
@@ -162,16 +164,23 @@ pub struct FileToWrite<'a> {
 //
 // @TODO: This function currently concatenates Strings in memory and
 // then writes in a single call. A more memory efficient approach
-// would be to keep the file open and write to it one after another.
+// would be to keep the file open and write each query to it one by
+// one
 pub fn write_combined(
     files: &Vec<FileToWrite>,
     formatter: Option<&Formatter>,
+    tagger: Option<&NameTagger>,
 ) -> Result<(), Error> {
     let mut combined_output = String::new();
     let mut paths = Vec::with_capacity(files.len());
     for file in files {
         combined_output.push_str("\n\n");
-        combined_output.push_str(file.contents.as_str());
+        let sql = match tagger {
+            Some(t) => t.ensure_name_tag(&file.contents, &file.id),
+            // @TODO: Can clone be avoided using Cow?
+            None => file.contents.clone(),
+        };
+        combined_output.push_str(&sql);
         paths.push(file.path);
     }
     let mut path_set: HashSet<&Path> = HashSet::from_iter(paths);
@@ -186,9 +195,15 @@ pub fn write_combined(
 pub fn write_separately(
     files: &Vec<FileToWrite>,
     formatter: Option<&Formatter>,
+    tagger: Option<&NameTagger>,
 ) -> Result<(), Error> {
     for file in files {
-        write(file.path, formatter, &file.contents)?;
+        let sql = match tagger {
+            Some(t) => t.ensure_name_tag(&file.contents, &file.id),
+            // @TODO: Can clone be avoided using Cow?
+            None => file.contents.clone(),
+        };
+        write(file.path, formatter, &sql)?;
     }
     Ok(())
 }

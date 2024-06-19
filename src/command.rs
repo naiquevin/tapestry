@@ -4,6 +4,7 @@ use crate::output;
 use crate::placeholder::Placeholder;
 use crate::render::Engine;
 use crate::scaffolding;
+// use crate::tagging::{NameTagStyle, NameTagger};
 use crate::util::ls_files;
 use comfy_table::Table;
 use std::collections::{HashMap, HashSet};
@@ -28,6 +29,11 @@ pub fn validate() -> Result<i32, Error> {
 pub fn render() -> Result<i32, Error> {
     let path = Path::new("tapestry.toml");
     let metadata = Metadata::try_from(path)?;
+    // @TODO: Get this from the manifest file
+    // let tagger = Some(NameTagger {
+    //     style: NameTagStyle::SnakeCase,
+    // });
+    let tagger = None;
     let mistakes = metadata.validate();
     if mistakes.is_empty() {
         let engine = Engine::from(&metadata);
@@ -47,10 +53,10 @@ pub fn render() -> Result<i32, Error> {
             };
             for tt in metadata.test_templates.find_by_query(&query.id) {
                 let test_output = engine.render_test(&tt.path, prep_stmt)?;
-                // output::write(&tt.output, formatter.as_ref(), &test_output)?;
                 let ttw = output::FileToWrite {
                     path: &tt.output,
                     contents: test_output,
+                    id: tt.file_name(),
                 };
                 tests_to_write.push(ttw);
             }
@@ -58,6 +64,7 @@ pub fn render() -> Result<i32, Error> {
             let qtw = output::FileToWrite {
                 path: &query.output,
                 contents: query_output,
+                id: &query.id,
             };
             queries_to_write.push(qtw);
         }
@@ -66,15 +73,15 @@ pub fn render() -> Result<i32, Error> {
         // on the layout
         match metadata.query_output_layout {
             output::Layout::OneFileOneQuery => {
-                output::write_separately(&queries_to_write, formatter.as_ref())?;
+                output::write_separately(&queries_to_write, formatter.as_ref(), tagger.as_ref())?;
             }
             output::Layout::OneFileAllQueries(_) => {
-                output::write_combined(&queries_to_write, formatter.as_ref())?;
+                output::write_combined(&queries_to_write, formatter.as_ref(), tagger.as_ref())?;
             }
         }
 
         // Write all tests
-        output::write_separately(&tests_to_write, formatter.as_ref())?;
+        output::write_separately(&tests_to_write, formatter.as_ref(), tagger.as_ref())?;
 
         Ok(0)
     } else {

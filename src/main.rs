@@ -14,6 +14,7 @@ mod query_template;
 mod render;
 mod scaffolding;
 mod sql_format;
+mod tagging;
 mod test_template;
 mod toml;
 mod util;
