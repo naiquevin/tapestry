@@ -1,13 +1,33 @@
 use regex::Regex;
 use std::borrow::Cow;
+use toml::Value;
 
-#[allow(unused)]
+use crate::error::{parse_error, Error};
+
+#[derive(Debug)]
 pub enum NameTagStyle {
     SnakeCase,
     KebabCase,
 }
 
 impl NameTagStyle {
+    fn decode(value: &Value) -> Result<Self, Error> {
+        match value.as_str() {
+            Some(s) => {
+                // @NOTE the case used options is not consistent! They
+                // are spelt autologically
+                match s {
+                    "snake_case" => Ok(Self::SnakeCase),
+                    "kebab-case" => Ok(Self::KebabCase),
+                    _ => Err(parse_error!("Invalid value for 'name_tagger.style': {s}")),
+                }
+            }
+            None => Err(parse_error!(
+                "Value of 'name_tagger.style' expected to be a string"
+            )),
+        }
+    }
+
     fn separator(&self) -> &str {
         match self {
             Self::SnakeCase => "_",
@@ -15,8 +35,11 @@ impl NameTagStyle {
         }
     }
 
+    // Constructs a tag from the id as per the `NameTagStyle`. Any
+    // non-alphanumeric char will be replaced by either hyphen
+    // (kebab-case) or underscore (snake_case).
     pub fn make_tag<'a>(&self, id: &'a str) -> Cow<'a, str> {
-        let re = Regex::new(r"-|@|\+|&|\*").unwrap();
+        let re = Regex::new(r"_|-|@|\+|&|\*").unwrap();
         re.replace_all(id, self.separator())
     }
 }
@@ -32,11 +55,25 @@ fn has_name_tag(sql: &str) -> bool {
     false
 }
 
+#[derive(Debug)]
 pub struct NameTagger {
     pub style: NameTagStyle,
 }
 
 impl NameTagger {
+    pub fn decode(value: &Value) -> Result<Option<Self>, Error> {
+        match value.as_table() {
+            Some(t) => {
+                let style = t
+                    .get("style")
+                    .ok_or(parse_error!("Key 'name_tagger.style' is missing"))
+                    .map(|s| NameTagStyle::decode(s))??;
+                Ok(Some(Self { style }))
+            }
+            None => Ok(None),
+        }
+    }
+
     // Prepends `sql` with a comment line containing the name tag if one
     // doesn't already exist
     //

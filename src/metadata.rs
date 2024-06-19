@@ -4,6 +4,7 @@ use crate::placeholder::Placeholder;
 use crate::query::Queries;
 use crate::query_template::QueryTemplates;
 use crate::sql_format::Formatter;
+use crate::tagging::NameTagger;
 use crate::test_template::TestTemplates;
 use crate::toml::decode_pathbuf;
 use crate::util::ls_files;
@@ -23,6 +24,7 @@ pub struct Metadata {
     pub queries_output_dir: PathBuf,
     pub tests_output_dir: PathBuf,
     pub query_output_layout: Layout,
+    pub name_tagger: Option<NameTagger>,
     pub query_templates: QueryTemplates,
     pub queries: Queries,
     pub test_templates: TestTemplates,
@@ -73,6 +75,11 @@ impl TryFrom<&Path> for Metadata {
             }
         };
 
+        let name_tagger = match table.get("name_tagger") {
+            Some(v) => NameTagger::decode(v)?,
+            None => None,
+        };
+
         let query_templates = match table.get("query_templates") {
             Some(v) => QueryTemplates::decode(&query_templates_dir, v)?,
             None => {
@@ -110,6 +117,7 @@ impl TryFrom<&Path> for Metadata {
             tests_output_dir,
             formatter,
             query_output_layout,
+            name_tagger,
             query_templates,
             queries,
             test_templates,
@@ -129,6 +137,7 @@ impl Metadata {
             queries_output_dir: PathBuf::from("output/queries"),
             tests_output_dir: PathBuf::from("output/tests"),
             query_output_layout: Layout::default(),
+            name_tagger: None,
             query_templates: QueryTemplates::new(),
             queries: Queries::new(),
             test_templates: TestTemplates::new(),

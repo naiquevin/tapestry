@@ -29,11 +29,6 @@ pub fn validate() -> Result<i32, Error> {
 pub fn render() -> Result<i32, Error> {
     let path = Path::new("tapestry.toml");
     let metadata = Metadata::try_from(path)?;
-    // @TODO: Get this from the manifest file
-    // let tagger = Some(NameTagger {
-    //     style: NameTagStyle::SnakeCase,
-    // });
-    let tagger = None;
     let mistakes = metadata.validate();
     if mistakes.is_empty() {
         let engine = Engine::from(&metadata);
@@ -73,15 +68,23 @@ pub fn render() -> Result<i32, Error> {
         // on the layout
         match metadata.query_output_layout {
             output::Layout::OneFileOneQuery => {
-                output::write_separately(&queries_to_write, formatter.as_ref(), tagger.as_ref())?;
+                output::write_separately(
+                    &queries_to_write,
+                    formatter.as_ref(),
+                    metadata.name_tagger.as_ref(),
+                )?;
             }
             output::Layout::OneFileAllQueries(_) => {
-                output::write_combined(&queries_to_write, formatter.as_ref(), tagger.as_ref())?;
+                output::write_combined(
+                    &queries_to_write,
+                    formatter.as_ref(),
+                    metadata.name_tagger.as_ref(),
+                )?;
             }
         }
 
         // Write all tests
-        output::write_separately(&tests_to_write, formatter.as_ref(), tagger.as_ref())?;
+        output::write_separately(&tests_to_write, formatter.as_ref(), None)?;
 
         Ok(0)
     } else {
