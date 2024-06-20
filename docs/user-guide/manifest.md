@@ -277,6 +277,9 @@ It's a set of values that will be converted to `cond__` Jinja
 variables that can be referenced inside the template. Note that they
 are defined in the manifest without the `cond__` suffix.
 
+This field is optional. If not specified, an empty set is considered
+as the default.
+
 For documentation on how to write a `query_template`, refer to
 [Writing query templates](query-templates.md)
 
@@ -291,6 +294,13 @@ all_conds = [ "genre", "limit" ]
 path = "songs_formats.sql.j2"
 all_conds = [ "artist", "file_format", "album_name" ]
 ```
+
+!!! Note
+
+    When `all_conds` is not specified, it essentially means that the query
+    is a valid SQL statement and not a Jinja template. Then why define it
+    as a template? The answer to that is &mdash; so that it can be
+    embedded in tests.
 
 ## queries
 
@@ -313,7 +323,8 @@ defined previously in the manifest.
 ### conds
 
 `conds` is a subset of the `all_conds` key that's defined for the
-linked query template.
+linked query template. It's an optional and if not specified, an empty
+set will be considered by default.
 
 ### output
 

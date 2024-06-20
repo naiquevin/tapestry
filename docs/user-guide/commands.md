@@ -86,6 +86,28 @@ templates.
 The `summary` command prints a tabular summary of all queries along
 with their associated (query) templates and tests.
 
+### `--all`
+
+When `--all` option is specified with this command, the summary will
+include query and test files inside `queries_output_dir` and
+`tests_output_dir` respectively that are not added to the manifest.
+
+!!! Note
+
+    There are legit use cases for having files in the query and test
+    output directories that are not added to the manifest Examples:
+
+    1. queries that don't need any tests but need to be stored in the same
+    directory as other queries, so that yesql, aiosql libs can load all of
+    them together.
+
+    2. Existing queries which are not yet migrated to tapestry (gradual
+    migration strategy).
+
+    3. pgTAP tests written for stored procedures, views, schema etc. that
+    need to be stored in the same directory as other tests, so that all
+    tests can be run together.
+
 ## coverage
 
 The `coverage` command prints a list of queries along with the no. of
