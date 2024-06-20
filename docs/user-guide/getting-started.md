@@ -66,6 +66,9 @@ tests_output_dir = "output/tests"
 exec_path = "pg_format"
 conf_path = "./.pg_format/config"
 
+[name_tagger]
+style = "kebab-case"
+
 # [[query_templates]]
 
 # [[queries]]
@@ -100,6 +103,9 @@ The `init` command has also created a `pg_format` config file for
 us. This is because it found the `pg_format` executable on
 `PATH`. Refer to the [`pg_format`](pg-format.md) section for more
 details.
+
+Finally, [`name_tagger`](manifest.md/#name_tagger) has been configured
+with `kebab-case` as the [`style`](manifest.md/#style).
 
 ## Adding a query_template to generate queries
 
@@ -257,6 +263,7 @@ Here is what the generated output files look like:
 === "artists\_long\_songs.sql"
 
     ```sql
+    -- name: artists-long-songs
     SELECT
         ar.artist_id,
         ar.name,
@@ -275,6 +282,7 @@ Here is what the generated output files look like:
 === "artists\_long\_songs-limit.sql"
 
     ```sql
+    -- name: artists-long-songs-limit
     SELECT
         ar.artist_id,
         ar.name,
@@ -294,6 +302,7 @@ Here is what the generated output files look like:
 === "artists\_long\_songs-genre-limit.sql"
 
     ```sql
+    -- name: artists-long-songs-genre-limit
     SELECT
         ar.artist_id,
         ar.name,
@@ -313,7 +322,11 @@ Here is what the generated output files look like:
     LIMIT $2;
     ```
 
-As you can see, the output SQL is formatted by `pg_format`.
+The SQL comments before the SQL with name of the query are generated
+by `name_tagger` added to the manifest. Learn more about [Name
+tagging](query-tags.md/#name-tagging-queries).
+
+Also notice that the output SQL is formatted by `pg_format`.
 
 ## Adding a test_template
 

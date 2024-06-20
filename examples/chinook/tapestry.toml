@@ -29,6 +29,13 @@ exec_path = "pg_format"
 ## (optional) path to the pg_format conf file.
 conf_path = "./.pg_format/config"
 
+## Whether or not the generated SQL is to be name-tagged. Name tagging
+## is required with libs such as yesql, aiosql. Remove this section to
+## disable name tagging
+[name_tagger]
+## Name tagging style. Supported options: 'kebab-case', 'snake_case', 'exact'
+style = "kebab-case"
+
 ## Specify `query_templates`, `queries` and `test_templates` below
 ## this comment. Please refer to the manifest documentation and
 ## example provided in the github repo -

@@ -1,3 +1,4 @@
+-- name: artists-long-songs
 SELECT
     ar.artist_id,
     ar.name,

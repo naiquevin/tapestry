@@ -1,3 +1,4 @@
+-- name: songs-formats-artist-file-format-album
 SELECT
     track.name AS title,
     artist.name AS artist_name,

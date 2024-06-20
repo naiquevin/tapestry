@@ -39,7 +39,7 @@ conf_path = "{{ pg_format.conf_path }}"
 ## is required with libs such as yesql, aiosql. Remove this section to
 ## disable name tagging
 [name_tagger]
-## Name tagging style. Supported options: 'kebab-case', 'snake_case'
+## Name tagging style. Supported options: 'kebab-case', 'snake_case', 'exact'
 style = "{{ name_tagger.style }}"
 {%- endif %}
 
