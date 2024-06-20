@@ -198,6 +198,15 @@ impl Metadata {
                 tt.display()
             );
         }
+
+        // Warn when `query_output_layout` is `one-file-all-queries`
+        // and `name_tagger` is not set.
+        if let Layout::OneFileAllQueries(_) = self.query_output_layout {
+            if self.name_tagger.is_none() {
+                warn!("Name tagging is recommended in case of 'one-file-all-queries' layout")
+            }
+        }
+
         Ok(())
     }
 
