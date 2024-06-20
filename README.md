@@ -3,7 +3,10 @@ Tapestry
 
 Tapestry is a framework for writing (postgres)SQL queries and
 ([pgTAP](https://pgtap.org/)) tests using
-[Jinja](https://github.com/mitsuhiko/minijinja) templates.
+[Jinja](https://github.com/mitsuhiko/minijinja) templates. It helps
+you write reusable SQL code and ensures that your pgTAP tests are
+testing the exact same SQL queries that are actually run by your
+application.
 
 Tapestry is written in Rust but it can be used with applications
 written in any programming language. It's purely a command line tool
