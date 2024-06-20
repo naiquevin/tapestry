@@ -161,6 +161,27 @@ init`](commands.md/#init) command will have,
 tests_output_dir = "output/tests"
 ```
 
+## query\_output\_layout
+
+[Layout](layouts.md) to be used for the generated query files. The two
+options are:
+
+1. `one-file-one-query`: Each SQL query will be written to a separate file
+
+2. `one-file-all-queries`: All SQL queries will be written to a single file
+
+It's optional. The default value is `one-file-one-query`.
+
+## query\_output\_file
+
+`query_output_file` is optional but it's use is valid only when the
+[layout](#query_output_layout) is `one-file-all-queries`. It basically
+saves the user from having to define the same [`output`](#output) for
+all queries.
+
+Refer to the [Layouts](layouts.md) section of the user guide for more
+info.
+
 ## formatter.pgFormatter
 
 This section is for configuring the `pg_format` tool that `tapestry`
@@ -198,6 +219,26 @@ the executable `pg_format` is found on `PATH`. In that case, a default
 To read more about configuring `pg_format` in the context of
 `tapestry`, refer to the [pg_format](pg-format.md) section of the
 docs.
+
+## name\_tagger
+
+`name_tagger` is a TOML table, which if present in the manifest will
+cause the generated SQL queries to be [name
+tagged](query-tags.md/#name-tagging-queries).
+
+### style
+
+`name_tagger.style` can be used to control how name tags will be
+derived from query id. The two options are:
+
+1. `kebab-case`
+2. `snake_case`
+
+!!! Note
+
+    Note the inconsistent naming of options (hyphen in `kebab-case` v/s
+    underscore in `snake_case`). They are named autologically.
+
 
 ## query\_templates
 
@@ -280,6 +321,21 @@ id = "artists_long_songs@genre*limit"
 template = "artists_long_songs.sql.j2"
 conds = [ "genre", "limit" ]
 ```
+
+The derived value of `output` for the above will be
+`artists_long_songs-genre-limit.sql`.
+
+### name_tag
+
+`name_tag` can be optionally set to specify a custom name tag for the
+query. Name tags are prefixed to the SQL queries as comments and they
+are used by SQL loading libraries such as yesql, aiosql etc. Read more
+about in [Name tagging queries](query-tags.md/#name-tagging-queries).
+
+!!! Note
+
+    A query will be tagged with the specified `name_tag` only if
+    [`name_tagger`](#name_tagger) is set.
 
 ## test_templates
 

@@ -18,6 +18,8 @@ nav:
       - Manifest: user-guide/manifest.md
       - Query templates: user-guide/query-templates.md
       - Test templates: user-guide/test-templates.md
+      - Layouts: user-guide/layouts.md
+      - Query Tags: user-guide/query-tags.md
       - Naming conventions: user-guide/naming-conventions.md
       - Commands: user-guide/commands.md
       - pg_format: user-guide/pg-format.md
