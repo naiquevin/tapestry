@@ -469,6 +469,48 @@
   
   
     <li class="md-nav__item">
+      <a href="../layouts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Layouts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../query-tags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Query Tags
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../naming-conventions/" class="md-nav__link">
         
   
@@ -592,6 +634,21 @@
       summary
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      --all
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -781,6 +838,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#-all" class="md-nav__link">
+    <span class="md-ellipsis">
+      --all
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -888,6 +960,31 @@ templates.</p>
 <h2 id="summary">summary</h2>
 <p>The <code>summary</code> command prints a tabular summary of all queries along
 with their associated (query) templates and tests.</p>
+<h3 id="-all"><code>--all</code></h3>
+<p>When <code>--all</code> option is specified with this command, the summary will
+include query and test files inside <code>queries_output_dir</code> and
+<code>tests_output_dir</code> respectively that are not added to the manifest.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There are legit use cases for having files in the query and test
+output directories that are not added to the manifest Examples:</p>
+<ol>
+<li>
+<p>queries that don't need any tests but need to be stored in the same
+directory as other queries, so that yesql, aiosql libs can load all of
+them together.</p>
+</li>
+<li>
+<p>Existing queries which are not yet migrated to tapestry (gradual
+migration strategy).</p>
+</li>
+<li>
+<p>pgTAP tests written for stored procedures, views, schema etc. that
+need to be stored in the same directory as other tests, so that all
+tests can be run together.</p>
+</li>
+</ol>
+</div>
 <h2 id="coverage">coverage</h2>
 <p>The <code>coverage</code> command prints a list of queries along with the no. of
 tests (i.e. <code>pgTAP</code> test files) for them. It also prints a coverage

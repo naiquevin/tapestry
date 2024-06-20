@@ -521,6 +521,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#query_output_layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      query_output_layout
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query_output_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      query_output_file
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#formatterpgformatter" class="md-nav__link">
     <span class="md-ellipsis">
       formatter.pgFormatter
@@ -543,6 +561,30 @@
   <a href="#conf_path" class="md-nav__link">
     <span class="md-ellipsis">
       conf_path
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#name_tagger" class="md-nav__link">
+    <span class="md-ellipsis">
+      name_tagger
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="name_tagger">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#style" class="md-nav__link">
+    <span class="md-ellipsis">
+      style
     </span>
   </a>
   
@@ -627,6 +669,15 @@
   <a href="#output" class="md-nav__link">
     <span class="md-ellipsis">
       output
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name_tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      name_tag
     </span>
   </a>
   
@@ -721,6 +772,48 @@
   
   <span class="md-ellipsis">
     Test templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../layouts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Layouts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../query-tags/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Query Tags
   </span>
   
 
@@ -937,6 +1030,24 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#query_output_layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      query_output_layout
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#query_output_file" class="md-nav__link">
+    <span class="md-ellipsis">
+      query_output_file
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#formatterpgformatter" class="md-nav__link">
     <span class="md-ellipsis">
       formatter.pgFormatter
@@ -959,6 +1070,30 @@
   <a href="#conf_path" class="md-nav__link">
     <span class="md-ellipsis">
       conf_path
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#name_tagger" class="md-nav__link">
+    <span class="md-ellipsis">
+      name_tagger
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="name_tagger">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#style" class="md-nav__link">
+    <span class="md-ellipsis">
+      style
     </span>
   </a>
   
@@ -1043,6 +1178,15 @@
   <a href="#output" class="md-nav__link">
     <span class="md-ellipsis">
       output
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#name_tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      name_tag
     </span>
   </a>
   
@@ -1236,6 +1380,25 @@ relative to the manifest file.</p>
 init</code></a> command will have,</p>
 <div class="highlight"><pre><span></span><code><span class="n">tests_output_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;output/tests&quot;</span>
 </code></pre></div>
+<h2 id="query_output_layout">query_output_layout</h2>
+<p><a href="../layouts/">Layout</a> to be used for the generated query files. The two
+options are:</p>
+<ol>
+<li>
+<p><code>one-file-one-query</code>: Each SQL query will be written to a separate file</p>
+</li>
+<li>
+<p><code>one-file-all-queries</code>: All SQL queries will be written to a single file</p>
+</li>
+</ol>
+<p>It's optional. The default value is <code>one-file-one-query</code>.</p>
+<h2 id="query_output_file">query_output_file</h2>
+<p><code>query_output_file</code> is optional but it's use is valid only when the
+<a href="#query_output_layout">layout</a> is <code>one-file-all-queries</code>. It basically
+saves the user from having to define the same <a href="#output"><code>output</code></a> for
+all queries.</p>
+<p>Refer to the <a href="../layouts/">Layouts</a> section of the user guide for more
+info.</p>
 <h2 id="formatterpgformatter">formatter.pgFormatter</h2>
 <p>This section is for configuring the <code>pg_format</code> tool that <code>tapestry</code>
 uses for formatting the rendered SQL files.</p>
@@ -1261,6 +1424,32 @@ the executable <code>pg_format</code> is found on <code>PATH</code>. In that cas
 <p>To read more about configuring <code>pg_format</code> in the context of
 <code>tapestry</code>, refer to the <a href="../pg-format/">pg_format</a> section of the
 docs.</p>
+<h2 id="name_tagger">name_tagger</h2>
+<p><code>name_tagger</code> is a TOML table, which if present in the manifest will
+cause the generated SQL queries to be <a href="../query-tags/#name-tagging-queries">name
+tagged</a>.</p>
+<h3 id="style">style</h3>
+<p><code>name_tagger.style</code> can be used to control how name tags will be
+derived from query id. The two options are:</p>
+<ol>
+<li><code>kebab-case</code></li>
+<li><code>snake_case</code></li>
+<li><code>exact</code></li>
+</ol>
+<p>Any special characters in the query <code>id</code> will be replaced with an
+appropriate character based on the above option &mdash; hyphen in case
+of <code>kebab-case</code> and underscore in case of <code>snake_case</code>. The third
+option <code>exact</code> is different in the sense that the query <code>id</code> will be
+used as it is as the name tag.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[name_tagger]</span>
+<span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;kebab-case&quot;</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Note the autological naming of options <code>kebab-case</code> (with a hyphen)
+v/s <code>snake_case</code> (with an underscore).</p>
+</div>
 <h2 id="query_templates">query_templates</h2>
 <p><code>query_templates</code> is an <a href="https://toml.io/en/v1.0.0#array-of-tables">array of
 tables</a> in <code>TOML</code>
@@ -1277,6 +1466,8 @@ query template.</p>
 <p>It's a set of values that will be converted to <code>cond__</code> Jinja
 variables that can be referenced inside the template. Note that they
 are defined in the manifest without the <code>cond__</code> suffix.</p>
+<p>This field is optional. If not specified, an empty set is considered
+as the default.</p>
 <p>For documentation on how to write a <code>query_template</code>, refer to
 <a href="../query-templates/">Writing query templates</a></p>
 <p>Example: </p>
@@ -1288,6 +1479,13 @@ are defined in the manifest without the <code>cond__</code> suffix.</p>
 <span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;songs_formats.sql.j2&quot;</span>
 <span class="n">all_conds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;artist&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;file_format&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;album_name&quot;</span><span class="w"> </span><span class="p">]</span>
 </code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <code>all_conds</code> is not specified, it essentially means that the query
+is a valid SQL statement and not a Jinja template. Then why define it
+as a template? The answer to that is &mdash; so that it can be
+embedded in tests.</p>
+</div>
 <h2 id="queries">queries</h2>
 <p><code>queries</code> is an <a href="https://toml.io/en/v1.0.0#array-of-tables">array of
 tables</a> in <code>TOML</code>
@@ -1301,7 +1499,8 @@ be specified multiple times in the manifest file.</p>
 defined previously in the manifest.</p>
 <h3 id="conds">conds</h3>
 <p><code>conds</code> is a subset of the <code>all_conds</code> key that's defined for the
-linked query template.</p>
+linked query template. It's an optional and if not specified, an empty
+set will be considered by default.</p>
 <h3 id="output">output</h3>
 <p><code>output</code> is the path to the output file where the SQL query will be
 rendered. It must be relative to the <code>queries_output_dir</code> config.</p>
@@ -1316,6 +1515,18 @@ names to the queries.</p>
 <span class="n">template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;artists_long_songs.sql.j2&quot;</span>
 <span class="n">conds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;genre&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;limit&quot;</span><span class="w"> </span><span class="p">]</span>
 </code></pre></div>
+<p>The derived value of <code>output</code> for the above will be
+<code>artists_long_songs-genre-limit.sql</code>.</p>
+<h3 id="name_tag">name_tag</h3>
+<p><code>name_tag</code> can be optionally set to specify a custom name tag for the
+query. Name tags are prefixed to the SQL queries as comments and they
+are used by SQL loading libraries such as yesql, aiosql etc. Read more
+about in <a href="../query-tags/#name-tagging-queries">Name tagging queries</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A query will be tagged with the specified <code>name_tag</code> only if
+<a href="#name_tagger"><code>name_tagger</code></a> is set.</p>
+</div>
 <h2 id="test_templates">test_templates</h2>
 <p><code>test_templates</code> is an <a href="https://toml.io/en/v1.0.0#array-of-tables">array of
 tables</a> in <code>TOML</code>

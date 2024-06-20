@@ -1,0 +1,20 @@
+# Layouts
+
+Tapestry lets you control the layout of the generated query files. You
+can organize the queries in two ways:
+
+1. `one-file-one-query`: Each SQL query will be written to a separate file
+2. `one-file-all-queries`: All SQL queries will be written to a single file
+
+This can be specified using `query_output_layout` key in the manifest
+file. If not specified, `one-file-one-query` will be considered as
+default.
+
+When layout is set to `one-file-all-queries`, it's expected that the
+`output` field for all queries is the same i.e. path to the file that
+all SQL will be written to. To avoid this duplication, you may
+configure an associated setting `query_output_file`.
+
+
+
+

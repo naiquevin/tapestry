@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../commands/">
+        <link rel="prev" href="../test-templates/">
       
       
-        <link rel="next" href="../docker/">
+        <link rel="next" href="../query-tags/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>pg_format - tapestry</title>
+        <title>Layouts - tapestry</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#configuring-pg_format" class="md-skip">
+        <a href="#layouts" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              pg_format
+              Layouts
             
           </span>
         </div>
@@ -466,10 +466,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../layouts/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Layouts
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -478,6 +498,35 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#layout-and-queriesoutput-field" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layout and queries[].output field
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -550,30 +599,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    pg_format
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../pg-format/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -582,44 +611,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#disallowed-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Disallowed configuration
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#selectively-opting-out-of-sql-formatting" class="md-nav__link">
-    <span class="md-ellipsis">
-      Selectively opting out of SQL formatting
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -700,18 +691,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#disallowed-configuration" class="md-nav__link">
+  <a href="#layout-and-queriesoutput-field" class="md-nav__link">
     <span class="md-ellipsis">
-      Disallowed configuration
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#selectively-opting-out-of-sql-formatting" class="md-nav__link">
-    <span class="md-ellipsis">
-      Selectively opting out of SQL formatting
+      Layout and queries[].output field
     </span>
   </a>
   
@@ -735,97 +717,31 @@
   
 
 
-<h1 id="configuring-pg_format">Configuring pg_format</h1>
-<p><code>tapestry</code> relies on <a href=""><code>pg_format</code></a> for formatting the rendered SQL
-files. This makes sure that,</p>
-<ul>
-<li>the rendered SQL files have consistent indentation</li>
-<li>you don't need to worry about SQL indentation when writing Jinja
-  templates</li>
-</ul>
-<p>However, <code>pg_format</code> is not a hard requirement for <code>tapestry</code>. If
-<code>pg_format</code> is not installed on your system at the time of running
-<a href="../commands/#init"><code>tapestry init</code></a> command, the
-<a href="../manifest/#formatterpgformatter"><code>formatter.pgFormatter</code></a> section
-will not be added in the auto-generated manifest file.</p>
-<p>The behavior of <code>pg_format</code> tool in the context of <code>tapestry</code> can be
-configured by adding a config file. The <a href="https://github.com/darold/pgFormatter/blob/master/doc/pg_format.conf.sample">sample config
-file</a>
-in the <code>pg_format</code> github repo can be used for reference.</p>
-<p>The default config file generated by <a href="../commands/#init"><code>tapestry
-init</code></a> command is located at <code>.pg_format/config</code>
-(relative to the manifest file) and looks like this,</p>
-<div class="highlight"><pre><span></span><code># Lines between markers &#39;start(noformat)&#39; and &#39;end(noformat)&#39; will not
-# be formatted. If you want to customize the markers, you may do so by
-# modifying this parameter.
-placeholder=start\(noformat\).+end\(noformat\)
-
-# Add a list of function to be formatted as PG internal
-# functions. Paths relative to the &#39;tapestry.toml&#39; file will also work
-#extra-function=./.pg_format/functions.lst
-
-# Add a list of keywords to be formatted as PG internal keywords.
-# Paths relative to the &#39;tapestry.toml&#39; file will also work
-#extra-keyword=./.pg_format/keywords.lst
-
-# -- DANGER ZONE --
-#
-# Please donot change the following config parameters. Tapestry may
-# not work otherwise.
-multiline=1
-format=text
-output=
-</code></pre></div>
-<p>As you can see, the generated file itself is well documented.</p>
-<h2 id="disallowed-configuration">Disallowed configuration</h2>
-<p>In the context of <code>tapestry</code>, some <code>pg_format</code> config params are
-disallowed (or they need to configured only in a certain way) for
-proper functioning of <code>tapestry</code>. These are explicitly defined with
-the intended value in the config file and annotated with <code>DANGER ZONE</code>
-warning in the comments. These must not be changed.</p>
-<h2 id="selectively-opting-out-of-sql-formatting">Selectively opting out of SQL formatting</h2>
-<p>A commonly faced problem with formatting <code>pgTAP</code> tests using
-<code>pg_format</code> is that hard coded expected values get formatted in a way
-that could make the test case unreadable for humans.</p>
-<p>Example: Consider the following <code>pgTAP</code> test case written in a test
-template file,</p>
-<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">results_eq</span><span class="p">(</span>
-<span class="w">    </span><span class="s1">&#39;EXECUTE artists_long_songs(&#39;&#39;Rock&#39;&#39;, 2)&#39;</span><span class="p">,</span>
-<span class="w">    </span><span class="err">$$</span><span class="k">VALUES</span>
-<span class="w">        </span><span class="p">(</span><span class="mi">22</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Led Zeppelin&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:26:52.329&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">),</span>
-<span class="w">        </span><span class="p">(</span><span class="mi">58</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Deep Purple&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:19:56.094&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">)</span>
-<span class="w">    </span><span class="err">$$</span><span class="p">,</span>
-<span class="w">    </span><span class="s1">&#39;Verify return value&#39;</span>
-<span class="p">);</span>
-</code></pre></div>
-<p>By default <code>pg_format</code> would format the above SQL snippet as follows,</p>
-<div class="highlight"><pre><span></span><code><span class="k">SELECT</span>
-<span class="w">    </span><span class="n">results_eq</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;EXECUTE artists_long_songs(&#39;&#39;Rock&#39;&#39;, 2)&#39;</span><span class="p">,</span><span class="w"> </span><span class="err">$$</span>
-<span class="w">    </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">22</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Led Zeppelin&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:26:52.329&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">58</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Deep Purple&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:19:56.094&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">)</span><span class="w"> </span><span class="err">$$</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Verify return value&#39;</span><span class="p">);</span>
-</code></pre></div>
-<p>To retain the readability, we need to preserve the user's custom
-indentation. This is where the <code>placeholder</code> config param of
-<code>pg_format</code> is useful</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>pg_format's <code>placeholder</code> config is not to be confused with <a href="../manifest/#placeholder"><code>placeholder</code></a>
-config key in tapestry's manifest.</p>
-</div>
-<p>This can be done by adding <code>noformat</code> markers before and after the
-snippet.</p>
-<div class="highlight"><pre><span></span><code><span class="c1">-- start(noformat)</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="n">results_eq</span><span class="p">(</span>
-<span class="w">    </span><span class="s1">&#39;EXECUTE artists_long_songs(&#39;&#39;Rock&#39;&#39;, 2)&#39;</span><span class="p">,</span>
-<span class="w">    </span><span class="err">$$</span><span class="k">VALUES</span>
-<span class="w">        </span><span class="p">(</span><span class="mi">22</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Led Zeppelin&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:26:52.329&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">),</span>
-<span class="w">        </span><span class="p">(</span><span class="mi">58</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Deep Purple&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:19:56.094&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">)</span>
-<span class="w">    </span><span class="err">$$</span><span class="p">,</span>
-<span class="w">    </span><span class="s1">&#39;Verify return value&#39;</span>
-<span class="p">);</span>
-<span class="c1">-- end(noformat)</span>
-</code></pre></div>
-<p>If you want to customize the markers for whatever reason, you can
-modify the <code>placeholder</code> param in the <code>pg_format</code> config file.</p>
+<h1 id="layouts">Layouts</h1>
+<p>Tapestry lets you control the layout of the query files i.e. how the
+generated SQL is organized in files. It supports two ways at present:</p>
+<ol>
+<li><code>one-file-one-query</code>: Each SQL query will be written to a separate file</li>
+<li><code>one-file-all-queries</code>: All SQL queries will be written to a single file</li>
+</ol>
+<p>To configure this, you need to specify the <a href="../manifest/#query_output_layout"><code>query_output_layout</code></a> key
+in the manifest. The default option if not specified is
+<code>one-file-one-query</code>.</p>
+<h2 id="layout-and-queriesoutput-field">Layout and <code>queries[].output</code> field</h2>
+<p>Users may specify <a href="../manifest/#output"><code>output</code></a> field
+for every query, which is the path where the generated SQL output will
+be written. If <code>output</code> is not specified, it's value is derived from
+the query id. This works well for the <code>one-file-one-query</code> layout.</p>
+<p>When the layout is <code>one-file-all-queries</code>, it's expected that the
+<code>output</code> field of all queries must be the same. Otherwise the manifest
+fails to validate. To avoid duplication, a related setting
+<code>query_output_file</code> is provided.</p>
+<p>If layout = <code>one-file-all-queries</code>, it's recommended to set
+<code>query_output_file</code> and omit the <code>output</code> field for individual
+queries.</p>
+<p>If layout = <code>one-file-one-query</code>, then you must not set
+<code>query_output_file</code>. Whether or not to set the <code>output</code> field for
+individual queries is up to you.</p>
 
 
 

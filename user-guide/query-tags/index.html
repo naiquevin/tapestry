@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../commands/">
+        <link rel="prev" href="../layouts/">
       
       
-        <link rel="next" href="../docker/">
+        <link rel="next" href="../naming-conventions/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>pg_format - tapestry</title>
+        <title>Query Tags - tapestry</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#configuring-pg_format" class="md-skip">
+        <a href="#query-tags" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              pg_format
+              Query Tags
             
           </span>
         </div>
@@ -487,10 +487,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../query-tags/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Query Tags
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -499,6 +519,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#name-tagging-queries" class="md-nav__link">
+    <span class="md-ellipsis">
+      Name tagging queries
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Name tagging queries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deriving-name-tags-from-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deriving name tags from id
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-name-tags" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom name tags
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -550,30 +623,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    pg_format
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../pg-format/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -582,44 +635,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#disallowed-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Disallowed configuration
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#selectively-opting-out-of-sql-formatting" class="md-nav__link">
-    <span class="md-ellipsis">
-      Selectively opting out of SQL formatting
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -700,20 +715,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#disallowed-configuration" class="md-nav__link">
+  <a href="#name-tagging-queries" class="md-nav__link">
     <span class="md-ellipsis">
-      Disallowed configuration
+      Name tagging queries
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Name tagging queries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deriving-name-tags-from-id" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deriving name tags from id
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#selectively-opting-out-of-sql-formatting" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#custom-name-tags" class="md-nav__link">
     <span class="md-ellipsis">
-      Selectively opting out of SQL formatting
+      Custom name tags
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -735,97 +765,79 @@
   
 
 
-<h1 id="configuring-pg_format">Configuring pg_format</h1>
-<p><code>tapestry</code> relies on <a href=""><code>pg_format</code></a> for formatting the rendered SQL
-files. This makes sure that,</p>
-<ul>
-<li>the rendered SQL files have consistent indentation</li>
-<li>you don't need to worry about SQL indentation when writing Jinja
-  templates</li>
-</ul>
-<p>However, <code>pg_format</code> is not a hard requirement for <code>tapestry</code>. If
-<code>pg_format</code> is not installed on your system at the time of running
-<a href="../commands/#init"><code>tapestry init</code></a> command, the
-<a href="../manifest/#formatterpgformatter"><code>formatter.pgFormatter</code></a> section
-will not be added in the auto-generated manifest file.</p>
-<p>The behavior of <code>pg_format</code> tool in the context of <code>tapestry</code> can be
-configured by adding a config file. The <a href="https://github.com/darold/pgFormatter/blob/master/doc/pg_format.conf.sample">sample config
-file</a>
-in the <code>pg_format</code> github repo can be used for reference.</p>
-<p>The default config file generated by <a href="../commands/#init"><code>tapestry
-init</code></a> command is located at <code>.pg_format/config</code>
-(relative to the manifest file) and looks like this,</p>
-<div class="highlight"><pre><span></span><code># Lines between markers &#39;start(noformat)&#39; and &#39;end(noformat)&#39; will not
-# be formatted. If you want to customize the markers, you may do so by
-# modifying this parameter.
-placeholder=start\(noformat\).+end\(noformat\)
+<h1 id="query-tags">Query tags</h1>
+<h2 id="name-tagging-queries">Name tagging queries</h2>
+<p>Typically, the output query files rendered by tapestry are intended to
+be used by libraries such as <code>yesql</code>, <code>aiosql</code> etc. These libraries
+require the queries to be "name-tagged". Tagging is done by simply
+adding a comment before the query as follows,</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- name: my-query</span>
+<span class="c1">-- A simple query</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
+<p>This way, these libraries can map the queries with the functions that
+it generates in code. These functions wraps around the database
+client/driver code and provides an easy interface for the user.</p>
+<p>The following example is taken from <a href="https://github.com/krisajenkins/yesql">yesql's
+README</a>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- name: users-by-country</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="o">*</span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">users</span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">country_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">:</span><span class="n">country_code</span>
+</code></pre></div>
+<p>...and then read that file to turn it into a regular Clojure function:</p>
+<div class="highlight"><pre><span></span><code><span class="p">(</span><span class="nf">defqueries</span><span class="w"> </span><span class="s">&quot;some/where/users_by_country.sql&quot;</span>
+<span class="w">   </span><span class="p">{</span><span class="ss">:connection</span><span class="w"> </span><span class="nv">db-spec</span><span class="p">})</span>
 
-# Add a list of function to be formatted as PG internal
-# functions. Paths relative to the &#39;tapestry.toml&#39; file will also work
-#extra-function=./.pg_format/functions.lst
-
-# Add a list of keywords to be formatted as PG internal keywords.
-# Paths relative to the &#39;tapestry.toml&#39; file will also work
-#extra-keyword=./.pg_format/keywords.lst
-
-# -- DANGER ZONE --
-#
-# Please donot change the following config parameters. Tapestry may
-# not work otherwise.
-multiline=1
-format=text
-output=
+<span class="c1">;;; A function with the name `users-by-country` has been created.</span>
+<span class="c1">;;; Let&#39;s use it:</span>
+<span class="p">(</span><span class="nf">users-by-country</span><span class="w"> </span><span class="p">{</span><span class="ss">:country_code</span><span class="w"> </span><span class="s">&quot;GB&quot;</span><span class="p">})</span>
+<span class="c1">;=&gt; ({:name &quot;Kris&quot; :country_code &quot;GB&quot; ...} ...)</span>
 </code></pre></div>
-<p>As you can see, the generated file itself is well documented.</p>
-<h2 id="disallowed-configuration">Disallowed configuration</h2>
-<p>In the context of <code>tapestry</code>, some <code>pg_format</code> config params are
-disallowed (or they need to configured only in a certain way) for
-proper functioning of <code>tapestry</code>. These are explicitly defined with
-the intended value in the config file and annotated with <code>DANGER ZONE</code>
-warning in the comments. These must not be changed.</p>
-<h2 id="selectively-opting-out-of-sql-formatting">Selectively opting out of SQL formatting</h2>
-<p>A commonly faced problem with formatting <code>pgTAP</code> tests using
-<code>pg_format</code> is that hard coded expected values get formatted in a way
-that could make the test case unreadable for humans.</p>
-<p>Example: Consider the following <code>pgTAP</code> test case written in a test
-template file,</p>
-<div class="highlight"><pre><span></span><code><span class="k">SELECT</span><span class="w"> </span><span class="n">results_eq</span><span class="p">(</span>
-<span class="w">    </span><span class="s1">&#39;EXECUTE artists_long_songs(&#39;&#39;Rock&#39;&#39;, 2)&#39;</span><span class="p">,</span>
-<span class="w">    </span><span class="err">$$</span><span class="k">VALUES</span>
-<span class="w">        </span><span class="p">(</span><span class="mi">22</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Led Zeppelin&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:26:52.329&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">),</span>
-<span class="w">        </span><span class="p">(</span><span class="mi">58</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Deep Purple&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:19:56.094&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">)</span>
-<span class="w">    </span><span class="err">$$</span><span class="p">,</span>
-<span class="w">    </span><span class="s1">&#39;Verify return value&#39;</span>
-<span class="p">);</span>
+<h3 id="deriving-name-tags-from-id">Deriving name tags from id</h3>
+<p>Tapestry does support name tagging of queries, but it's disabled by
+default. To enable it, just add the following lines in the manifest,</p>
+<div class="highlight"><pre><span></span><code><span class="k">[name_tagger]</span>
+<span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;kebab-case&quot;</span>
 </code></pre></div>
-<p>By default <code>pg_format</code> would format the above SQL snippet as follows,</p>
-<div class="highlight"><pre><span></span><code><span class="k">SELECT</span>
-<span class="w">    </span><span class="n">results_eq</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;EXECUTE artists_long_songs(&#39;&#39;Rock&#39;&#39;, 2)&#39;</span><span class="p">,</span><span class="w"> </span><span class="err">$$</span>
-<span class="w">    </span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="mi">22</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Led Zeppelin&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:26:52.329&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">58</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Deep Purple&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:19:56.094&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">)</span><span class="w"> </span><span class="err">$$</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Verify return value&#39;</span><span class="p">);</span>
+<p>This will result in name tags added to queries. The name tags are
+derived from the query <a href="../manifest/#id">ids</a>. The <code>style</code> setting
+allows us to control how the id should be slugified to derive the name
+tag. For e.g. <code>kebab-case</code> will cause all non-alphanumeric characters
+in the id to be replaced by hyphens.</p>
+<p>The other options for style are <code>snake_case</code> and <code>exact</code>.</p>
+<h3 id="custom-name-tags">Custom name tags</h3>
+<p>The above method derives name tags from query ids. But yesql and
+aiosql sometimes require the query names to be suffixed with specific
+characters to indicate specific operations. Example: In yesql, the
+name tags for INSERT/UPDATE/DELETE statements need to be suffixed with
+<code>!</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- name: save-person!</span>
+<span class="k">UPDATE</span><span class="w"> </span><span class="n">person</span>
+<span class="w">    </span><span class="k">SET</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">:</span><span class="n">name</span>
+<span class="w">    </span><span class="k">WHERE</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">:</span><span class="n">id</span>
 </code></pre></div>
-<p>To retain the readability, we need to preserve the user's custom
-indentation. This is where the <code>placeholder</code> config param of
-<code>pg_format</code> is useful</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>pg_format's <code>placeholder</code> config is not to be confused with <a href="../manifest/#placeholder"><code>placeholder</code></a>
-config key in tapestry's manifest.</p>
-</div>
-<p>This can be done by adding <code>noformat</code> markers before and after the
-snippet.</p>
-<div class="highlight"><pre><span></span><code><span class="c1">-- start(noformat)</span>
-<span class="k">SELECT</span><span class="w"> </span><span class="n">results_eq</span><span class="p">(</span>
-<span class="w">    </span><span class="s1">&#39;EXECUTE artists_long_songs(&#39;&#39;Rock&#39;&#39;, 2)&#39;</span><span class="p">,</span>
-<span class="w">    </span><span class="err">$$</span><span class="k">VALUES</span>
-<span class="w">        </span><span class="p">(</span><span class="mi">22</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Led Zeppelin&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:26:52.329&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">),</span>
-<span class="w">        </span><span class="p">(</span><span class="mi">58</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;Deep Purple&#39;</span><span class="p">::</span><span class="nb">varchar</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;00:19:56.094&#39;</span><span class="p">::</span><span class="nb">interval</span><span class="p">)</span>
-<span class="w">    </span><span class="err">$$</span><span class="p">,</span>
-<span class="w">    </span><span class="s1">&#39;Verify return value&#39;</span>
-<span class="p">);</span>
-<span class="c1">-- end(noformat)</span>
-</code></pre></div>
-<p>If you want to customize the markers for whatever reason, you can
-modify the <code>placeholder</code> param in the <code>pg_format</code> config file.</p>
+<p>There are two ways to achieve this:</p>
+<ol>
+<li>
+<p>Specify <code>exact</code> as the <code>name_tagger.style</code>. Then the query
+   <a href="../manifest/#id"><code>id</code></a> itself to be used as the name tag (as it
+   is).</p>
+</li>
+<li>
+<p>Specify the optional <a href="../manifest/#name_tag"><code>queries[].name_tag</code></a>
+   field when defining the queries.</p>
+</li>
+</ol>
+<p>While it may seem like the first approach involves less effort, the
+downside is that we'd be giving up on the <a href="../naming-conventions/">Naming
+conventions</a> that tapestry recommends.</p>
+<p>Libraries such as yesql and aiosql usually don't allow special
+characters in the name tags as they use them to generate functions in
+code. So yesql recommends the name tags to be in <code>kebab-case</code> as
+Clojure functions follow that convention, whereas aiosql needs the
+name tags to be in <code>snake_case</code> as that's the requirement and also the
+convention in Python.</p>
 
 
 
