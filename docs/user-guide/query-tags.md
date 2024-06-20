@@ -55,9 +55,7 @@ allows us to control how the id should be slugified to derive the name
 tag. For e.g. `kebab-case` will cause all non-alphanumeric characters
 in the id to be replaced by hyphens.
 
-The only other option for style supported is `snake_case`. You may
-refer to the [`name_tagger.style`](manifest.md/#style) documentation
-for more info.
+The other options for style are `snake_case` and `exact`.
 
 ### Custom name tags
 
@@ -74,5 +72,23 @@ UPDATE person
     WHERE id = :id
 ```
 
-To achieve this, you can specify the optional
-[`name_tag`](manifest.md/#name_tag) field when defining the queries.
+There are two ways to achieve this:
+
+1. Specify `exact` as the `name_tagger.style`. Then the query
+   [`id`](manifest.md/#id) itself to be used as the name tag (as it
+   is).
+
+2. Specify the optional [`queries[].name_tag`](manifest.md/#name_tag)
+   field when defining the queries.
+
+While it may seem like the first approach involves less effort, the
+downside is that we'd be giving up on the [Naming
+conventions](naming-conventions.md) that tapestry recommends.
+
+Libraries such as yesql and aiosql usually don't allow special
+characters in the name tags as they use them to generate functions in
+code. So yesql recommends the name tags to be in `kebab-case` as
+Clojure functions follow that convention, whereas aiosql needs the
+name tags to be in `snake_case` as that's the requirement and also the
+convention in Python.
+

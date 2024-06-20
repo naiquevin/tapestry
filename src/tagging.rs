@@ -15,6 +15,7 @@ pub enum NameTag {
 pub enum NameTagStyle {
     SnakeCase,
     KebabCase,
+    Exact,
 }
 
 impl NameTagStyle {
@@ -26,6 +27,7 @@ impl NameTagStyle {
                 match s {
                     "snake_case" => Ok(Self::SnakeCase),
                     "kebab-case" => Ok(Self::KebabCase),
+                    "exact" => Ok(Self::Exact),
                     _ => Err(parse_error!("Invalid value for 'name_tagger.style': {s}")),
                 }
             }
@@ -35,19 +37,17 @@ impl NameTagStyle {
         }
     }
 
-    fn separator(&self) -> &str {
-        match self {
-            Self::SnakeCase => "_",
-            Self::KebabCase => "-",
-        }
-    }
-
     // Constructs a tag from the id as per the `NameTagStyle`. Any
     // non-alphanumeric char will be replaced by either hyphen
     // (kebab-case) or underscore (snake_case).
     pub fn make_tag<'a>(&self, id: &'a str) -> Cow<'a, str> {
+        // @TODO: Can this regex pattern be defined globally?
         let re = Regex::new(r"_|-|@|\+|&|\*").unwrap();
-        re.replace_all(id, self.separator())
+        match self {
+            Self::SnakeCase => re.replace_all(id, "_"),
+            Self::KebabCase => re.replace_all(id, "-"),
+            Self::Exact => Cow::from(id),
+        }
     }
 }
 
@@ -56,6 +56,7 @@ impl fmt::Display for NameTagStyle {
         match self {
             NameTagStyle::SnakeCase => write!(f, "snake_case"),
             NameTagStyle::KebabCase => write!(f, "kebab-case"),
+            NameTagStyle::Exact => write!(f, "exact"),
         }
     }
 }

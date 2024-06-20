@@ -233,12 +233,25 @@ derived from query id. The two options are:
 
 1. `kebab-case`
 2. `snake_case`
+3. `exact`
+
+Any special characters in the query `id` will be replaced with an
+appropriate character based on the above option &mdash; hyphen in case
+of `kebab-case` and underscore in case of `snake_case`. The third
+option `exact` is different in the sense that the query `id` will be
+used as it is as the name tag.
+
+Example:
+
+```toml
+[name_tagger]
+style = "kebab-case"
+```
 
 !!! Note
 
-    Note the inconsistent naming of options (hyphen in `kebab-case` v/s
-    underscore in `snake_case`). They are named autologically.
-
+    Note the autological naming of options `kebab-case` (with a hyphen)
+    v/s `snake_case` (with an underscore).
 
 ## query\_templates
 
