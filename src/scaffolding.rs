@@ -60,8 +60,9 @@ struct DefaultManifestContext<'a> {
 
 impl<'a> From<&'a Metadata> for DefaultManifestContext<'a> {
     fn from(m: &'a Metadata) -> Self {
-        let pg_format = m.formatter.as_ref().map(|formatter| match formatter {
-            Formatter::PgFormatter(pgf) => PgFormatterContext::from(pgf),
+        let pg_format = m.formatter.as_ref().and_then(|formatter| match formatter {
+            Formatter::PgFormatter(pgf) => Some(PgFormatterContext::from(pgf)),
+            Formatter::SqlFormatRs(_) => None,
         });
         let name_tagger = m.name_tagger.as_ref().map(NameTaggerContext::from);
         Self {
@@ -98,6 +99,7 @@ fn write_formatter_configs(dir: &Path, formatter: Option<&Formatter>) -> Result<
                         .map_err(Error::Io)?;
                 }
             }
+            Formatter::SqlFormatRs(_) => {}
         }
     }
     Ok(())
