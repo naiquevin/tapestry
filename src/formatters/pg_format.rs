@@ -1,43 +1,10 @@
 use crate::error::{parse_error, Error};
 use crate::toml::decode_pathbuf;
-use std::convert::TryFrom;
-use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
-use std::thread;
 use toml::Value;
 
-/// Provides an abstraction for running an executable (i.e. shelling
-/// out) to format sql. It passes raw unformatted sql as input to the
-/// executable via `stdin`.
-struct Cmd<'a> {
-    exec: &'a Path,
-    args: Vec<&'a str>,
-}
-
-impl<'a> Cmd<'a> {
-    fn execute(&self, input: &str) -> Vec<u8> {
-        let mut child = Command::new(self.exec)
-            .args(&self.args)
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .spawn()
-            .expect("Failed to spawn child process");
-
-        let mut stdin = child.stdin.take().expect("Failed to open stdin");
-        // @TODO: Check if it's possible to avoid allocating for an
-        // owned String here
-        let input = input.to_owned();
-        thread::spawn(move || {
-            stdin
-                .write_all(input.as_bytes())
-                .expect("Failed to write to stdin");
-        });
-
-        let output = child.wait_with_output().expect("Failed to read stdout");
-        output.stdout
-    }
-}
+use super::util::Cmd;
 
 /// Provides an abstraction for formatting sql using the `pgFormatter`
 /// (a.k.a `pg_format`) tool
@@ -113,48 +80,6 @@ impl PgFormatter {
             args,
         };
         cmd.execute(sql)
-    }
-}
-
-/// Enum wrapping over abstractions for various sql formatting tools.
-///
-/// This indirection is just a provision for plugging in sql
-/// formatting tools other than PgFormatter. But at present, only
-/// `PgFormatter` is supported.
-#[derive(Debug)]
-pub enum Formatter {
-    PgFormatter(PgFormatter),
-}
-
-impl Formatter {
-    pub fn decode(value: &Value) -> Result<Option<Self>, Error> {
-        match value.as_table() {
-            Some(t) => {
-                if let Some(v) = t.get("pgFormatter") {
-                    PgFormatter::try_from(v).map(|f| Some(Self::PgFormatter(f)))
-                } else {
-                    Ok(None)
-                }
-            }
-            None => Ok(None),
-        }
-    }
-
-    pub fn format(&self, sql: &str) -> Vec<u8> {
-        match self {
-            Self::PgFormatter(p) => p.format(sql),
-        }
-    }
-
-    pub fn discover() -> Option<Self> {
-        let pg_format = PgFormatter::new_if_exists().map(Self::PgFormatter);
-        if pg_format.is_some() {
-            pg_format
-        } else {
-            // Check for more formatting tools here when support for
-            // them is added.
-            None
-        }
     }
 }
 

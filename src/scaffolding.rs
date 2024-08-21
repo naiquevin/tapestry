@@ -1,6 +1,6 @@
 use crate::error::Error;
+use crate::formatters::{Formatter, PgFormatter};
 use crate::metadata::Metadata;
-use crate::sql_format::{Formatter, PgFormatter};
 use crate::tagging::NameTagger;
 use minijinja::Environment;
 use serde::Serialize;

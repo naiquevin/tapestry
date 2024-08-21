@@ -5,6 +5,7 @@ use std::process;
 
 mod command;
 mod error;
+mod formatters;
 mod logging;
 mod metadata;
 mod output;
@@ -13,7 +14,6 @@ mod query;
 mod query_template;
 mod render;
 mod scaffolding;
-mod sql_format;
 mod tagging;
 mod test_template;
 mod toml;

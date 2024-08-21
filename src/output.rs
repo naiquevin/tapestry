@@ -2,7 +2,7 @@ use log::warn;
 use toml::Value;
 
 use crate::error::{parse_error, Error};
-use crate::sql_format::Formatter;
+use crate::formatters::Formatter;
 use crate::tagging::{NameTag, NameTagger};
 use crate::toml::decode_pathbuf;
 use std::borrow::Cow;

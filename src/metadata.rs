@@ -1,9 +1,9 @@
 use crate::error::{parse_error, Error};
+use crate::formatters::Formatter;
 use crate::output::Layout;
 use crate::placeholder::Placeholder;
 use crate::query::Queries;
 use crate::query_template::QueryTemplates;
-use crate::sql_format::Formatter;
 use crate::tagging::{NameTagStyle, NameTagger};
 use crate::test_template::TestTemplates;
 use crate::toml::decode_pathbuf;
