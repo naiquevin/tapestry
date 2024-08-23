@@ -1,5 +1,6 @@
 use crate::error::{parse_error, Error};
 use crate::toml::decode_pathbuf;
+use std::cell::OnceCell;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use toml::Value;
@@ -12,7 +13,7 @@ use super::util::Cmd;
 pub struct PgFormatter {
     pub exec_path: PathBuf,
     pub conf_path: Option<PathBuf>,
-    args: Vec<String>,
+    args: OnceCell<Vec<String>>,
 }
 
 fn pg_format_args(conf_path: Option<&Path>) -> Vec<String> {
@@ -39,12 +40,7 @@ impl TryFrom<&Value> for PgFormatter {
                     Some(cp) => Some(decode_pathbuf(cp, None, "formatter.pgFormatter.conf_path")?),
                     None => None,
                 };
-                let args = pg_format_args(conf_path.as_deref());
-                Ok(Self {
-                    exec_path,
-                    conf_path,
-                    args,
-                })
+                Ok(Self::new(exec_path, conf_path))
             }
             None => Err(parse_error!(
                 "Value of 'formatter.pgFormatter' must be a toml table"
@@ -54,6 +50,15 @@ impl TryFrom<&Value> for PgFormatter {
 }
 
 impl PgFormatter {
+
+    pub fn new(exec_path: PathBuf, conf_path: Option<PathBuf>) -> Self {
+        Self {
+            exec_path,
+            conf_path,
+            args: OnceCell::new(),
+        }
+    }
+
     pub fn new_if_exists() -> Option<Self> {
         let mut command = Command::new("pg_format");
         let status = command
@@ -63,18 +68,20 @@ impl PgFormatter {
             .status()
             .expect("Failed to spawn child process");
         if status.success() {
-            Some(Self {
-                exec_path: PathBuf::from(command.get_program()),
-                conf_path: Some(PathBuf::from("./.pg_format/config")),
-                args: pg_format_args(None),
-            })
+            Some(Self::new(
+                PathBuf::from(command.get_program()),
+                Some(PathBuf::from("./.pg_format/config")))
+            )
         } else {
             None
         }
     }
 
     pub fn format(&self, sql: &str) -> Vec<u8> {
-        let args = self.args.iter().map(|a| a.as_str()).collect();
+        let args = self.args
+            .get_or_init(|| pg_format_args(self.conf_path.as_deref()))
+            .iter()
+            .map(|a| a.as_str()).collect();
         let cmd = Cmd {
             exec: &self.exec_path,
             args,
