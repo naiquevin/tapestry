@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use toml::Value;
 
-use super::util::Cmd;
+use super::external::ExternalFormatter;
 
 /// Provides an abstraction for formatting sql using the `pgFormatter`
 /// (a.k.a `pg_format`) tool
@@ -76,17 +76,23 @@ impl PgFormatter {
             None
         }
     }
+}
 
-    pub fn format(&self, sql: &str) -> Vec<u8> {
-        let args = self.args
-            .get_or_init(|| pg_format_args(self.conf_path.as_deref()))
+impl ExternalFormatter for PgFormatter {
+    fn executable(&self) -> &Path {
+        self.exec_path.as_path()
+    }
+
+    fn format_args(&self) -> Vec<&str> {
+        let args = self.args.get_or_init(|| pg_format_args(self.conf_path.as_deref()));
+        args
             .iter()
-            .map(|a| a.as_str()).collect();
-        let cmd = Cmd {
-            exec: &self.exec_path,
-            args,
-        };
-        cmd.execute(sql)
+            .map(|a| a.as_str())
+            .collect()
+    }
+
+    fn check_args(&self) -> Vec<&str> {
+        vec!["-v"]
     }
 }
 

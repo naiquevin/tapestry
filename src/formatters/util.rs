@@ -6,11 +6,13 @@ use std::thread;
 /// Provides an abstraction for running an executable (i.e. shelling
 /// out) to format sql. It passes raw unformatted sql as input to the
 /// executable via `stdin`.
+#[allow(dead_code)]
 pub struct Cmd<'a> {
     pub exec: &'a Path,
     pub args: Vec<&'a str>,
 }
 
+#[allow(dead_code)]
 impl<'a> Cmd<'a> {
     pub fn execute(&self, input: &str) -> Vec<u8> {
         let mut child = Command::new(self.exec)

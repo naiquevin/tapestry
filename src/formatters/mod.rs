@@ -3,6 +3,9 @@ pub use pg_format::PgFormatter;
 use sqlformat_rs::SqlFormat;
 use toml::Value;
 
+use self::external::ExternalFormatter;
+
+mod external;
 mod pg_format;
 mod sqlformat_rs;
 mod util;
