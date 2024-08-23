@@ -50,7 +50,6 @@ impl TryFrom<&Value> for PgFormatter {
 }
 
 impl PgFormatter {
-
     pub fn new(exec_path: PathBuf, conf_path: Option<PathBuf>) -> Self {
         Self {
             exec_path,
@@ -70,8 +69,8 @@ impl PgFormatter {
         if status.success() {
             Some(Self::new(
                 PathBuf::from(command.get_program()),
-                Some(PathBuf::from("./.pg_format/config")))
-            )
+                Some(PathBuf::from("./.pg_format/config")),
+            ))
         } else {
             None
         }
@@ -84,11 +83,10 @@ impl ExternalFormatter for PgFormatter {
     }
 
     fn format_args(&self) -> Vec<&str> {
-        let args = self.args.get_or_init(|| pg_format_args(self.conf_path.as_deref()));
-        args
-            .iter()
-            .map(|a| a.as_str())
-            .collect()
+        let args = self
+            .args
+            .get_or_init(|| pg_format_args(self.conf_path.as_deref()));
+        args.iter().map(|a| a.as_str()).collect()
     }
 
     fn check_args(&self) -> Vec<&str> {

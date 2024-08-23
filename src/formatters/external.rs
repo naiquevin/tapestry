@@ -1,7 +1,9 @@
-use std::thread;
-use std::process::{Command, Stdio};
-use std::path::Path;
 use std::io::Write;
+use std::path::Path;
+use std::process::{Command, Stdio};
+use std::thread;
+
+use toml::Value;
 
 /// Trait for formatters that are installed as external programs.
 #[allow(unused)]
