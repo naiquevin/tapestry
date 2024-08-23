@@ -77,7 +77,7 @@ impl PgFormatter {
     }
 }
 
-impl ExternalFormatter for PgFormatter {
+impl ExternalFormatter<'_> for PgFormatter {
     fn executable(&self) -> &Path {
         self.exec_path.as_path()
     }

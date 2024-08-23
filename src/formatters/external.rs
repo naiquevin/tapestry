@@ -7,7 +7,7 @@ use toml::Value;
 
 /// Trait for formatters that are installed as external programs.
 #[allow(unused)]
-pub trait ExternalFormatter {
+pub trait ExternalFormatter<'a>: TryFrom<&'a Value> {
     /// Returns path to the executable
     fn executable(&self) -> &Path;
 
