@@ -2,6 +2,7 @@ use crate::error::Error;
 use crate::formatters::{Formatter, PgFormatter};
 use crate::metadata::Metadata;
 use crate::tagging::NameTagger;
+use crate::toml::SerializableTomlTable;
 use minijinja::Environment;
 use serde::Serialize;
 use std::convert::From;
@@ -19,18 +20,18 @@ fn create_project_dir(path: &Path) -> Result<(), Error> {
     }
 }
 
-#[derive(Serialize)]
-struct PgFormatterContext<'a> {
-    exec_path: &'a Path,
-    conf_path: Option<&'a Path>,
-}
-
-impl<'a> From<&'a PgFormatter> for PgFormatterContext<'a> {
+impl<'a> From<&'a PgFormatter> for SerializableTomlTable {
     fn from(source: &'a PgFormatter) -> Self {
-        Self {
-            exec_path: source.exec_path.as_path(),
-            conf_path: source.conf_path.as_deref(),
+        let mut t = SerializableTomlTable::new("formatter.pgFormatter");
+        t.push_comment("(required) Location of the pg_format executable");
+        let exec_path = &source.exec_path.display().to_string();
+        t.push_entry_string("exec_path", exec_path);
+        t.push_comment("(optional) path to the pg_format conf file.");
+        if let Some(p) = &source.conf_path {
+            let conf_path = &p.display().to_string();
+            t.push_entry_string("conf_path", conf_path);
         }
+        t
     }
 }
 
@@ -54,14 +55,14 @@ struct DefaultManifestContext<'a> {
     test_templates_dir: &'a Path,
     queries_output_dir: &'a Path,
     tests_output_dir: &'a Path,
-    pg_format: Option<PgFormatterContext<'a>>,
+    formatter: Option<SerializableTomlTable>,
     name_tagger: Option<NameTaggerContext>,
 }
 
 impl<'a> From<&'a Metadata> for DefaultManifestContext<'a> {
     fn from(m: &'a Metadata) -> Self {
-        let pg_format = m.formatter.as_ref().and_then(|formatter| match formatter {
-            Formatter::PgFormatter(pgf) => Some(PgFormatterContext::from(pgf)),
+        let formatter = m.formatter.as_ref().and_then(|formatter| match formatter {
+            Formatter::PgFormatter(pgf) => Some(SerializableTomlTable::from(pgf)),
             Formatter::SqlFormatRs(_) => None,
         });
         let name_tagger = m.name_tagger.as_ref().map(NameTaggerContext::from);
@@ -71,7 +72,7 @@ impl<'a> From<&'a Metadata> for DefaultManifestContext<'a> {
             test_templates_dir: m.test_templates_dir.as_path(),
             queries_output_dir: m.queries_output_dir.as_path(),
             tests_output_dir: m.tests_output_dir.as_path(),
-            pg_format,
+            formatter,
             name_tagger,
         }
     }
@@ -114,6 +115,27 @@ pub fn init_project(dir: &Path) -> Result<(), Error> {
 
     // Check if any formating tool is installed on the system
     metadata.formatter = Formatter::discover();
+
+    // @TODO: Here we will allow the user to choose the formatter
+    // smartly as follows:
+    //
+    //  1. We will find out which all formatters supported by tapestry
+    //     are installed on the user's system and collect them into a
+    //     list
+    //
+    //  2. By default, the 'sqlformat-rs' option will be added to this
+    //     list. This is to handle the case where the user has no
+    //     external formatters installed on the system
+    //
+    //  3. A `None` option will also be added to this list, in case
+    //     the user prefers to not format the sql at all (why?)
+    //
+    //  4. Then we will prompt the user to select one among them (the
+    //     inquire crate can be used for this).
+    //
+    //  5. Config for the selected formatter will be added to the
+    //     manifest file.
+    //
 
     // Create the manifest file
     let manifest_path = dir.join("tapestry.toml");

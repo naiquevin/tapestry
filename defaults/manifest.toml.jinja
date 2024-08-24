@@ -23,15 +23,12 @@ test_templates_dir = "{{ test_templates_dir }}"
 queries_output_dir = "{{ queries_output_dir }}"
 tests_output_dir = "{{ tests_output_dir }}"
 
-{%- if pg_format %}
+{%- if formatter %}
 
-[formatter.pgFormatter]
-## (required) Location of the pg_format executable
-exec_path = "{{ pg_format.exec_path }}"
-## (optional) path to the pg_format conf file.
-{% if pg_format.conf_path -%}
-conf_path = "{{ pg_format.conf_path }}"
-{%- endif %}
+[{{ formatter.key_path }}]
+{%- for line in formatter.lines %}
+{{ line }}
+{%- endfor %}
 {%- endif %}
 
 {% if name_tagger -%}
