@@ -1,5 +1,5 @@
 use crate::error::Error;
-use crate::formatters::{Formatter, PgFormatter};
+use crate::formatters::Formatter;
 use crate::metadata::Metadata;
 use crate::tagging::NameTagger;
 use crate::toml::SerializableTomlTable;
@@ -17,21 +17,6 @@ fn create_project_dir(path: &Path) -> Result<(), Error> {
             Ok(())
         }
         Err(e) => Err(Error::Io(e)),
-    }
-}
-
-impl<'a> From<&'a PgFormatter> for SerializableTomlTable {
-    fn from(source: &'a PgFormatter) -> Self {
-        let mut t = SerializableTomlTable::new("formatter.pgFormatter");
-        t.push_comment("(required) Location of the pg_format executable");
-        let exec_path = &source.exec_path.display().to_string();
-        t.push_entry_string("exec_path", exec_path);
-        t.push_comment("(optional) path to the pg_format conf file.");
-        if let Some(p) = &source.conf_path {
-            let conf_path = &p.display().to_string();
-            t.push_entry_string("conf_path", conf_path);
-        }
-        t
     }
 }
 
@@ -61,10 +46,7 @@ struct DefaultManifestContext<'a> {
 
 impl<'a> From<&'a Metadata> for DefaultManifestContext<'a> {
     fn from(m: &'a Metadata) -> Self {
-        let formatter = m.formatter.as_ref().and_then(|formatter| match formatter {
-            Formatter::PgFormatter(pgf) => Some(SerializableTomlTable::from(pgf)),
-            Formatter::SqlFormatRs(_) => None,
-        });
+        let formatter = m.formatter.as_ref().and_then(|f| f.config_toml_table());
         let name_tagger = m.name_tagger.as_ref().map(NameTaggerContext::from);
         Self {
             placeholder: m.placeholder.label(),

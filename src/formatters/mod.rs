@@ -1,10 +1,11 @@
-use crate::error::Error;
+use crate::{error::Error, toml::SerializableTomlTable};
 pub use pg_format::PgFormatter;
 use sqlformat_rs::SqlFormat;
 use toml::Value;
 
-use self::external::ExternalFormatter;
+use self::{config::Configurable, external::ExternalFormatter};
 
+mod config;
 mod external;
 mod pg_format;
 mod sqlformat_rs;
@@ -41,6 +42,13 @@ impl Formatter {
         match self {
             Self::PgFormatter(p) => p.format(sql),
             Self::SqlFormatRs(f) => f.format(sql),
+        }
+    }
+
+    pub fn config_toml_table(&self) -> Option<SerializableTomlTable> {
+        match self {
+            Self::PgFormatter(p) => Some(p.to_toml_table()),
+            _ => None,
         }
     }
 

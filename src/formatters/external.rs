@@ -5,9 +5,11 @@ use std::thread;
 
 use toml::Value;
 
+use super::config::Configurable;
+
 /// Trait for formatters that are installed as external programs.
 #[allow(unused)]
-pub trait ExternalFormatter<'a>: TryFrom<&'a Value> {
+pub trait ExternalFormatter<'a>: TryFrom<&'a Value> + Configurable {
     /// Returns path to the executable
     fn executable(&self) -> &Path;
 

@@ -1,10 +1,11 @@
 use crate::error::{parse_error, Error};
-use crate::toml::decode_pathbuf;
+use crate::toml::{decode_pathbuf, SerializableTomlTable};
 use std::cell::OnceCell;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use toml::Value;
 
+use super::config::Configurable;
 use super::external::ExternalFormatter;
 
 /// Provides an abstraction for formatting sql using the `pgFormatter`
@@ -74,6 +75,21 @@ impl PgFormatter {
         } else {
             None
         }
+    }
+}
+
+impl Configurable for PgFormatter {
+    fn to_toml_table(&self) -> SerializableTomlTable {
+        let mut t = SerializableTomlTable::new("formatter.pgFormatter");
+        t.push_comment("(required) Location of the pg_format executable");
+        let exec_path = &self.exec_path.display().to_string();
+        t.push_entry_string("exec_path", exec_path);
+        t.push_comment("(optional) path to the pg_format conf file.");
+        if let Some(p) = &self.conf_path {
+            let conf_path = &p.display().to_string();
+            t.push_entry_string("conf_path", conf_path);
+        }
+        t
     }
 }
 
