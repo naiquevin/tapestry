@@ -48,7 +48,7 @@ impl Formatter {
     pub fn config_toml_table(&self) -> Option<SerializableTomlTable> {
         match self {
             Self::PgFormatter(p) => Some(p.to_toml_table()),
-            _ => None,
+            Self::SqlFormatRs(f) => Some(f.to_toml_table()),
         }
     }
 
@@ -59,7 +59,7 @@ impl Formatter {
         } else {
             // Check for more formatting tools here when support for
             // them is added.
-            None
+            Some(Self::SqlFormatRs(SqlFormat::default()))
         }
     }
 }

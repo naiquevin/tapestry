@@ -102,6 +102,18 @@ impl SerializableTomlTable {
         self.lines.push(entry)
     }
 
+    pub fn push_entry_i64(&mut self, key: &str, value: i64) {
+        let v = Value::Integer(value);
+        let entry = SerializableTomlTableLine::Entry(key.to_owned(), v);
+        self.lines.push(entry)
+    }
+
+    pub fn push_entry_bool(&mut self, key: &str, value: bool) {
+        let v = Value::Boolean(value);
+        let entry = SerializableTomlTableLine::Entry(key.to_owned(), v);
+        self.lines.push(entry)
+    }
+
     pub fn push_comment(&mut self, msg: &str) {
         let comment = SerializableTomlTableLine::Comment(msg.to_owned());
         self.lines.push(comment)
