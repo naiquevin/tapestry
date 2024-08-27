@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use crate::{error::Error, toml::SerializableTomlTable};
 pub use pg_format::PgFormatter;
 use sqlformat_rs::SqlFormat;
@@ -62,4 +64,32 @@ impl Formatter {
             Some(Self::SqlFormatRs(SqlFormat::default()))
         }
     }
+
+    #[allow(unused)]
+    pub fn executable(&self) -> Option<&Path> {
+        match self {
+            Self::PgFormatter(p) => Some(p.executable()),
+            Self::SqlFormatRs(_) => None,
+        }
+    }
+}
+
+
+/// Returns an ordered vec of formatters discovered on the system.
+///
+/// It includes the builtin sqlformat as well, and it's the first item
+/// in the result
+#[allow(unused)]
+pub fn discover_available_formatters() -> Vec<Formatter> {
+    let mut formatters = vec![];
+    // @NOTE: The following order needs to be maintained
+
+    // 1. builtin formatter sqlformat
+    formatters.push(Formatter::SqlFormatRs(SqlFormat::default()));
+
+    // 2. pgFormatter
+    if let Some(pgf) = PgFormatter::discover() {
+        formatters.push(Formatter::PgFormatter(pgf));
+    }
+    formatters
 }

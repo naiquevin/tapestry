@@ -76,6 +76,15 @@ impl PgFormatter {
             None
         }
     }
+
+    pub fn discover() -> Option<Self> {
+        let f = Self::new(PathBuf::from("pg_format"), None);
+        if f.check() {
+            Some(f)
+        } else {
+            None
+        }
+    }
 }
 
 impl Configurable for PgFormatter {
