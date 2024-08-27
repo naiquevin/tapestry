@@ -5,11 +5,12 @@ pub use pg_format::PgFormatter;
 use sqlformat_rs::SqlFormat;
 use toml::Value;
 
-use self::{config::Configurable, external::ExternalFormatter};
+use self::{config::Configurable, external::ExternalFormatter, sqlfluff::SqlFluff};
 
 mod config;
 mod external;
 mod pg_format;
+mod sqlfluff;
 mod sqlformat_rs;
 mod util;
 
@@ -22,6 +23,7 @@ mod util;
 pub enum Formatter {
     PgFormatter(PgFormatter),
     SqlFormatRs(SqlFormat),
+    SqlFluff(SqlFluff),
 }
 
 impl Formatter {
@@ -30,6 +32,9 @@ impl Formatter {
             Some(t) => {
                 if let Some(v) = t.get("pgFormatter") {
                     return PgFormatter::try_from(v).map(|f| Some(Self::PgFormatter(f)));
+                }
+                if let Some(v) = t.get("sqlfluff") {
+                    return SqlFluff::try_from(v).map(|f| Some(Self::SqlFluff(f)));
                 }
                 if let Some(v) = t.get("sqlformat-rs") {
                     return SqlFormat::try_from(v).map(|f| Some(Self::SqlFormatRs(f)));
@@ -43,6 +48,7 @@ impl Formatter {
     pub fn format(&self, sql: &str) -> Vec<u8> {
         match self {
             Self::PgFormatter(p) => p.format(sql),
+            Self::SqlFluff(f) => f.format(sql),
             Self::SqlFormatRs(f) => f.format(sql),
         }
     }
@@ -50,6 +56,7 @@ impl Formatter {
     pub fn config_toml_table(&self) -> Option<SerializableTomlTable> {
         match self {
             Self::PgFormatter(p) => Some(p.to_toml_table()),
+            Self::SqlFluff(f) => Some(f.to_toml_table()),
             Self::SqlFormatRs(f) => Some(f.to_toml_table()),
         }
     }
@@ -57,6 +64,7 @@ impl Formatter {
     pub fn executable(&self) -> Option<&Path> {
         match self {
             Self::PgFormatter(p) => Some(p.executable()),
+            Self::SqlFluff(f) => Some(f.executable()),
             Self::SqlFormatRs(_) => None,
         }
     }
@@ -76,6 +84,11 @@ pub fn discover_available_formatters() -> Vec<Formatter> {
     // 2. pgFormatter
     if let Some(pgf) = PgFormatter::discover() {
         formatters.push(Formatter::PgFormatter(pgf));
+    }
+
+    // 3. sqlfluff
+    if let Some(sf) = SqlFluff::discover() {
+        formatters.push(Formatter::SqlFluff(sf));
     }
     formatters
 }

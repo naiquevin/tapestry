@@ -83,6 +83,7 @@ fn write_formatter_configs(dir: &Path, formatter: Option<&Formatter>) -> Result<
                         .map_err(Error::Io)?;
                 }
             }
+            Formatter::SqlFluff(_) => {}
             Formatter::SqlFormatRs(_) => {}
         }
     }
