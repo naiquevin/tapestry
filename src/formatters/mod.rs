@@ -1,11 +1,11 @@
-use std::path::Path;
-
+use self::config::Configurable;
+use self::external::ExternalFormatter;
+use self::sqlfluff::SqlFluff;
 use crate::{error::Error, toml::SerializableTomlTable};
 pub use pg_format::PgFormatter;
 use sqlformat_rs::SqlFormat;
+use std::path::Path;
 use toml::Value;
-
-use self::{config::Configurable, external::ExternalFormatter, sqlfluff::SqlFluff};
 
 mod config;
 mod external;
@@ -19,6 +19,7 @@ mod util;
 /// This indirection is just a provision for plugging in sql
 /// formatting tools other than PgFormatter. But at present, only
 /// `PgFormatter` is supported.
+#[allow(clippy::enum_variant_names)]
 #[derive(Debug)]
 pub enum Formatter {
     PgFormatter(PgFormatter),

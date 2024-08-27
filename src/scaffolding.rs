@@ -72,6 +72,7 @@ fn write_manifest(path: &Path, metadata: &Metadata) -> Result<(), Error> {
     Ok(())
 }
 
+// @TODO: Move this inside the formatter module
 fn write_formatter_configs(dir: &Path, formatter: Option<&Formatter>) -> Result<(), Error> {
     if let Some(f) = formatter {
         match f {

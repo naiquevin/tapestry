@@ -15,7 +15,7 @@ fn default_format_options() -> FormatOptions {
     FormatOptions {
         indent: Indent::Spaces(4),
         uppercase: true,
-        lines_between_queries: 1
+        lines_between_queries: 1,
     }
 }
 
