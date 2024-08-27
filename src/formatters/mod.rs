@@ -62,7 +62,6 @@ impl Formatter {
     }
 }
 
-
 /// Returns an ordered vec of formatters discovered on the system.
 ///
 /// It includes the builtin sqlformat as well, and it's the first item

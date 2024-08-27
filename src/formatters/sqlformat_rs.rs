@@ -1,4 +1,7 @@
-use crate::{error::{parse_error, Error}, toml::SerializableTomlTable};
+use crate::{
+    error::{parse_error, Error},
+    toml::SerializableTomlTable,
+};
 use sqlformat::{FormatOptions, Indent, QueryParams};
 use toml::Value;
 
@@ -54,7 +57,9 @@ impl TryFrom<&Value> for SqlFormat {
 
 impl Default for SqlFormat {
     fn default() -> Self {
-        Self { options: default_format_options() }
+        Self {
+            options: default_format_options(),
+        }
     }
 }
 

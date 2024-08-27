@@ -95,7 +95,9 @@ struct FormatterChoice {
 
 impl FormatterChoice {
     fn new(formatter: Formatter) -> Self {
-        Self { formatter: Some(formatter) }
+        Self {
+            formatter: Some(formatter),
+        }
     }
 
     fn none() -> Self {
@@ -106,34 +108,28 @@ impl FormatterChoice {
 impl Display for FormatterChoice {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let txt = match &self.formatter {
-            Some(formatter) => {
-                match formatter.executable() {
-                    Some(exec_path) => {
-                        if exec_path.has_root() {
-                            let tool_name = exec_path.file_name().unwrap();
-                            format!("{} ({})", tool_name.to_string_lossy(), exec_path.display())
-                        } else {
-                            exec_path.display().to_string()
-                        }
-                    }
-                    None => {
-                        if let Formatter::SqlFormatRs(_) = formatter {
-                            "sqlformat (built-in)".to_owned()
-                        } else {
-                            panic!("Should never happen")
-                        }
+            Some(formatter) => match formatter.executable() {
+                Some(exec_path) => {
+                    if exec_path.has_root() {
+                        let tool_name = exec_path.file_name().unwrap();
+                        format!("{} ({})", tool_name.to_string_lossy(), exec_path.display())
+                    } else {
+                        exec_path.display().to_string()
                     }
                 }
-            }
-            None => {
-                "None (no formatting)".to_owned()
-            }
-        }
-        ;
+                None => {
+                    if let Formatter::SqlFormatRs(_) = formatter {
+                        "sqlformat (built-in)".to_owned()
+                    } else {
+                        panic!("Should never happen")
+                    }
+                }
+            },
+            None => "None (no formatting)".to_owned(),
+        };
         write!(f, "{txt}")
     }
 }
-
 
 pub fn init_project(dir: &Path) -> Result<(), Error> {
     // Create the project root dir
