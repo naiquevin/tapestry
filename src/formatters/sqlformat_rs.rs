@@ -12,11 +12,11 @@ use super::config::Configurable;
 /// Note that the `FormatOptions` struct implements the Default trait,
 /// but tapestry's default for sqlformat-rs are different from those.
 fn default_format_options() -> FormatOptions {
-    let mut opts = FormatOptions::default();
-    opts.indent = Indent::Spaces(4);
-    opts.uppercase = true;
-    opts.lines_between_queries = 1;
-    opts
+    FormatOptions {
+        indent: Indent::Spaces(4),
+        uppercase: true,
+        lines_between_queries: 1
+    }
 }
 
 #[derive(Debug)]
