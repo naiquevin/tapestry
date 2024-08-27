@@ -1,11 +1,12 @@
 use crate::error::Error;
-use crate::formatters::Formatter;
+use crate::formatters::{discover_available_formatters, Formatter};
 use crate::metadata::Metadata;
 use crate::tagging::NameTagger;
 use crate::toml::SerializableTomlTable;
 use minijinja::Environment;
 use serde::Serialize;
 use std::convert::From;
+use std::fmt::{self, Display};
 use std::fs;
 use std::path::Path;
 
@@ -88,6 +89,52 @@ fn write_formatter_configs(dir: &Path, formatter: Option<&Formatter>) -> Result<
     Ok(())
 }
 
+struct FormatterChoice {
+    formatter: Option<Formatter>,
+}
+
+impl FormatterChoice {
+    fn new(formatter: Formatter) -> Self {
+        Self { formatter: Some(formatter) }
+    }
+
+    fn none() -> Self {
+        Self { formatter: None }
+    }
+}
+
+impl Display for FormatterChoice {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let txt = match &self.formatter {
+            Some(formatter) => {
+                match formatter.executable() {
+                    Some(exec_path) => {
+                        if exec_path.has_root() {
+                            let tool_name = exec_path.file_name().unwrap();
+                            format!("{} ({})", tool_name.to_string_lossy(), exec_path.display())
+                        } else {
+                            exec_path.display().to_string()
+                        }
+                    }
+                    None => {
+                        if let Formatter::SqlFormatRs(_) = formatter {
+                            "sqlformat (built-in)".to_owned()
+                        } else {
+                            panic!("Should never happen")
+                        }
+                    }
+                }
+            }
+            None => {
+                "None (no formatting)".to_owned()
+            }
+        }
+        ;
+        write!(f, "{txt}")
+    }
+}
+
+
 pub fn init_project(dir: &Path) -> Result<(), Error> {
     // Create the project root dir
     create_project_dir(dir)?;
@@ -95,29 +142,23 @@ pub fn init_project(dir: &Path) -> Result<(), Error> {
     // Default metadata
     let mut metadata = Metadata::default();
 
-    // Check if any formating tool is installed on the system
-    metadata.formatter = Formatter::discover();
+    let available_formatters = discover_available_formatters();
+    let mut formatter_choices = available_formatters
+        .into_iter()
+        .map(FormatterChoice::new)
+        .collect::<Vec<FormatterChoice>>();
+    // Add None as an option at the start of the list
+    formatter_choices.insert(0, FormatterChoice::none());
 
-    // @TODO: Here we will allow the user to choose the formatter
-    // smartly as follows:
-    //
-    //  1. We will find out which all formatters supported by tapestry
-    //     are installed on the user's system and collect them into a
-    //     list
-    //
-    //  2. By default, the 'sqlformat-rs' option will be added to this
-    //     list. This is to handle the case where the user has no
-    //     external formatters installed on the system
-    //
-    //  3. A `None` option will also be added to this list, in case
-    //     the user prefers to not format the sql at all (why?)
-    //
-    //  4. Then we will prompt the user to select one among them (the
-    //     inquire crate can be used for this).
-    //
-    //  5. Config for the selected formatter will be added to the
-    //     manifest file.
-    //
+    let ans = inquire::Select::new("Choose an SQL formatter", formatter_choices)
+        // Set starting cursor to 1, to show 'sqlformat' selected by
+        // default
+        .with_starting_cursor(1)
+        .with_help_message("The above SQL formatters were found on your system and available for use. Choose one or None to opt out of formatting")
+        .prompt()
+        .expect("Error when selecting SQL formatter. Please try again");
+
+    metadata.formatter = ans.formatter;
 
     // Create the manifest file
     let manifest_path = dir.join("tapestry.toml");

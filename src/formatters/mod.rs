@@ -54,18 +54,6 @@ impl Formatter {
         }
     }
 
-    pub fn discover() -> Option<Self> {
-        let pg_format = PgFormatter::new_if_exists().map(Self::PgFormatter);
-        if pg_format.is_some() {
-            pg_format
-        } else {
-            // Check for more formatting tools here when support for
-            // them is added.
-            Some(Self::SqlFormatRs(SqlFormat::default()))
-        }
-    }
-
-    #[allow(unused)]
     pub fn executable(&self) -> Option<&Path> {
         match self {
             Self::PgFormatter(p) => Some(p.executable()),
@@ -79,7 +67,6 @@ impl Formatter {
 ///
 /// It includes the builtin sqlformat as well, and it's the first item
 /// in the result
-#[allow(unused)]
 pub fn discover_available_formatters() -> Vec<Formatter> {
     let mut formatters = vec![];
     // @NOTE: The following order needs to be maintained

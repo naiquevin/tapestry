@@ -10,6 +10,7 @@ rust-version = "1.70.0"
 clap = { version = "4.5.4", features = ["derive"] }
 comfy-table = "7.1.1"
 env_logger = "0.11.3"
+inquire = "0.7.5"
 log = "0.4.21"
 minijinja = { version = "1.0.15", features = ["loader"] }
 regex = "1.10.4"

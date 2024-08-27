@@ -2,7 +2,6 @@ use crate::error::{parse_error, Error};
 use crate::toml::{decode_pathbuf, SerializableTomlTable};
 use std::cell::OnceCell;
 use std::path::{Path, PathBuf};
-use std::process::{Command, Stdio};
 use toml::Value;
 
 use super::config::Configurable;
@@ -59,26 +58,11 @@ impl PgFormatter {
         }
     }
 
-    pub fn new_if_exists() -> Option<Self> {
-        let mut command = Command::new("pg_format");
-        let status = command
-            .arg("-v")
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .status()
-            .expect("Failed to spawn child process");
-        if status.success() {
-            Some(Self::new(
-                PathBuf::from(command.get_program()),
-                Some(PathBuf::from("./.pg_format/config")),
-            ))
-        } else {
-            None
-        }
-    }
-
     pub fn discover() -> Option<Self> {
-        let f = Self::new(PathBuf::from("pg_format"), None);
+        let f = Self::new(
+            PathBuf::from("pg_format"),
+            Some(PathBuf::from("./.pg_format/config")),
+        );
         if f.check() {
             Some(f)
         } else {
