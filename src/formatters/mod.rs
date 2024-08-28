@@ -69,6 +69,15 @@ impl Formatter {
             Self::SqlFormatRs(_) => None,
         }
     }
+
+    pub fn generate_config_file(&self, dir: &Path) -> Result<(), Error> {
+        let res = match self {
+            Self::PgFormatter(p) => p.generate_config_file(dir),
+            Self::SqlFormatRs(f) => f.generate_config_file(dir),
+            Self::SqlFluff(f) => f.generate_config_file(dir),
+        };
+        res.map_err(Error::Io)
+    }
 }
 
 /// Returns an ordered vec of formatters discovered on the system.

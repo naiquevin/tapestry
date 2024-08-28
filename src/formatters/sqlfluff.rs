@@ -37,6 +37,11 @@ impl Configurable for SqlFluff {
         t.push_entry_string("exec_path", &exec_path);
         t
     }
+
+    fn config_file(&self) -> Option<(&Path, &'static str)> {
+        // @TODO: Implement code to create the `.sqlfluff` config file
+        None
+    }
 }
 
 impl ExternalFormatter<'_> for SqlFluff {

@@ -72,25 +72,6 @@ fn write_manifest(path: &Path, metadata: &Metadata) -> Result<(), Error> {
     Ok(())
 }
 
-// @TODO: Move this inside the formatter module
-fn write_formatter_configs(dir: &Path, formatter: Option<&Formatter>) -> Result<(), Error> {
-    if let Some(f) = formatter {
-        match f {
-            Formatter::PgFormatter(pgf) => {
-                if let Some(p) = &pgf.conf_path {
-                    let conf_path = dir.join(p);
-                    fs::create_dir(conf_path.parent().unwrap()).map_err(Error::Io)?;
-                    fs::write(conf_path, include_str!("../defaults/pg_format.config"))
-                        .map_err(Error::Io)?;
-                }
-            }
-            Formatter::SqlFluff(_) => {}
-            Formatter::SqlFormatRs(_) => {}
-        }
-    }
-    Ok(())
-}
-
 struct FormatterChoice {
     formatter: Option<Formatter>,
 }
@@ -167,7 +148,9 @@ pub fn init_project(dir: &Path) -> Result<(), Error> {
     fs::create_dir_all(dir.join(&metadata.test_templates_dir)).map_err(Error::Io)?;
 
     // Create formatter config files if applicable
-    write_formatter_configs(dir, metadata.formatter.as_ref())?;
+    if let Some(formatter) = metadata.formatter {
+        formatter.generate_config_file(dir)?;
+    }
 
     Ok(())
 }

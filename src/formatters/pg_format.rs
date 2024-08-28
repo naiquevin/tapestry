@@ -84,6 +84,12 @@ impl Configurable for PgFormatter {
         }
         t
     }
+
+    fn config_file(&self) -> Option<(&Path, &'static str)> {
+        self.conf_path
+            .as_deref()
+            .map(|p| (p, include_str!("../../defaults/pg_format.config")))
+    }
 }
 
 impl ExternalFormatter<'_> for PgFormatter {

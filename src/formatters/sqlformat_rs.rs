@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use crate::{
     error::{parse_error, Error},
     toml::SerializableTomlTable,
@@ -79,5 +81,9 @@ impl Configurable for SqlFormat {
         t.push_comment("(optional) No. of line breaks after a query");
         t.push_entry_i64("lines_between_queries", 1);
         t
+    }
+
+    fn config_file(&self) -> Option<(&Path, &'static str)> {
+        None
     }
 }
