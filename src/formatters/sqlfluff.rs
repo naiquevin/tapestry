@@ -39,8 +39,7 @@ impl Configurable for SqlFluff {
     }
 
     fn config_file(&self) -> Option<(&Path, &'static str)> {
-        // @TODO: Implement code to create the `.sqlfluff` config file
-        None
+        Some((Path::new(".sqlfluff"), include_str!("../../defaults/sqlfluff.config")))
     }
 }
 
@@ -50,7 +49,7 @@ impl ExternalFormatter<'_> for SqlFluff {
     }
 
     fn format_args(&self) -> Vec<&str> {
-        vec!["format", "--dialect", "postgres", "-"]
+        vec!["format", "--nocolor", "--disable-progress-bar", "-"]
     }
 
     fn check_args(&self) -> Vec<&str> {
