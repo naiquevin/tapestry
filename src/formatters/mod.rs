@@ -1,5 +1,6 @@
 use self::config::Configurable;
 use self::external::ExternalFormatter;
+use self::sql_formatter::SqlFormatter;
 use self::sqlfluff::SqlFluff;
 use crate::{error::Error, toml::SerializableTomlTable};
 pub use pg_format::PgFormatter;
@@ -10,6 +11,7 @@ use toml::Value;
 mod config;
 mod external;
 mod pg_format;
+mod sql_formatter;
 mod sqlfluff;
 mod sqlformat_rs;
 mod util;
@@ -24,6 +26,7 @@ mod util;
 pub enum Formatter {
     PgFormatter(PgFormatter),
     SqlFormatRs(SqlFormat),
+    SqlFormatter(SqlFormatter),
     SqlFluff(SqlFluff),
 }
 
@@ -33,6 +36,9 @@ impl Formatter {
             Some(t) => {
                 if let Some(v) = t.get("pgFormatter") {
                     return PgFormatter::try_from(v).map(|f| Some(Self::PgFormatter(f)));
+                }
+                if let Some(v) = t.get("sql-formatter") {
+                    return SqlFormatter::try_from(v).map(|f| Some(Self::SqlFormatter(f)));
                 }
                 if let Some(v) = t.get("sqlfluff") {
                     return SqlFluff::try_from(v).map(|f| Some(Self::SqlFluff(f)));
@@ -49,6 +55,7 @@ impl Formatter {
     pub fn format(&self, sql: &str) -> Vec<u8> {
         match self {
             Self::PgFormatter(p) => p.format(sql),
+            Self::SqlFormatter(f) => f.format(sql),
             Self::SqlFluff(f) => f.format(sql),
             Self::SqlFormatRs(f) => f.format(sql),
         }
@@ -57,6 +64,7 @@ impl Formatter {
     pub fn config_toml_table(&self) -> Option<SerializableTomlTable> {
         match self {
             Self::PgFormatter(p) => Some(p.to_toml_table()),
+            Self::SqlFormatter(f) => Some(f.to_toml_table()),
             Self::SqlFluff(f) => Some(f.to_toml_table()),
             Self::SqlFormatRs(f) => Some(f.to_toml_table()),
         }
@@ -65,6 +73,7 @@ impl Formatter {
     pub fn executable(&self) -> Option<&Path> {
         match self {
             Self::PgFormatter(p) => Some(p.executable()),
+            Self::SqlFormatter(f) => Some(f.executable()),
             Self::SqlFluff(f) => Some(f.executable()),
             Self::SqlFormatRs(_) => None,
         }
@@ -73,6 +82,7 @@ impl Formatter {
     pub fn generate_config_file(&self, dir: &Path) -> Result<(), Error> {
         let res = match self {
             Self::PgFormatter(p) => p.generate_config_file(dir),
+            Self::SqlFormatter(f) => f.generate_config_file(dir),
             Self::SqlFormatRs(f) => f.generate_config_file(dir),
             Self::SqlFluff(f) => f.generate_config_file(dir),
         };
@@ -96,7 +106,12 @@ pub fn discover_available_formatters() -> Vec<Formatter> {
         formatters.push(Formatter::PgFormatter(pgf));
     }
 
-    // 3. sqlfluff
+    // 3. sql-formatter
+    if let Some(sqlf) = SqlFormatter::discover() {
+        formatters.push(Formatter::SqlFormatter(sqlf));
+    }
+
+    // 4. sqlfluff
     if let Some(sf) = SqlFluff::discover() {
         formatters.push(Formatter::SqlFluff(sf));
     }
