@@ -1,17 +1,17 @@
 # Configuring pg_format
 
-`tapestry` relies on [`pg_format`]() for formatting the rendered SQL
-files. This makes sure that,
+`tapestry` can be configured to use [`pg_format`]() for formatting the
+rendered SQL files. This makes sure that,
 
 * the rendered SQL files have consistent indentation
 * you don't need to worry about SQL indentation when writing Jinja
   templates
 
-However, `pg_format` is not a hard requirement for `tapestry`. If
-`pg_format` is not installed on your system at the time of running
-[`tapestry init`](commands.md/#init) command, the
-[`formatter.pgFormatter`](manifest.md/#formatterpgformatter) section
-will not be added in the auto-generated manifest file.
+It can be installed on MacOS as follows,
+
+```bash
+brew install pgformatter
+```
 
 The behavior of `pg_format` tool in the context of `tapestry` can be
 configured by adding a config file. The [sample config

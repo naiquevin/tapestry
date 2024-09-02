@@ -22,7 +22,11 @@ nav:
       - Query Tags: user-guide/query-tags.md
       - Naming conventions: user-guide/naming-conventions.md
       - Commands: user-guide/commands.md
-      - pg_format: user-guide/pg-format.md
+      - SQL formatting:
+        - Overview: user-guide/formatting.md
+        - sqlformat: user-guide/sqlformat-rs.md
+        - pg_format: user-guide/pg-format.md
+        - sqlfluff: user-guide/sqlfluff.md
       - Docker: user-guide/docker.md
   - Rationale: rationale.md
 

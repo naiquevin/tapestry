@@ -35,6 +35,23 @@ cd ~/
 tapestry init chinook
 ```
 
+_**New in version 0.2.0**_
+
+Running `init` will prompt you to choose an sql formatter.
+
+```shell
+? Choose an SQL formatter
+  None (no formatting)
+  sqlformat (built-in)
+> pg_format
+  sqlfluff
+[The above SQL formatters were found on your system and available for use. Choose one or None to opt out of formatting]
+```
+
+This example assumes that `pg_format` is chosen as the preferred
+formatter. For more details about SQL formatting support, see [SQL
+formatting](formatting.md).
+
 This will create a directory named `chinook` with following structure,
 
 ```shell
