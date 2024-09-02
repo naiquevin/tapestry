@@ -39,7 +39,10 @@ impl Configurable for SqlFluff {
     }
 
     fn config_file(&self) -> Option<(&Path, &'static str)> {
-        Some((Path::new(".sqlfluff"), include_str!("../../defaults/sqlfluff.config")))
+        Some((
+            Path::new(".sqlfluff"),
+            include_str!("../../defaults/sqlfluff.config"),
+        ))
     }
 }
 
