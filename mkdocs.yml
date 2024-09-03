@@ -27,6 +27,7 @@ nav:
         - sqlformat: user-guide/sqlformat-rs.md
         - pg_format: user-guide/pg-format.md
         - sqlfluff: user-guide/sqlfluff.md
+        - sql-formatter: user-guide/sql-formatter.md
       - Docker: user-guide/docker.md
   - Rationale: rationale.md
 

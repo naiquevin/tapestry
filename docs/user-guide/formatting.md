@@ -37,6 +37,7 @@ $ tapestry init myproject
   None (no formatting)
 > sqlformat (built-in)
   pg_format
+  sql-formatter
   sqlfluff
 [The above SQL formatters were found on your system and available for use. Choose one or None to opt out of formatting]
 ```
@@ -53,6 +54,8 @@ altogether.
 - [sqlformat](sqlformat-rs.md)
 
 - [pg_format](pg-format.md)
+
+- [sql-formatter](sql-formatter.md)
 
 - [sqlfluff](sqlfluff.md)
 
