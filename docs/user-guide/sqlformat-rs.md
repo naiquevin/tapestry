@@ -13,9 +13,10 @@ It provides 3 basic config options:
 
 3. `lines_between_queries`: No. of empty lines between two queries.
 
-During project initialization, if you choose `sqlformat` as the
-preferred formatter, then following lines will be added to your
-`tapestry.toml` file.
+During project initialization, `sqlformat` is shown as one of the
+options, besides other external formatters. Upon choosing it as the
+preferred formatter, following lines are added to the `tapestry.toml`
+manifest file.
 
 ```toml
 [formatter.sqlformat-rs]

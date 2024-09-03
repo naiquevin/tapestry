@@ -11,8 +11,9 @@ The configuration options for `sqlfluff` are quite extensive and well
 documented -
 https://docs.sqlfluff.com/en/stable/configuration/index.html.
 
-During project initialization, if you choose `sqlfluff` as the
-preferred formatter, then following lines will be added to your
+During project initialization, if `sqlfluff` is found installed on
+your system (and in `$PATH`), it will be shown as one of the formatter
+options. Upon choosing it, following lines will be added to the
 `tapestry.toml` manifest file.
 
 ```toml
