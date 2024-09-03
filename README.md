@@ -77,14 +77,10 @@ Notable sections:
 - [Installation](https://naiquevin.github.io/tapestry/user-guide/install/)
 - [Getting started](https://naiquevin.github.io/tapestry/user-guide/getting-started/)
 - [Commands](https://naiquevin.github.io/tapestry/user-guide/commands/)
+- [SQL formatting](https://naiquevin.github.io/tapestry/user-guide/formatting/)
 - [Docker/Podman based testing workflow](https://naiquevin.github.io/tapestry/user-guide/docker/)
 
 LICENSE
 -------
 
 MIT (See [LICENSE](LICENSE)).
-
-
-
-
-
