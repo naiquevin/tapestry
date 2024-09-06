@@ -143,7 +143,7 @@ impl Query {
     /// # Panics
     ///
     /// 1. This fn assumes that the template path is valid unicode and
-    /// will panic if that's not the case.
+    ///    will panic if that's not the case.
     ///
     /// 2. If the path ends in `..`
     ///
