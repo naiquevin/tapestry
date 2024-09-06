@@ -97,18 +97,10 @@ pub fn render() -> Result<i32, Error> {
 }
 
 pub fn init(dir: &Path) -> Result<i32, Error> {
-    match scaffolding::init_project(dir) {
-        Ok(()) => {
-            println!("New tapestry project initialized at: {}", dir.display());
-            Ok(0)
-        }
-        Err(Error::Scaffolding(emsg)) => {
-            eprintln!("Error initializing new tapestry project");
-            eprintln!("Reason: {emsg}");
-            Ok(1)
-        }
-        Err(e) => Err(e),
-    }
+    scaffolding::init_project(dir).map(|_| {
+        println!("New tapestry project initialized at: {}", dir.display());
+        0
+    })
 }
 
 pub fn summary(include_all: bool) -> Result<i32, Error> {
