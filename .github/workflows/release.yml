@@ -1,0 +1,138 @@
+---
+
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        type: string
+        description: "Release version (tag)"
+        required: true
+      dry-run:
+        type: choice
+        description: "Dry Run"
+        options:
+          - "no"
+          - "yes"
+        required: true
+
+# Set permissions to be able to create releases
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    name: create-release
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Inputs from workflow dispatch
+        shell: bash
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          echo "TAPESTRY_VERSION=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          echo "TAPESTRY_DRY_RUN=${{ github.event.inputs.dry-run }}" >> $GITHUB_ENV
+          echo "TAPESTRY_VERSION: ${{ github.event.inputs.version }}"
+          echo "TAPESTRY_DRY_RUN: ${{ github.event.inputs.dry-run }}"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        if: ${{ github.event_name == 'workflow_dispatch'}}
+        with:
+          ref: ${{ github.event.inputs.version }}
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        if: ${{ github.event_name != 'workflow_dispatch'}}
+
+      - name: Get the release version from the tag
+        shell: bash
+        if: env.TAPESTRY_VERSION == ''
+        run: |
+          echo "TAPESTRY_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Show the version
+        run: |
+          echo "version is: $TAPESTRY_VERSION"
+
+      - name: Check that tag version and Cargo.toml version are the same
+        shell: bash
+        run: |
+          # Here we're doing a bare minimum check to ensure tag and
+          # version in Cargo.toml is the same. A proper check will
+          # again be done later at the time of building the artifact.
+          if ! grep -qE "^version = \"$TAPESTRY_VERSION\"$" Cargo.toml; then
+            echo "version does not match Cargo.toml" >&2
+            exit 1
+          fi
+
+      - name: Create Github release (draft)
+        if: env.TAPESTRY_DRY_RUN != 'yes'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create $TAPESTRY_VERSION --draft --verify-tag --title $TAPESTRY_VERSION
+
+    outputs:
+      tapestry_version: ${{ env.TAPESTRY_VERSION }}
+      tapestry_dry_run: ${{ env.TAPESTRY_DRY_RUN }}
+
+
+  build-release:
+    name: build-release
+    needs: ['create-release']
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        include:
+          - build: linux
+            os: ubuntu-22.04
+            rust: 1.80.1
+            target: x86_64-unknown-linux-gnu
+          ## @TODO Cross compilation needed here
+          # - build: linux-arm
+          #   os: ubuntu-22.04
+          #   rust: stable
+          #   target: aarch64-unknown-linux-gnu
+          - build: macos
+            os: macos-12
+            rust: 1.80.1
+            target: x86_64-apple-darwin
+          ## @TODO Cross compilation needed here
+          # - build: macos-arm
+          #   os: macos-12
+          #   rust: stable
+          #   target: aarch64-apple-darwin
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.create-release.outputs.tapestry_version }}
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: ${{ matrix.target }}
+
+      - name: Build using the scripts/gh-build script
+        shell: bash
+        run: |
+          scripts/gh-build ${{ needs.create-release.outputs.tapestry_version }} ${{ matrix.target }}
+
+      - name: Upload release archive
+        if: ${{ needs.create-release.outputs.tapestry_dry_run != 'yes' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ needs.create-release.outputs.tapestry_version }}" "gh-release/tapestry-${{ matrix.target }}.gz"
+          gh release upload "${{ needs.create-release.outputs.tapestry_version }}" "gh-release/tapestry-${{ matrix.target }}.gz.sha256"
+
+      - name: Cleanup
+        if: ${{ needs.create-release.outputs.tapestry_dry_run != 'yes' }}
+        shell: bash
+        run: |
+          rm -r gh-release/
+          cargo clean

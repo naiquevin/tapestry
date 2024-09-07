@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+set -e
+
+version=$1
+target=$2
+
+# Ensure that tag exists for the version
+if [ -z $(git tag -l "$version") ]; then
+    echo "Git tag $version doesn't exist" >&2
+    exit 1
+fi
+
+# Ensure that the tag is the same as that in Cargo.toml manifest file
+if ! grep -qE "^version = \"$version\"$" Cargo.toml; then
+    echo "Version mismatch" >&2
+    exit 1
+fi
+
+# Ensure that target matches that of the current system (where it's
+# being built)
+current_target=$(rustc -vV | sed -n 's|host: ||p')
+if [ "$target" != $current_target ]; then
+    echo "Target mismatch $target != $current_target" >&2
+    exit 1
+fi
+
+# Ensure that the target is part of supported targets
+if [ -z $(rustc --print target-list | grep $target) ]; then
+    echo "Provided target is not supported" >&2
+    exit 1
+fi
+
+mkdir gh-release
+
+echo "Running cargo build"
+cargo build --release
+
+bin=tapestry-$target
+
+echo "Copying binary to ./gh-release"
+mv target/release/tapestry gh-release/$bin
+
+echo "Running gzip"
+gzip -f gh-release/$bin
+
+echo "Calculating sha256 checksum"
+shasum -a 256 gh-release/$bin.gz | awk '{ print $1 }' > gh-release/$bin.gz.sha256
+
+ls -lh gh-release/
+
+exit 0
