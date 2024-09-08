@@ -29,6 +29,10 @@ exec_path = "pg_format"
 ## (optional) path to the pg_format conf file.
 conf_path = "./.pg_format/config"
 
+## [formatter.sqlformat-rs]
+# indent = 4
+# uppercase = true
+
 ## Whether or not the generated SQL is to be name-tagged. Name tagging
 ## is required with libs such as yesql, aiosql. Remove this section to
 ## disable name tagging

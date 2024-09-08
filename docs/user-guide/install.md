@@ -9,19 +9,17 @@ cargo install --git https://github.com/naiquevin/tapestry.git
 
 ### Additional dependencies
 
-Tapestry depends on [pg_format](https://github.com/darold/pgFormatter)
-for formatting the generated SQL files. It's not a hard requirement
-but recommended.
+Tapestry can be configured to depend on external SQL formatting tools
+for formatting the generated SQL files. In that case, it expects the
+respective tool to be installed on the system.
 
-On MacOS, it can be installed using homebrew,
+Note that you need to install the formatting tools on the machine
+where you'd be rendering the SQL files using `tapestry` e.g. on your
+workstation and/or the build server.
 
-```shell
-brew install pgformatter
-```
-
-Note that you need to install `pg_format` on the machine where you'd
-be rendering the SQL files using `tapestry` e.g. on your workstation
-and/or the build server.
+But these are not hard requirements as tapestry also ships with a
+basic inbuilt SQL formatter so that the generated files will be
+properly formatted without the need of any external dependencies.
 
 ## Dependencies for running tests
 

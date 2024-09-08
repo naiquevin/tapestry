@@ -1,4 +1,5 @@
 use crate::error::{parse_error, Error};
+use serde::{Serialize, Serializer};
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use toml::Value;
@@ -58,5 +59,63 @@ pub fn decode_strset(value: &Value, key: &str) -> Result<HashSet<String>, Error>
             "Value of '{}' is expected to be an array of strings",
             key
         )),
+    }
+}
+
+// Abstractions for serializing simple toml tables
+
+enum SerializableTomlTableLine {
+    Entry(String, Value),
+    Comment(String),
+}
+
+impl Serialize for SerializableTomlTableLine {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let s = match self {
+            Self::Entry(k, v) => format!("{k} = {v}"),
+            Self::Comment(msg) => format!("# {msg}"),
+        };
+        serializer.serialize_str(s.as_str())
+    }
+}
+
+#[derive(Serialize)]
+pub struct SerializableTomlTable {
+    key_path: String,
+    lines: Vec<SerializableTomlTableLine>,
+}
+
+impl SerializableTomlTable {
+    pub fn new(key_path: &str) -> Self {
+        Self {
+            key_path: key_path.to_owned(),
+            lines: vec![],
+        }
+    }
+
+    pub fn push_entry_string(&mut self, key: &str, value: &str) {
+        let v = Value::String(value.to_owned());
+        let entry = SerializableTomlTableLine::Entry(key.to_owned(), v);
+        self.lines.push(entry)
+    }
+
+    pub fn push_entry_i64(&mut self, key: &str, value: i64) {
+        let v = Value::Integer(value);
+        let entry = SerializableTomlTableLine::Entry(key.to_owned(), v);
+        self.lines.push(entry)
+    }
+
+    pub fn push_entry_bool(&mut self, key: &str, value: bool) {
+        let v = Value::Boolean(value);
+        let entry = SerializableTomlTableLine::Entry(key.to_owned(), v);
+        self.lines.push(entry)
+    }
+
+    pub fn push_comment(&mut self, msg: &str) {
+        let comment = SerializableTomlTableLine::Comment(msg.to_owned());
+        self.lines.push(comment)
     }
 }

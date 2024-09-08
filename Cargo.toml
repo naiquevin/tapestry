@@ -2,6 +2,7 @@
 name = "tapestry"
 version = "0.1.1"
 edition = "2021"
+rust-version = "1.70.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -9,8 +10,10 @@ edition = "2021"
 clap = { version = "4.5.4", features = ["derive"] }
 comfy-table = "7.1.1"
 env_logger = "0.11.3"
+inquire = "0.7.5"
 log = "0.4.21"
 minijinja = { version = "1.0.15", features = ["loader"] }
 regex = "1.10.4"
 serde = { version = "1.0.201", features = ["derive"] }
+sqlformat = "0.2.4"
 toml = "0.8.12"
