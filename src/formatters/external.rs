@@ -28,7 +28,7 @@ pub trait ExternalFormatter<'a>: TryFrom<&'a Value> + Configurable {
     /// the result of `self.format_args` as arguments.
     fn format(&self, input: &str) -> Vec<u8> {
         let mut child = Command::new(self.executable())
-            .args(&self.format_args())
+            .args(self.format_args())
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .spawn()
@@ -55,7 +55,7 @@ pub trait ExternalFormatter<'a>: TryFrom<&'a Value> + Configurable {
     /// the return value of `self.check_args` as arguments.
     fn check(&self) -> bool {
         Command::new(self.executable())
-            .args(&self.check_args())
+            .args(self.check_args())
             .stdout(Stdio::null())
             .stderr(Stdio::null())
             .status()
