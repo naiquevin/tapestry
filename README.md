@@ -53,7 +53,14 @@ The first tag/version is yet to be created and released.
 Installation
 ------------
 
-You can install `tapestry` directly from github,
+Currently, binaries for `x86_64` arch for Linux and MacOS can be
+downloaded from the [Github release
+page](https://github.com/naiquevin/tapestry/releases). (Binaries for
+`arm/aarch64` platform and Windows OS are not available yet)
+
+If you have the rust tool chain installed on your machine, you can
+build and install `tapestry` directly from github (without having to
+clone the repo).
 
 ``` shell
 cargo install --git https://github.com/naiquevin/tapestry.git
@@ -61,9 +68,11 @@ cargo install --git https://github.com/naiquevin/tapestry.git
 
 ### Additional dependencies
 
-There's an additional dependency on
-[pg_format](https://github.com/darold/pgFormatter) for formatting the
-generated SQL files. It's recommended, but not a hard requirement.
+`tapestry` doesn't have any additional dependencies as such, but it
+can be optionally configured to depend on external SQL formatting
+tools. For more information, check the [SQL
+formatting](https://naiquevin.github.io/tapestry/user-guide/formatting/)
+page in docs.
 
 Read the docs
 -------------
