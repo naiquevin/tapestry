@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../commands/">
+        <link rel="prev" href="../sqlformat-rs/">
       
       
-        <link rel="next" href="../docker/">
+        <link rel="next" href="../sqlfluff/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -554,6 +554,88 @@
   
   
   
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_11" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_11" id="__nav_2_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    SQL formatting
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_11_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_11">
+            <span class="md-nav__icon md-icon"></span>
+            SQL formatting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formatting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sqlformat-rs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    sqlformat
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
@@ -619,6 +701,56 @@
     </ul>
   
 </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sqlfluff/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    sqlfluff
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql-formatter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    sql-formatter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -736,25 +868,33 @@
 
 
 <h1 id="configuring-pg_format">Configuring pg_format</h1>
-<p><code>tapestry</code> relies on <a href=""><code>pg_format</code></a> for formatting the rendered SQL
-files. This makes sure that,</p>
+<p><code>tapestry</code> can be configured to use <a href=""><code>pg_format</code></a> for formatting the
+rendered SQL files. This makes sure that,</p>
 <ul>
 <li>the rendered SQL files have consistent indentation</li>
 <li>you don't need to worry about SQL indentation when writing Jinja
   templates</li>
 </ul>
-<p>However, <code>pg_format</code> is not a hard requirement for <code>tapestry</code>. If
-<code>pg_format</code> is not installed on your system at the time of running
-<a href="../commands/#init"><code>tapestry init</code></a> command, the
-<a href="../manifest/#formatterpgformatter"><code>formatter.pgFormatter</code></a> section
-will not be added in the auto-generated manifest file.</p>
+<p>It can be installed on MacOS as follows,</p>
+<div class="highlight"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>pgformatter
+</code></pre></div>
+<p>During project initialization, if tapestry finds <code>pg_format</code>
+installed on your system (and in <code>$PATH</code>), it will show it as one of
+the formatter options. If you choose it, then following lines will be
+added to the <code>tapestry.toml</code> manifest file.</p>
+<div class="highlight"><pre><span></span><code><span class="k">[formatter.pgFormatter]</span>
+<span class="c1">## (required) Location of the pg_format executable</span>
+<span class="n">exec_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;pg_format&quot;</span>
+<span class="c1">## (optional) path to the pg_format conf file.</span>
+<span class="n">conf_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;./.pg_format/config&quot;</span>
+</code></pre></div>
 <p>The behavior of <code>pg_format</code> tool in the context of <code>tapestry</code> can be
 configured by adding a config file. The <a href="https://github.com/darold/pgFormatter/blob/master/doc/pg_format.conf.sample">sample config
 file</a>
 in the <code>pg_format</code> github repo can be used for reference.</p>
-<p>The default config file generated by <a href="../commands/#init"><code>tapestry
-init</code></a> command is located at <code>.pg_format/config</code>
-(relative to the manifest file) and looks like this,</p>
+<p>The <a href="../commands/#init"><code>tapestry init</code></a> command also generates a
+default config file, located at <code>.pg_format/config</code> (relative to the
+manifest file) and looks like this,</p>
 <div class="highlight"><pre><span></span><code># Lines between markers &#39;start(noformat)&#39; and &#39;end(noformat)&#39; will not
 # be formatted. If you want to customize the markers, you may do so by
 # modifying this parameter.

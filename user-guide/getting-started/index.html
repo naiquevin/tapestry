@@ -655,6 +655,86 @@
   
   
   
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_11" id="__nav_2_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    SQL formatting
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_11">
+            <span class="md-nav__icon md-icon"></span>
+            SQL formatting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../formatting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sqlformat-rs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    sqlformat
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
     <li class="md-nav__item">
       <a href="../pg-format/" class="md-nav__link">
         
@@ -665,6 +745,56 @@
   
 
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sqlfluff/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    sqlfluff
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sql-formatter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    sql-formatter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -853,6 +983,18 @@ you can run it from any suitable location e.g. the home dir <code>~/</code></p>
 <div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>~/
 tapestry<span class="w"> </span>init<span class="w"> </span>chinook
 </code></pre></div>
+<p><em><strong>New in version 0.2.0</strong></em></p>
+<p>Running <code>init</code> will prompt you to choose an sql formatter.</p>
+<div class="highlight"><pre><span></span><code>?<span class="w"> </span>Choose<span class="w"> </span>an<span class="w"> </span>SQL<span class="w"> </span>formatter
+<span class="w">  </span>None<span class="w"> </span><span class="o">(</span>no<span class="w"> </span>formatting<span class="o">)</span>
+<span class="w">  </span>sqlformat<span class="w"> </span><span class="o">(</span>built-in<span class="o">)</span>
+&gt;<span class="w"> </span>pg_format
+<span class="w">  </span>sqlfluff
+<span class="o">[</span>The<span class="w"> </span>above<span class="w"> </span>SQL<span class="w"> </span>formatters<span class="w"> </span>were<span class="w"> </span>found<span class="w"> </span>on<span class="w"> </span>your<span class="w"> </span>system<span class="w"> </span>and<span class="w"> </span>available<span class="w"> </span><span class="k">for</span><span class="w"> </span>use.<span class="w"> </span>Choose<span class="w"> </span>one<span class="w"> </span>or<span class="w"> </span>None<span class="w"> </span>to<span class="w"> </span>opt<span class="w"> </span>out<span class="w"> </span>of<span class="w"> </span>formatting<span class="o">]</span>
+</code></pre></div>
+<p>This example assumes that <code>pg_format</code> is chosen as the preferred
+formatter. For more details about SQL formatting support, see <a href="../formatting/">SQL
+formatting</a>.</p>
 <p>This will create a directory named <code>chinook</code> with following structure,</p>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>chinook
 $<span class="w"> </span>tree<span class="w"> </span>-a<span class="w"> </span>--charset<span class="o">=</span>ascii<span class="w"> </span>.

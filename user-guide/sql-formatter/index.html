@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../sqlfluff/">
       
       
-        <link rel="next" href="../getting-started/">
+        <link rel="next" href="../docker/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Installation - tapestry</title>
+        <title>sql-formatter - tapestry</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#installation" class="md-skip">
+        <a href="#configuring-sql-formatter" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Installation
+              sql-formatter
             
           </span>
         </div>
@@ -361,30 +361,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Installation
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -393,44 +373,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#additional-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      Additional dependencies
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dependencies-for-running-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      Dependencies for running tests
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -608,6 +550,8 @@
                 
   
   
+    
+  
   
   
     
@@ -617,11 +561,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_11" checked>
         
           
           <label class="md-nav__link" for="__nav_2_11" id="__nav_2_11_label" tabindex="0">
@@ -635,7 +579,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_11_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_11_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_11">
             <span class="md-nav__icon md-icon"></span>
             SQL formatting
@@ -730,10 +674,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../sql-formatter/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -742,6 +695,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -823,32 +777,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#additional-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      Additional dependencies
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dependencies-for-running-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      Dependencies for running tests
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -865,37 +793,39 @@
   
 
 
-<h1 id="installation">Installation</h1>
-<p>Until tapestry is published to crates.io, you can install it directly
-from github,</p>
-<div class="highlight"><pre><span></span><code>cargo<span class="w"> </span>install<span class="w"> </span>--git<span class="w"> </span>https://github.com/naiquevin/tapestry.git
+<h1 id="configuring-sql-formatter">Configuring sql-formatter</h1>
+<p><a href="https://github.com/sql-formatter-org/sql-formatter">sql-formatter</a> is
+a Javascript library and command line tool for pretty printing SQL. It
+supports multiple SQL dialects including postgresql, and hence makes
+for a pretty good external tool that tapestry can use for formatting
+the generated SQL.</p>
+<p>You can easily install it using npm,</p>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>sql-formatter
 </code></pre></div>
-<h3 id="additional-dependencies">Additional dependencies</h3>
-<p>Tapestry can be configured to depend on external SQL formatting tools
-for formatting the generated SQL files. In that case, it expects the
-respective tool to be installed on the system.</p>
-<p>Note that you need to install the formatting tools on the machine
-where you'd be rendering the SQL files using <code>tapestry</code> e.g. on your
-workstation and/or the build server.</p>
-<p>But these are not hard requirements as tapestry also ships with a
-basic inbuilt SQL formatter so that the generated files will be
-properly formatted without the need of any external dependencies.</p>
-<h2 id="dependencies-for-running-tests">Dependencies for running tests</h2>
-<p>If you are using tapestry to render tests (which you should, because
-that's what the tool is meant for!) then you'd also need the <code>pgTAP</code>
-extension and the <code>pg_prove</code> command line tool.</p>
-<p><code>pgTAP</code> can be easily built from source. Refer to the instructions
-<a href="https://pgxn.org/dist/pgtap/">here</a>.</p>
-<p>You can install <code>pg_prove</code> from a CPAN distribution as follows:</p>
-<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>cpan<span class="w"> </span>TAP::Parser::SourceHandler::pgTAP
+<p>During project initialization, if <code>sql-formatter</code> is found installed
+on your system (and in <code>$PATH</code>), it will be shown as one of the
+formatter options. Upon choosing it, following lines will be added to
+the <code>tapestry.toml</code> manifest file.</p>
+<div class="highlight"><pre><span></span><code><span class="k">[formatter.sql-formatter]</span>
+<span class="c1"># (required) Location of the sql-formatter executable</span>
+<span class="n">exec_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;sql-formatter&quot;</span>
+<span class="c1"># (optional) path to the json conf file.</span>
+<span class="n">conf_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;./.sql-formatter/config.json&quot;</span>
 </code></pre></div>
-<p>Refer to the <a href="https://pgtap.org/documentation.html#installation">pgTAP installation
-guide</a> for more
-details.</p>
-<p>As <code>tapestry</code> is a postgres specific tool, it goes without saying that
-you'd need a working installation of postgres to be able to run the
-tests. Please refer to the <a href="https://www.postgresql.org/download/">official
-documentation</a> for that.</p>
+<p><code>sql-formatter</code> can be configured through a JSON file. The <code>init</code>
+command also dumps a default JSON file at
+<code>./.sql-formatter/config.json</code>, relative to the manifest file, with
+the following contents:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;language&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;postgresql&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;tabWidth&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;keywordCase&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;upper&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;linesBetweenQueries&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>Refer to the <a href="https://github.com/sql-formatter-org/sql-formatter?tab=readme-ov-file#configuration-options">sql-formatter
+documentation</a>
+for more configuration options.</p>
 
 
 

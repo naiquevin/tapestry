@@ -1,0 +1,6 @@
+# Configuring sqlformat
+
+`sqlformat` is the inbuilt formatter supported by tapestry. It's
+implemented using the the
+[sqlformat](https://crates.io/crates/sqlformat) crate. 
+

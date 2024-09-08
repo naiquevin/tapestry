@@ -11,10 +11,10 @@
       
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../pg-format/">
       
       
-        <link rel="next" href="../getting-started/">
+        <link rel="next" href="../sql-formatter/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Installation - tapestry</title>
+        <title>sqlfluff - tapestry</title>
       
     
     
@@ -64,7 +64,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#installation" class="md-skip">
+        <a href="#configuring-sqlfluff" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +98,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Installation
+              sqlfluff
             
           </span>
         </div>
@@ -361,30 +361,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Installation
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../install/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -393,44 +373,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#additional-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      Additional dependencies
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dependencies-for-running-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      Dependencies for running tests
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -608,6 +550,8 @@
                 
   
   
+    
+  
   
   
     
@@ -617,11 +561,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_11" checked>
         
           
           <label class="md-nav__link" for="__nav_2_11" id="__nav_2_11_label" tabindex="0">
@@ -635,7 +579,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_11_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_11_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_11">
             <span class="md-nav__icon md-icon"></span>
             SQL formatting
@@ -709,10 +653,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../sqlfluff/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -721,6 +674,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -823,32 +777,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#additional-dependencies" class="md-nav__link">
-    <span class="md-ellipsis">
-      Additional dependencies
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#dependencies-for-running-tests" class="md-nav__link">
-    <span class="md-ellipsis">
-      Dependencies for running tests
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -865,37 +793,40 @@
   
 
 
-<h1 id="installation">Installation</h1>
-<p>Until tapestry is published to crates.io, you can install it directly
-from github,</p>
-<div class="highlight"><pre><span></span><code>cargo<span class="w"> </span>install<span class="w"> </span>--git<span class="w"> </span>https://github.com/naiquevin/tapestry.git
+<h1 id="configuring-sqlfluff">Configuring sqlfluff</h1>
+<p><code>sqlfluff</code> is a feature rich SQL formatter that's written in Python
+and hence is an external dependency for tapestry.</p>
+<p><code>sqlfluff</code> recognizes a file named <code>./.sqlfluff</code> a standard
+configuration file to load config from. Tapestry capitalizes on this
+so that there's no need to invent a new config format.</p>
+<p>The configuration options for <code>sqlfluff</code> are quite extensive and well
+documented -
+https://docs.sqlfluff.com/en/stable/configuration/index.html.</p>
+<p>During project initialization, if <code>sqlfluff</code> is found installed on
+your system (and in <code>$PATH</code>), it will be shown as one of the formatter
+options. Upon choosing it, following lines will be added to the
+<code>tapestry.toml</code> manifest file.</p>
+<div class="highlight"><pre><span></span><code><span class="k">[formatter.sqlfluff]</span>
+<span class="c1"># (required) Location of the sqlfluff executable</span>
+<span class="n">exec_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;sqlfluff&quot;</span>
 </code></pre></div>
-<h3 id="additional-dependencies">Additional dependencies</h3>
-<p>Tapestry can be configured to depend on external SQL formatting tools
-for formatting the generated SQL files. In that case, it expects the
-respective tool to be installed on the system.</p>
-<p>Note that you need to install the formatting tools on the machine
-where you'd be rendering the SQL files using <code>tapestry</code> e.g. on your
-workstation and/or the build server.</p>
-<p>But these are not hard requirements as tapestry also ships with a
-basic inbuilt SQL formatter so that the generated files will be
-properly formatted without the need of any external dependencies.</p>
-<h2 id="dependencies-for-running-tests">Dependencies for running tests</h2>
-<p>If you are using tapestry to render tests (which you should, because
-that's what the tool is meant for!) then you'd also need the <code>pgTAP</code>
-extension and the <code>pg_prove</code> command line tool.</p>
-<p><code>pgTAP</code> can be easily built from source. Refer to the instructions
-<a href="https://pgxn.org/dist/pgtap/">here</a>.</p>
-<p>You can install <code>pg_prove</code> from a CPAN distribution as follows:</p>
-<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>cpan<span class="w"> </span>TAP::Parser::SourceHandler::pgTAP
+<p>Additionally, it will also create the <code>.sqlfluff</code> config file
+alongside the manifest file.</p>
+<div class="highlight"><pre><span></span><code><span class="k">[sqlfluff]</span>
+<span class="na">dialect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">postgres</span>
 </code></pre></div>
-<p>Refer to the <a href="https://pgtap.org/documentation.html#installation">pgTAP installation
-guide</a> for more
-details.</p>
-<p>As <code>tapestry</code> is a postgres specific tool, it goes without saying that
-you'd need a working installation of postgres to be able to run the
-tests. Please refer to the <a href="https://www.postgresql.org/download/">official
-documentation</a> for that.</p>
+<p>You may refer to <a href="https://docs.sqlfluff.com/en/stable/configuration/index.html">sqlfluff
+documentation</a>
+to configure formatting as per your preferences.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unlike in <a href="pg-format.rs">pgFormatter's config</a>, the path to the
+sqlfluff config file doesn't need to be explicitly specified in the
+manifest file. Similar to normal functioning of <code>sqlfluff</code>, config
+will be implicitly loaded from a file named <code>./.sqlfluff</code> in the
+current directory. Since tapestry commands are run from the same dir
+that this file is created in, it just works.</p>
+</div>
 
 
 
