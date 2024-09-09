@@ -7,6 +7,7 @@ use crate::scaffolding;
 // use crate::tagging::{NameTagStyle, NameTagger};
 use crate::util::ls_files;
 use comfy_table::Table;
+use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
@@ -196,16 +197,25 @@ pub fn status(assert_no_changes: bool) -> Result<i32, Error> {
     if mistakes.is_empty() {
         let engine = Engine::from(&metadata);
         let formatter = &metadata.formatter;
+        let name_tagger = &metadata.name_tagger;
         let mut stats: HashMap<&Path, output::Status> = HashMap::new();
         for query in metadata.queries.iter() {
-            let q_output = engine.render_query(&query.id, None)?;
+            // query output sql (not tagged)
+            let q_output_sql = engine.render_query(&query.id, None)?;
+
+            // query output (tagged if name_tagger is configured)
+            let q_output = match name_tagger {
+                Some(t) => t.ensure_name_tag(&q_output_sql, &query.name_tag),
+                None => Cow::from(&q_output_sql),
+            };
+
             let q_stat = output::status(&query.output, formatter.as_ref(), &q_output)?;
             println!("Query: {}: {}", &q_stat.label(), query.output.display());
             stats.insert(&query.output, q_stat);
 
             // render and process tests
             let prep_stmt = match metadata.placeholder {
-                Placeholder::PosArgs => Some(q_output.as_str()),
+                Placeholder::PosArgs => Some(q_output_sql.as_str()),
                 Placeholder::Variables => None,
             };
             for tt in metadata.test_templates.find_by_query(&query.id) {
