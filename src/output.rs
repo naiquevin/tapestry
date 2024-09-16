@@ -36,6 +36,16 @@ impl Status {
     }
 }
 
+fn ensure_trailing_newline(sql: &str) -> Cow<'_, str> {
+    if !sql.ends_with('\n') {
+        let mut s = sql.to_string();
+        s.push('\n');
+        Cow::Owned(s)
+    } else {
+        Cow::Borrowed(sql)
+    }
+}
+
 /// Returns status of a query output file without modifying it
 ///
 /// This function compares the `rendered_output` (after formatting if
@@ -250,9 +260,10 @@ pub fn write_combined(
     let mut combined_output = String::new();
     let mut paths = Vec::with_capacity(files.len());
     for file in files {
-        combined_output.push_str("\n\n");
         let sql = file.tagged_sql(tagger);
         combined_output.push_str(&sql);
+        combined_output.push('\n');
+        combined_output.push('\n');
         paths.push(file.path);
     }
     let mut path_set: HashSet<&Path> = HashSet::from_iter(paths);
