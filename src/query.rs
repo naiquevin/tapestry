@@ -277,6 +277,10 @@ impl Queries {
         mistakes
     }
 
+    pub fn output_files(&self) -> impl Iterator<Item = &Path> {
+        self.inner.iter().map(|q| q.output.as_path())
+    }
+
     pub fn get(&self, id: &str) -> Option<&Rc<Query>> {
         self.index.get(id)
     }

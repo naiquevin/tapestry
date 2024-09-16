@@ -259,4 +259,36 @@ impl Metadata {
 
         mistakes
     }
+
+    /// Returns the combined output file in case layout =
+    /// `OneFileAllQueries`
+    ///
+    /// If layout is not `OneFileAllQueries`, then `None` is returned
+    ///
+    /// Results in an error if all queries don't have the same output
+    /// path.
+    ///
+    /// @TODO: Add tests
+    pub fn combined_output_file(&self) -> Result<Option<&Path>, Error> {
+        match &self.query_output_layout {
+            Layout::OneFileOneQuery => Ok(None),
+            Layout::OneFileAllQueries(output_file) => {
+                match output_file {
+                    Some(filepath) => Ok(Some(filepath)),
+                    None => {
+                        let mut output_paths =
+                            self.queries.output_files().collect::<HashSet<&Path>>();
+                        if output_paths.len() == 1 {
+                            // Unwrap is acceptable as the length is known to be 1
+                            Ok(Some(output_paths.drain().next().unwrap()))
+                        } else {
+                            Err(Error::Layout(
+                                "Common output file is required when layout = one-file-all-queries".to_string()
+                            ))
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
