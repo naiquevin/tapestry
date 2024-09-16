@@ -3,11 +3,14 @@ use toml::Value;
 
 use crate::error::{parse_error, Error};
 use crate::formatters::Formatter;
+use crate::metadata::Metadata;
+use crate::query::{Queries, Query};
 use crate::tagging::{NameTag, NameTagger};
 use crate::toml::decode_pathbuf;
 use std::borrow::Cow;
-use std::collections::HashSet;
-use std::fs;
+use std::collections::{HashMap, HashSet};
+use std::fs::{self, File};
+use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
 
 pub fn ensure_output_dirs<P: AsRef<Path>>(queries_dir: P, tests_dir: P) -> Result<(), Error> {
@@ -33,12 +36,12 @@ impl Status {
     }
 }
 
-/// Returns status of an output file
+/// Returns status of a query output file without modifying it
 ///
 /// This function compares the `rendered_output` (after formatting if
-/// applicable) with the contents of the output file at location
-/// `path` without actually writing the file. It returns the
-/// appropriate `Status` enum variant as follows,
+/// applicable) with the contents of the output file obtained using
+/// the `QueryOutputReader`. It returns the appropriate `Status` enum
+/// variant as follows,
 ///
 ///   Status::Added - if the output file doesn't already exist i.e. it
 ///   would get added upon calling the `render` command
@@ -55,7 +58,62 @@ impl Status {
 /// Returns `Error::Io` error if an error is encountered while reading
 /// the output file.
 ///
-pub fn status<P: AsRef<Path>>(
+pub fn query_status(
+    query: &Query,
+    reader: &QueryOutputReader,
+    formatter: Option<&Formatter>,
+    rendered_output: &str,
+) -> Result<Status, Error> {
+    let exists = reader.exists(&query.id)?;
+    if exists {
+        let contents = reader.read(&query.id)?;
+        // @NOTE: The code duplication below is intentional. It
+        // prevents unnecessary conversion of byte array into vec
+        match formatter {
+            Some(f) => {
+                if f.format(rendered_output) != contents {
+                    Ok(Status::Modified)
+                } else {
+                    Ok(Status::Unchanged)
+                }
+            }
+            None => {
+                let output = ensure_trailing_newline(rendered_output);
+                if output.as_bytes() != contents {
+                    Ok(Status::Modified)
+                } else {
+                    Ok(Status::Unchanged)
+                }
+            }
+        }
+    } else {
+        Ok(Status::Added)
+    }
+}
+
+/// Returns status of a test output file without modifying it
+///
+/// This function compares the `rendered_output` (after formatting if
+/// applicable) with the contents of the output file at location
+/// `path`. It returns the appropriate `Status` enum variant as
+/// follows,
+///
+///   Status::Added - if the output file doesn't already exist i.e. it
+///   would get added upon calling the `render` command
+///
+///   Status::Modified - if the `rendered_output` (after formatting if
+///   applicable) is different from the contents of the existing
+///   output file i.e. the file would get modified upon calling the
+///   `render` command.
+///
+///   Status::Unchanged - if the `rendered_output` (after formatting
+///   if applicable) is exactly the same as that contents of the
+///   existing output file
+///
+/// Returns `Error::Io` error if an error is encountered while reading
+/// the output file.
+///
+pub fn testfile_status<P: AsRef<Path>>(
     path: P,
     formatter: Option<&Formatter>,
     rendered_output: &str,
@@ -216,6 +274,148 @@ pub fn write_separately(
         write(file.path, formatter, &sql)?;
     }
     Ok(())
+}
+
+// @TODO: Add tests
+fn parse_combined_sql<'a>(
+    filepath: &Path,
+    tagger: &NameTagger,
+    formatter: Option<&Formatter>,
+    queries: &'a Queries,
+) -> Result<HashMap<&'a str, String>, Error> {
+    let tags_to_ids = queries
+        .iter()
+        .map(|q| {
+            let tag = tagger.make_name_tag(&q.name_tag);
+            (tag, q.id.as_str())
+        })
+        .collect::<HashMap<String, &str>>();
+    let mut curr_id: Option<&str> = None;
+    let mut result: HashMap<&str, String> = HashMap::with_capacity(tags_to_ids.len());
+
+    let file = File::open(filepath).map_err(Error::Io)?;
+
+    // @NOTE: `map_while(Result::ok)` is the equivalent of flatten
+    for line in io::BufReader::new(file).lines().map_while(Result::ok) {
+        match tags_to_ids.get(&line) {
+            Some(id) => {
+                curr_id = Some(id);
+                result.insert(id, line);
+            }
+            None => {
+                let key =
+                    curr_id.ok_or(Error::QueryOutputParsing(filepath.display().to_string()))?;
+                if let Some(qlines) = result.get_mut(key) {
+                    qlines.push('\n');
+                    qlines.push_str(line.as_str());
+                } else {
+                    warn!("Query id not identified when parsing output file. Discarding line");
+                }
+            }
+        }
+    }
+
+    if formatter.is_some() {
+        // @NOTE: If formatter is specified, add extra trailing
+        // newline for each query. Reason for doing this: The
+        // formatting operation adds a trailing newline to each
+        // sql. This means when every query is individually formatted,
+        // it will be formatted with a trailing newline. But the same
+        // doesn't happen when all queries are in a single file. This
+        // workaround is to just for it so that comparison can be done
+        // more cleanly.
+        result.iter_mut().for_each(|(_, val)| {
+            val.push('\n');
+        });
+    }
+
+    // Convert acc to cache hashmap
+    Ok(result)
+}
+
+/// Abstraction for reading query output files based on the layout
+/// i.e. if layout = OneFileOneQuery, then it will be read from
+/// individual files, otherwise if layout = OneFileAllQueries, then
+/// the individual queries will be first parsed by reading the single
+/// output and cached
+pub struct QueryOutputReader<'a> {
+    metadata: &'a Metadata,
+    parsed_query_store: Option<HashMap<&'a str, String>>,
+}
+
+impl<'a> QueryOutputReader<'a> {
+    pub fn new(metadata: &'a Metadata) -> Result<Self, Error> {
+        // @TODO: Instead of eagerly loading data, we could have used
+        // OnceCell here. But currently, the
+        // `OnceCell.get_or_try_init` is a nightly only feature.
+        let pqs = match metadata.query_output_layout {
+            Layout::OneFileOneQuery => None,
+            Layout::OneFileAllQueries(_) => {
+                // Unwrap is acceptable as None value is expected only
+                // if the layout = OneFileOneQuery
+                let filepath = metadata.combined_output_file()?.unwrap();
+                let tagger = metadata.name_tagger.as_ref().ok_or(Error::Layout(
+                    "name_tagger is required when layout = one-file-all-queries".to_string()
+                ))?;
+                Some(parse_combined_sql(
+                    filepath,
+                    tagger,
+                    metadata.formatter.as_ref(),
+                    &metadata.queries,
+                )?)
+            }
+        };
+        Ok(Self {
+            metadata,
+            parsed_query_store: pqs,
+        })
+    }
+
+    pub fn read(&self, query_id: &str) -> Result<Vec<u8>, Error> {
+        let query = self
+            .metadata
+            .queries
+            .get(query_id)
+            .ok_or(Error::UndefinedQuery(query_id.to_owned()))?;
+        match self.metadata.query_output_layout {
+            Layout::OneFileOneQuery => fs::read(&query.output).map_err(Error::Io),
+            Layout::OneFileAllQueries(_) => {
+                let query_store =
+                    self.parsed_query_store
+                        .as_ref()
+                        .ok_or(Error::QueryOutputParsing(
+                            "QueryOutputReader.parsed_query_store field not initialized".to_string()
+                        ))?;
+                query_store
+                    .get(query_id)
+                    .map(|s| s.clone().into_bytes())
+                    .ok_or(Error::QueryOutputParsing(format!(
+                        "Query not found in combined SQL file: {}",
+                        query.output.display(),
+                    )))
+            }
+        }
+    }
+
+    pub fn exists(&self, query_id: &str) -> Result<bool, Error> {
+        let query = self
+            .metadata
+            .queries
+            .get(query_id)
+            .ok_or(Error::UndefinedQuery(query_id.to_owned()))?;
+        match self.metadata.query_output_layout {
+            Layout::OneFileOneQuery => query.output.try_exists().map_err(Error::Io),
+            Layout::OneFileAllQueries(_) => {
+                let query_store =
+                    self.parsed_query_store
+                        .as_ref()
+                        .ok_or(Error::QueryOutputParsing(
+                            "QueryOutputReader.parsed_query_store field not initialized".to_string()
+                        ))?;
+                Ok(query_store.contains_key(&query_id))
+            }
+        }
+    }
 }
 
 #[cfg(test)]

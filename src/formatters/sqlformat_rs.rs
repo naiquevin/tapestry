@@ -67,7 +67,9 @@ impl Default for SqlFormat {
 
 impl SqlFormat {
     pub fn format(&self, sql: &str) -> Vec<u8> {
-        sqlformat::format(sql, &QueryParams::None, self.options).into_bytes()
+        let mut formatted = sqlformat::format(sql, &QueryParams::None, self.options);
+        formatted.push('\n');
+        formatted.into_bytes()
     }
 }
 

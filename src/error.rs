@@ -12,6 +12,8 @@ pub enum Error {
     MiniJinja(minijinja::Error),
     Scaffolding(String),
     ManifestNotFound,
+    QueryOutputParsing(String),
+    Layout(String),
     Cli(String),
 }
 
@@ -36,6 +38,10 @@ impl Display for Error {
                 write!(f, "Lookup for test template failed: path={path}")
             }
             Self::MiniJinja(e) => write!(f, "MiniJinja Error: {e:?}"),
+            Self::QueryOutputParsing(msg) => {
+                write!(f, "Failed to parse the query output file: {msg}")
+            }
+            Self::Layout(msg) => write!(f, "Layout error: {msg}"),
         }
     }
 }

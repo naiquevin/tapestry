@@ -61,6 +61,9 @@ impl fmt::Display for NameTagStyle {
     }
 }
 
+// @TODO: It's sufficient to check that the first line is the name
+// tag. It can be assumed that the docstrings will follow the name
+// tag.
 fn has_name_tag(sql: &str) -> bool {
     let pattern = Regex::new(r"--\s*name:\s*\w+").unwrap();
     let pre_comments = sql.lines().take_while(|s| s.starts_with("--"));

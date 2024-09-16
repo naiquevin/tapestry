@@ -1,6 +1,6 @@
 use crate::error::Error;
 use crate::metadata::Metadata;
-use crate::output;
+use crate::output::{self, QueryOutputReader};
 use crate::placeholder::Placeholder;
 use crate::render::Engine;
 use crate::scaffolding;
@@ -199,6 +199,7 @@ pub fn status(assert_no_changes: bool) -> Result<i32, Error> {
         let formatter = &metadata.formatter;
         let name_tagger = &metadata.name_tagger;
         let mut stats: HashMap<&Path, output::Status> = HashMap::new();
+        let query_reader = QueryOutputReader::new(&metadata)?;
         for query in metadata.queries.iter() {
             // query output sql (not tagged)
             let q_output_sql = engine.render_query(&query.id, None)?;
@@ -209,7 +210,8 @@ pub fn status(assert_no_changes: bool) -> Result<i32, Error> {
                 None => Cow::from(&q_output_sql),
             };
 
-            let q_stat = output::status(&query.output, formatter.as_ref(), &q_output)?;
+            let q_stat =
+                output::query_status(query, &query_reader, formatter.as_ref(), &q_output)?;
             println!("Query: {}: {}", &q_stat.label(), query.output.display());
             stats.insert(&query.output, q_stat);
 
@@ -220,7 +222,7 @@ pub fn status(assert_no_changes: bool) -> Result<i32, Error> {
             };
             for tt in metadata.test_templates.find_by_query(&query.id) {
                 let t_output = engine.render_test(&tt.path, prep_stmt)?;
-                let t_stat = output::status(&tt.output, formatter.as_ref(), &t_output)?;
+                let t_stat = output::testfile_status(&tt.output, formatter.as_ref(), &t_output)?;
                 println!("  Test: {}: {}", &t_stat.label(), &tt.output.display());
                 stats.insert(&tt.output, t_stat);
             }
