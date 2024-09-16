@@ -369,7 +369,7 @@ impl<'a> QueryOutputReader<'a> {
                 // if the layout = OneFileOneQuery
                 let filepath = metadata.combined_output_file()?.unwrap();
                 let tagger = metadata.name_tagger.as_ref().ok_or(Error::Layout(
-                    "name_tagger is required when layout = one-file-all-queries".to_string()
+                    "name_tagger is required when layout = one-file-all-queries".to_string(),
                 ))?;
                 Some(parse_combined_sql(
                     filepath,
@@ -398,7 +398,8 @@ impl<'a> QueryOutputReader<'a> {
                     self.parsed_query_store
                         .as_ref()
                         .ok_or(Error::QueryOutputParsing(
-                            "QueryOutputReader.parsed_query_store field not initialized".to_string()
+                            "QueryOutputReader.parsed_query_store field not initialized"
+                                .to_string(),
                         ))?;
                 query_store
                     .get(query_id)
@@ -424,7 +425,8 @@ impl<'a> QueryOutputReader<'a> {
                     self.parsed_query_store
                         .as_ref()
                         .ok_or(Error::QueryOutputParsing(
-                            "QueryOutputReader.parsed_query_store field not initialized".to_string()
+                            "QueryOutputReader.parsed_query_store field not initialized"
+                                .to_string(),
                         ))?;
                 Ok(query_store.contains_key(&query_id))
             }

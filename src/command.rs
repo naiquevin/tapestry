@@ -210,8 +210,7 @@ pub fn status(assert_no_changes: bool) -> Result<i32, Error> {
                 None => Cow::from(&q_output_sql),
             };
 
-            let q_stat =
-                output::query_status(query, &query_reader, formatter.as_ref(), &q_output)?;
+            let q_stat = output::query_status(query, &query_reader, formatter.as_ref(), &q_output)?;
             println!("Query: {}: {}", &q_stat.label(), query.output.display());
             stats.insert(&query.output, q_stat);
 

@@ -283,7 +283,8 @@ impl Metadata {
                             Ok(Some(output_paths.drain().next().unwrap()))
                         } else {
                             Err(Error::Layout(
-                                "Common output file is required when layout = one-file-all-queries".to_string()
+                                "Common output file is required when layout = one-file-all-queries"
+                                    .to_string(),
                             ))
                         }
                     }
