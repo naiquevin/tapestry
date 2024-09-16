@@ -303,6 +303,9 @@ fn parse_combined_sql<'a>(
                 result.insert(id, line);
             }
             None => {
+                if curr_id.is_none() && line.is_empty() {
+                    continue;
+                }
                 let key =
                     curr_id.ok_or(Error::QueryOutputParsing(filepath.display().to_string()))?;
                 if let Some(qlines) = result.get_mut(key) {
