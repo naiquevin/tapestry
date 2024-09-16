@@ -91,6 +91,14 @@ impl NameTagger {
         }
     }
 
+    pub fn make_name_tag(&self, name_tag: &NameTag) -> String {
+        let tag = match name_tag {
+            NameTag::DeriveFromId(id) => self.style.make_tag(id),
+            NameTag::Custom(s) => Cow::from(s),
+        };
+        format!("-- name: {tag}")
+    }
+
     // Prepends `sql` with a comment line containing the name tag if one
     // doesn't already exist
     //
@@ -100,11 +108,7 @@ impl NameTagger {
         if has_name_tag(sql) {
             Cow::from(sql)
         } else {
-            let tag = match name_tag {
-                NameTag::DeriveFromId(id) => self.style.make_tag(id),
-                NameTag::Custom(s) => Cow::from(s),
-            };
-            let mut result = format!("-- name: {tag}");
+            let mut result = self.make_name_tag(name_tag);
             result.push('\n');
             result.push_str(sql);
             Cow::from(result)
