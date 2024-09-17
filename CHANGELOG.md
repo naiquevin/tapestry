@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.1
+
+Released on: 2024-09-17
+
+- Fix the status command to work when layout =
+  'one-file-all-queries'. This was a regression that was introduced
+  when the layout functionality was implemented. This release fixes it.
+
 ## 0.2.0
 
 Released on: 2024-09-08
