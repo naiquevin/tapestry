@@ -22,7 +22,7 @@
     
     
       
-        <title>Installation - tapestry</title>
+        <title>Installation - Tapestry</title>
       
     
     
@@ -78,7 +78,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="tapestry" class="md-header__button md-logo" aria-label="tapestry" data-md-component="logo">
+    <a href="../.." title="Tapestry" class="md-header__button md-logo" aria-label="Tapestry" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -92,7 +92,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            tapestry
+            Tapestry
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -203,7 +203,7 @@
         <a href="../" class="md-tabs__link">
           
   
-  User Guide
+  User guide
 
         </a>
       </li>
@@ -250,13 +250,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="tapestry" class="md-nav__button md-logo" aria-label="tapestry" data-md-component="logo">
+    <a href="../.." title="Tapestry" class="md-nav__button md-logo" aria-label="Tapestry" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
-    tapestry
+    Tapestry
   </label>
   
     <div class="md-nav__source">
@@ -322,7 +322,7 @@
             
   
   <span class="md-ellipsis">
-    User Guide
+    User guide
   </span>
   
 
@@ -332,7 +332,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            User Guide
+            User guide
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -766,7 +766,28 @@
         
   
   <span class="md-ellipsis">
-    Docker
+    Docker/Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cd-ci/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CD/CI integration
   </span>
   
 
@@ -866,8 +887,13 @@
 
 
 <h1 id="installation">Installation</h1>
-<p>Until tapestry is published to crates.io, you can install it directly
-from github,</p>
+<p>Currently, binaries for <code>x86_64</code> arch for Linux and MacOS can be
+downloaded from the Github <a href="https://github.com/naiquevin/tapestry/releases">release
+page</a>. Binaries for
+<code>arm/aarch64</code> platform and Windows OS are not available yet.</p>
+<p>If you have the rust tool chain installed on your machine, you can
+build and install tapestry directly from github (without having to
+clone the repo)</p>
 <div class="highlight"><pre><span></span><code>cargo<span class="w"> </span>install<span class="w"> </span>--git<span class="w"> </span>https://github.com/naiquevin/tapestry.git
 </code></pre></div>
 <h3 id="additional-dependencies">Additional dependencies</h3>
@@ -880,6 +906,7 @@ workstation and/or the build server.</p>
 <p>But these are not hard requirements as tapestry also ships with a
 basic inbuilt SQL formatter so that the generated files will be
 properly formatted without the need of any external dependencies.</p>
+<p>Refer to the <a href="../formatting/">SQL formatting</a> section for more on this.</p>
 <h2 id="dependencies-for-running-tests">Dependencies for running tests</h2>
 <p>If you are using tapestry to render tests (which you should, because
 that's what the tool is meant for!) then you'd also need the <code>pgTAP</code>

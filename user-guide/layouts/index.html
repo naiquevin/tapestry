@@ -22,7 +22,7 @@
     
     
       
-        <title>Layouts - tapestry</title>
+        <title>Layouts - Tapestry</title>
       
     
     
@@ -78,7 +78,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="tapestry" class="md-header__button md-logo" aria-label="tapestry" data-md-component="logo">
+    <a href="../.." title="Tapestry" class="md-header__button md-logo" aria-label="Tapestry" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -92,7 +92,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            tapestry
+            Tapestry
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -203,7 +203,7 @@
         <a href="../" class="md-tabs__link">
           
   
-  User Guide
+  User guide
 
         </a>
       </li>
@@ -250,13 +250,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="tapestry" class="md-nav__button md-logo" aria-label="tapestry" data-md-component="logo">
+    <a href="../.." title="Tapestry" class="md-nav__button md-logo" aria-label="Tapestry" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
-    tapestry
+    Tapestry
   </label>
   
     <div class="md-nav__source">
@@ -322,7 +322,7 @@
             
   
   <span class="md-ellipsis">
-    User Guide
+    User guide
   </span>
   
 
@@ -332,7 +332,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            User Guide
+            User guide
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -518,6 +518,15 @@
   <a href="#layout-and-queriesoutput-field" class="md-nav__link">
     <span class="md-ellipsis">
       Layout and queries[].output field
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layout-and-query-tagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layout and query tagging
     </span>
   </a>
   
@@ -757,7 +766,28 @@
         
   
   <span class="md-ellipsis">
-    Docker
+    Docker/Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cd-ci/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CD/CI integration
   </span>
   
 
@@ -829,6 +859,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#layout-and-query-tagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Layout and query tagging
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -862,16 +901,35 @@ in the manifest. The default option if not specified is
 for every query, which is the path where the generated SQL output will
 be written. If <code>output</code> is not specified, it's value is derived from
 the query id. This works well for the <code>one-file-one-query</code> layout.</p>
-<p>When the layout is <code>one-file-all-queries</code>, it's expected that the
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="k">[[queries]]</span>
+<span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;artists_long_songs@genre*limit&quot;</span>
+<span class="n">template</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;artists_long_songs.sql.j2&quot;</span>
+<span class="n">conds</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;genre&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;limit&quot;</span><span class="w"> </span><span class="p">]</span>
+</code></pre></div>
+<p>The derived value of output for the above will be
+<code>artists_long_songs-genre-limit.sql</code>.</p>
+<p>But when the layout is <code>one-file-all-queries</code>, it's expected that the
 <code>output</code> field of all queries must be the same. Otherwise the manifest
 fails to validate. To avoid duplication, a related setting
 <code>query_output_file</code> is provided.</p>
 <p>If layout = <code>one-file-all-queries</code>, it's recommended to set
 <code>query_output_file</code> and omit the <code>output</code> field for individual
 queries.</p>
-<p>If layout = <code>one-file-one-query</code>, then you must not set
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><span class="n">query_output_layout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;one-file-all-queries&quot;</span>
+<span class="n">query_output_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;queries.sql&quot;</span>
+</code></pre></div>
+<p><strong>Tip</strong>: If layout = <code>one-file-one-query</code>, then you must not set
 <code>query_output_file</code>. Whether or not to set the <code>output</code> field for
 individual queries is up to you.</p>
+<h2 id="layout-and-query-tagging">Layout and query tagging</h2>
+<p><a href="../query-tags/">Name tagging of queries</a> is mandatory when layout is
+<code>one-file-all-queries</code>.</p>
+<p><strong>Why?</strong> (If you are curious): Name tags make parsing individual
+queries from a single SQL file much more straightforward. The
+<a href="../commands/#status"><code>status</code></a> command relies on parsing of individual
+queries from a single output file.</p>
 
 
 

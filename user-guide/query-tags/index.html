@@ -22,7 +22,7 @@
     
     
       
-        <title>Query Tags - tapestry</title>
+        <title>Query Tags - Tapestry</title>
       
     
     
@@ -78,7 +78,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="tapestry" class="md-header__button md-logo" aria-label="tapestry" data-md-component="logo">
+    <a href="../.." title="Tapestry" class="md-header__button md-logo" aria-label="Tapestry" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -92,7 +92,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            tapestry
+            Tapestry
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -203,7 +203,7 @@
         <a href="../" class="md-tabs__link">
           
   
-  User Guide
+  User guide
 
         </a>
       </li>
@@ -250,13 +250,13 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="tapestry" class="md-nav__button md-logo" aria-label="tapestry" data-md-component="logo">
+    <a href="../.." title="Tapestry" class="md-nav__button md-logo" aria-label="Tapestry" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
-    tapestry
+    Tapestry
   </label>
   
     <div class="md-nav__source">
@@ -322,7 +322,7 @@
             
   
   <span class="md-ellipsis">
-    User Guide
+    User guide
   </span>
   
 
@@ -332,7 +332,7 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
-            User Guide
+            User guide
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -546,6 +546,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#name-tag-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Name tag format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#deriving-name-tags-from-id" class="md-nav__link">
     <span class="md-ellipsis">
       Deriving name tags from id
@@ -558,6 +567,15 @@
   <a href="#custom-name-tags" class="md-nav__link">
     <span class="md-ellipsis">
       Custom name tags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disabling-name-tagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disabling name tagging
     </span>
   </a>
   
@@ -781,7 +799,28 @@
         
   
   <span class="md-ellipsis">
-    Docker
+    Docker/Podman
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cd-ci/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CD/CI integration
   </span>
   
 
@@ -855,6 +894,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#name-tag-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      Name tag format
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#deriving-name-tags-from-id" class="md-nav__link">
     <span class="md-ellipsis">
       Deriving name tags from id
@@ -867,6 +915,15 @@
   <a href="#custom-name-tags" class="md-nav__link">
     <span class="md-ellipsis">
       Custom name tags
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#disabling-name-tagging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Disabling name tagging
     </span>
   </a>
   
@@ -908,6 +965,9 @@ adding a comment before the query as follows,</p>
 <p>This way, these libraries can map the queries with the functions that
 it generates in code. These functions wraps around the database
 client/driver code and provides an easy interface for the user.</p>
+<p>Name-tagging queries is specially makes sense when all queries are
+rendered in the same output file (See <code>one-file-all-queries</code> in
+<a href="../layouts/">layouts</a>).</p>
 <p>The following example is taken from <a href="https://github.com/krisajenkins/yesql">yesql's
 README</a>:</p>
 <div class="highlight"><pre><span></span><code><span class="c1">-- name: users-by-country</span>
@@ -924,17 +984,35 @@ README</a>:</p>
 <span class="p">(</span><span class="nf">users-by-country</span><span class="w"> </span><span class="p">{</span><span class="ss">:country_code</span><span class="w"> </span><span class="s">&quot;GB&quot;</span><span class="p">})</span>
 <span class="c1">;=&gt; ({:name &quot;Kris&quot; :country_code &quot;GB&quot; ...} ...)</span>
 </code></pre></div>
+<h3 id="name-tag-format">Name tag format</h3>
+<p>The name tag is just a comment with a prefix <code>name:</code>. But if any
+other comment lines are present before a query, then the name tag
+should precede it.</p>
+<div class="highlight"><pre><span></span><code>&lt;name tag&gt;
+&lt;additional docstring if any&gt;
+&lt;query&gt;
+</code></pre></div>
+<p><span style="color: green;">Correct &#9745;</span></p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- name: my-query</span>
+<span class="c1">-- A simple query</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
+<p><span style="color: red;">Incorrect &#9746;</span></p>
+<div class="highlight"><pre><span></span><code><span class="c1">-- A simple query</span>
+<span class="c1">-- name: my-query</span>
+<span class="k">SELECT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="deriving-name-tags-from-id">Deriving name tags from id</h3>
-<p>Tapestry does support name tagging of queries, but it's disabled by
-default. To enable it, just add the following lines in the manifest,</p>
+<p>The name tagging config in the manifest file will look like this:</p>
 <div class="highlight"><pre><span></span><code><span class="k">[name_tagger]</span>
 <span class="n">style</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;kebab-case&quot;</span>
 </code></pre></div>
-<p>This will result in name tags added to queries. The name tags are
-derived from the query <a href="../manifest/#id">ids</a>. The <code>style</code> setting
-allows us to control how the id should be slugified to derive the name
-tag. For e.g. <code>kebab-case</code> will cause all non-alphanumeric characters
-in the id to be replaced by hyphens.</p>
+<p>This will result in name tags to be added to query output files. By
+default, the name tags are derived from the query
+<a href="../manifest/#id">ids</a>. The <code>style</code> setting allows us to control how
+the id should be slugified to derive the name tag. For
+e.g. <code>kebab-case</code> will cause all non-alphanumeric characters in the id
+to be replaced by hyphens.</p>
 <p>The other options for style are <code>snake_case</code> and <code>exact</code>.</p>
 <h3 id="custom-name-tags">Custom name tags</h3>
 <p>The above method derives name tags from query ids. But yesql and
@@ -968,6 +1046,12 @@ code. So yesql recommends the name tags to be in <code>kebab-case</code> as
 Clojure functions follow that convention, whereas aiosql needs the
 name tags to be in <code>snake_case</code> as that's the requirement and also the
 convention in Python.</p>
+<h3 id="disabling-name-tagging">Disabling name tagging</h3>
+<p>Name tagging can be disabled by simply removing the <code>[name_tagger]</code>
+TOML table from the manifest file.</p>
+<p>Note however that name tagging cannot be disabled if the
+<a href="../layouts/">layout</a> is <code>one-file-all-queries</code>. Most tapestry commands
+will fail with validation error in that case.</p>
 
 
 
