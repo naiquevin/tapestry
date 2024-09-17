@@ -11,18 +11,20 @@ rendering. For that, it supports a bunch of popular SQL formatting
 tools that the user may already have installed on their system. The
 currently supported formatting tools are:
 
-1. pg_format
-2. sqlfluff
-3. sqlformat (inbuilt)
+1. sqlformat (inbuilt)
+2. [pg_format](https://github.com/darold/pgFormatter) (PL/pgSQL + Perl)
+3. [sql-formatter](https://github.com/sql-formatter-org/sql-formatter) (Javascript)
+4. [sqlfluff](https://sqlfluff.com/) (Python)
 
-The first two are external tools that tapestry "shells-out" to. Hence
-they are expected to be installed on your system.
+All except the first one are external tools that tapestry "shells-out"
+to. Hence they are expected to be installed on your system.
 
 Tapestry also comes with it's own inbuilt formatter that can be used
 in case none of the above tools are installed. It's powered by the
-sqlformat-rs crate. You may choose this if you don't prefer to install
-an additional system level dependency. Although the level of config
-supported by sqlformat is quite rudimentary.
+[sqlformat-rs](https://crates.io/crates/sqlformat) crate. You may
+choose this if you don't prefer to install an additional system level
+dependency. Although the level of config supported by sqlformat is
+quite rudimentary.
 
 ## Selecting a formatter
 

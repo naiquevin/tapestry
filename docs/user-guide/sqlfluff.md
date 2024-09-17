@@ -1,7 +1,8 @@
 # Configuring sqlfluff
 
-`sqlfluff` is a feature rich SQL formatter that's written in Python
-and hence is an external dependency for tapestry.
+[sqlfluff](https://sqlfluff.com/) is a feature rich SQL formatter
+that's written in Python and hence is an external dependency for
+tapestry.
 
 `sqlfluff` recognizes a file named `./.sqlfluff` a standard
 configuration file to load config from. Tapestry capitalizes on this

@@ -1,4 +1,4 @@
-# Docker based workflow for running pgTAP tests
+# Container based workflow to run pgTAP tests
 
 `tapestry` only generates SQL files for queries and `pgTAP` tests. To
 be able to run the tests you need to install and setup:

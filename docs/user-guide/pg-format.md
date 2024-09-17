@@ -1,7 +1,8 @@
 # Configuring pg_format
 
-`tapestry` can be configured to use [`pg_format`]() for formatting the
-rendered SQL files. This makes sure that,
+`tapestry` can be configured to use
+[`pg_format`](https://github.com/darold/pgFormatter) for formatting
+the rendered SQL files. This makes sure that,
 
 * the rendered SQL files have consistent indentation
 * you don't need to worry about SQL indentation when writing Jinja

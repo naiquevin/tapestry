@@ -172,15 +172,26 @@ options are:
 
 It's optional. The default value is `one-file-one-query`.
 
+Example:
+
+```toml
+query_output_layout = "one-file-all-queries"
+```
+
 ## query\_output\_file
 
 `query_output_file` is optional but it's use is valid only when the
 [layout](#query_output_layout) is `one-file-all-queries`. It basically
 saves the user from having to define the same [`output`](#output) for
-all queries.
+all queries. Example:
+
+```toml
+query_output_layout = "one-file-all-queries"
+query_output_file = "queries.sql"
+```
 
 Refer to the [Layouts](layouts.md) section of the user guide for more
-info.
+info on this topic.
 
 ## formatter.pgFormatter
 

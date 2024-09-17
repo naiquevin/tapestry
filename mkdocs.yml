@@ -1,4 +1,4 @@
-site_name: tapestry
+site_name: Tapestry
 site_description: Framework for writing and maintaining (postgres)SQL queries and (pgTAP) tests
 repo_name: naiquevin/tapestry
 repo_url: https://github.com/naiquevin/tapestry
@@ -11,7 +11,7 @@ theme:
 
 nav:
   - Home: index.md
-  - User Guide:
+  - User guide:
       - user-guide/index.md
       - Installation: user-guide/install.md
       - Getting started: user-guide/getting-started.md
@@ -28,7 +28,8 @@ nav:
         - pg_format: user-guide/pg-format.md
         - sqlfluff: user-guide/sqlfluff.md
         - sql-formatter: user-guide/sql-formatter.md
-      - Docker: user-guide/docker.md
+      - Docker/Podman: user-guide/docker.md
+      - CD/CI integration: user-guide/cd-ci.md
   - Rationale: rationale.md
 
 

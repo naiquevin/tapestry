@@ -1,7 +1,13 @@
 # Installation
 
-Until tapestry is published to crates.io, you can install it directly
-from github,
+Currently, binaries for `x86_64` arch for Linux and MacOS can be
+downloaded from the Github [release
+page](https://github.com/naiquevin/tapestry/releases). Binaries for
+`arm/aarch64` platform and Windows OS are not available yet.
+
+If you have the rust tool chain installed on your machine, you can
+build and install tapestry directly from github (without having to
+clone the repo)
 
 ```shell
 cargo install --git https://github.com/naiquevin/tapestry.git
@@ -20,6 +26,8 @@ workstation and/or the build server.
 But these are not hard requirements as tapestry also ships with a
 basic inbuilt SQL formatter so that the generated files will be
 properly formatted without the need of any external dependencies.
+
+Refer to the [SQL formatting](formatting.md) section for more on this.
 
 ## Dependencies for running tests
 

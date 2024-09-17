@@ -17,6 +17,10 @@ This way, these libraries can map the queries with the functions that
 it generates in code. These functions wraps around the database
 client/driver code and provides an easy interface for the user.
 
+Name-tagging queries is specially makes sense when all queries are
+rendered in the same output file (See `one-file-all-queries` in
+[layouts](layouts.md)).
+
 The following example is taken from [yesql's
 README](https://github.com/krisajenkins/yesql):
 
@@ -39,21 +43,49 @@ WHERE country_code = :country_code
 ;=> ({:name "Kris" :country_code "GB" ...} ...)
 ```
 
+### Name tag format
+
+The name tag is just a comment with a prefix `name: `. But if any
+other comment lines are present before a query, then the name tag
+should precede it.
+
+```
+<name tag>
+<additional docstring if any>
+<query>
+```
+
+<span style="color: green;">Correct &#9745;</span>
+
+```sql
+-- name: my-query
+-- A simple query
+SELECT 1;
+```
+
+<span style="color: red;">Incorrect &#9746;</span>
+
+```sql
+-- A simple query
+-- name: my-query
+SELECT 1;
+```
+
 ### Deriving name tags from id
 
-Tapestry does support name tagging of queries, but it's disabled by
-default. To enable it, just add the following lines in the manifest,
+The name tagging config in the manifest file will look like this:
 
 ```toml
 [name_tagger]
 style = "kebab-case"
 ```
 
-This will result in name tags added to queries. The name tags are
-derived from the query [ids](manifest.md/#id). The `style` setting
-allows us to control how the id should be slugified to derive the name
-tag. For e.g. `kebab-case` will cause all non-alphanumeric characters
-in the id to be replaced by hyphens.
+This will result in name tags to be added to query output files. By
+default, the name tags are derived from the query
+[ids](manifest.md/#id). The `style` setting allows us to control how
+the id should be slugified to derive the name tag. For
+e.g. `kebab-case` will cause all non-alphanumeric characters in the id
+to be replaced by hyphens.
 
 The other options for style are `snake_case` and `exact`.
 
@@ -91,4 +123,13 @@ code. So yesql recommends the name tags to be in `kebab-case` as
 Clojure functions follow that convention, whereas aiosql needs the
 name tags to be in `snake_case` as that's the requirement and also the
 convention in Python.
+
+### Disabling name tagging
+
+Name tagging can be disabled by simply removing the `[name_tagger]`
+TOML table from the manifest file.
+
+Note however that name tagging cannot be disabled if the
+[layout](layouts.md) is `one-file-all-queries`. Most tapestry commands
+will fail with validation error in that case.
 

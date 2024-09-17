@@ -44,6 +44,7 @@ Running `init` will prompt you to choose an sql formatter.
   None (no formatting)
   sqlformat (built-in)
 > pg_format
+  sql-formatter
   sqlfluff
 [The above SQL formatters were found on your system and available for use. Choose one or None to opt out of formatting]
 ```
@@ -500,9 +501,11 @@ Result: PASS
 
 If you've reached this far, you should now have a basic understanding
 of what `tapestry` is and how to use it. Next, it'd be a good idea to
-understand the [manifest file](manifest.md) in more detail.
+learn about [integrating tapestry with the CD/CI workflows](cd-ci.md)
+of your project, to get an overall understanding of what all tools
+tapestry offers to help you make the most of SQL in project.
 
-!!! note
+!!! Note
 
     The chinook example discussed in this tutorial can also be found in
     the github repo under the `examples/chinook` directory (there are a
