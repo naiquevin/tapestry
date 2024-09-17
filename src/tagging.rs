@@ -61,18 +61,23 @@ impl fmt::Display for NameTagStyle {
     }
 }
 
-// @TODO: It's sufficient to check that the first line is the name
-// tag. It can be assumed that the docstrings will follow the name
-// tag.
+// Checks whether the sql query has a name tag as the first comment.
+//
+// Name-tagged queries will have the format:
+//
+//   <name tag>
+//   [docstring comments]
+//   <the query>
+//
+// Example:
+//
+//   -- name: foobar
+//   -- This query simply fetches from the foobar table
+//   SELECT * FROM foobar;
 fn has_name_tag(sql: &str) -> bool {
     let pattern = Regex::new(r"--\s*name:\s*\w+").unwrap();
-    let pre_comments = sql.lines().take_while(|s| s.starts_with("--"));
-    for line in pre_comments {
-        if pattern.is_match(line) {
-            return true;
-        }
-    }
-    false
+    let first_line = sql.lines().find(|s| !s.is_empty()).unwrap_or("");
+    pattern.is_match(first_line)
 }
 
 #[derive(Debug)]
@@ -175,5 +180,33 @@ WHERE
     AND department = 'department';
 "#;
         assert_eq!(expected, tagger.ensure_name_tag(sql, &name_tag));
+    }
+
+    #[test]
+    fn test_has_name_tag() {
+        let sql = r#"-- name: foobar
+SELECT * FROM foobar;
+"#;
+        assert!(has_name_tag(sql));
+
+        // Empty lines before the name tag are ignored
+        let sql = r#"
+-- name: foobar
+SELECT * FROM foobar;
+"#;
+        assert!(has_name_tag(sql));
+
+        let sql = r#"
+SELECT * FROM foobar;
+"#;
+        assert!(!has_name_tag(sql));
+
+        // General SQL comments / docstrings expected to come after
+        // the name tag line
+        let sql = r#"-- This query simplies queries from a table
+-- name: foobar
+SELECT * FROM foobar;
+"#;
+        assert!(!has_name_tag(sql));
     }
 }
