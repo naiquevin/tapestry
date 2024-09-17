@@ -211,7 +211,12 @@ pub fn status(assert_no_changes: bool) -> Result<i32, Error> {
             };
 
             let q_stat = output::query_status(query, &query_reader, formatter.as_ref(), &q_output)?;
-            println!("Query: {}: {}", &q_stat.label(), query.output.display());
+            println!(
+                "Query: {}: {} ({})",
+                &q_stat.label(),
+                query.id,
+                query.output.display()
+            );
             stats.insert(&query.output, q_stat);
 
             // render and process tests
