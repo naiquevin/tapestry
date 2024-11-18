@@ -32,6 +32,7 @@ pub enum ManifestMistake<'a> {
         output_path: &'a Path,
     },
     DisparateQueryOutputs,
+    NameTaggingRequired(String),
 }
 
 impl<'a> ManifestMistake<'a> {
@@ -73,6 +74,9 @@ impl<'a> ManifestMistake<'a> {
             },
             Self::DisparateQueryOutputs => {
                 String::from("Disparate query outputs found. All expected to be same as 'query_output_file' when layout = one-file-all-queries")
+            },
+            Self::NameTaggingRequired(reason) => {
+                format!("Name tagging is required for reason: {reason}")
             }
         }
     }

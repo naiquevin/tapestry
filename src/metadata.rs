@@ -254,6 +254,14 @@ impl Metadata {
         );
         mistakes.append(&mut self.test_templates.validate(&self.queries));
 
+        if let Layout::OneFileAllQueries(_) = self.query_output_layout {
+            if self.name_tagger.is_none() {
+                mistakes.push(ManifestMistake::NameTaggingRequired(
+                    "query_output_layout = 'one-file-all-queries'".to_owned()
+                ))
+            }
+        }
+
         // Log warnings if any
         let _ = self.warnings();
 
