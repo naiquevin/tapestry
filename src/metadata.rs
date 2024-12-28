@@ -269,7 +269,7 @@ impl Metadata {
         if let Layout::OneFileAllQueries(_) = self.query_output_layout {
             if self.name_tagger.is_none() {
                 mistakes.push(ManifestMistake::NameTaggingRequired(
-                    "query_output_layout = 'one-file-all-queries'".to_owned()
+                    "query_output_layout = 'one-file-all-queries'".to_owned(),
                 ))
             }
         }
