@@ -88,6 +88,15 @@ impl Formatter {
         };
         res.map_err(Error::Io)
     }
+
+    pub fn is_available(&self) -> bool {
+        match self {
+            Self::PgFormatter(f) => f.check(),
+            Self::SqlFormatRs(_) => true,
+            Self::SqlFormatter(f) => f.check(),
+            Self::SqlFluff(f) => f.check(),
+        }
+    }
 }
 
 /// Returns an ordered vec of formatters discovered on the system.

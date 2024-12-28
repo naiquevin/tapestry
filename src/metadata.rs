@@ -207,6 +207,18 @@ impl Metadata {
             }
         }
 
+        // Warn if the provided formatter is not found or installed on
+        // the system
+        if let Some(formatter) = self.formatter.as_ref() {
+            if !formatter.is_available() {
+                // @SAFE use of unwrap because if executable() returns
+                // None, it means the formatter is internal and hence
+                // will always be available.
+                let exec_path = formatter.executable().unwrap().display();
+                warn!("Executable for external formatter not found: {exec_path}");
+            }
+        }
+
         Ok(())
     }
 
