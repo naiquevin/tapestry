@@ -32,8 +32,7 @@ pub trait ExternalFormatter<'a>: TryFrom<&'a Value> + Configurable {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .spawn()
-            .expect("Failed to spawn child process");
-
+            .expect("Failed to run formatter as a child process");
         let mut stdin = child.stdin.take().expect("Failed to open stdin");
         // @TODO: Check if it's possible to avoid allocating for an
         // owned String here
@@ -59,7 +58,6 @@ pub trait ExternalFormatter<'a>: TryFrom<&'a Value> + Configurable {
             .stdout(Stdio::null())
             .stderr(Stdio::null())
             .status()
-            .expect("Failed to spawn child process")
-            .success()
+            .map_or(false, |s| s.success())
     }
 }
