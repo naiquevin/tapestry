@@ -152,7 +152,7 @@ impl TestTemplates {
         Ok(Self { inner: items })
     }
 
-    pub fn validate<'a, 'b>(&'a self, queries: &'b Queries) -> Vec<ManifestMistake>
+    pub fn validate<'a, 'b>(&'a self, queries: &'b Queries) -> Vec<ManifestMistake<'a>>
     where
         'b: 'a,
     {
