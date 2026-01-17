@@ -92,19 +92,21 @@ if [ $is_create_db -eq 1 ]; then
 fi
 
 # Execute sql in all schema files in alphabetical order
-echo "==== Executing commands in schema files ===="
-schema_files=$(ls $data_dir/schema/*.sql | sort)
-for f in $schema_files; do
-    if grep -iq "create database $pgdatabase;" $f; then
-        psql -h $pghost -U $pguser -f $f -q
-    else
-        psql -h $pghost -U $pguser -d $pgdatabase -f $f -q
-    fi
-done
+if [-d $data_dir/schema ]; then
+    echo "==== Executing commands in schema files ===="
+    schema_files=$(ls $data_dir/schema/*.sql | sort)
+    for f in $schema_files; do
+        if grep -iq "create database $pgdatabase;" $f; then
+            psql -h $pghost -U $pguser -f $f -q
+        else
+            psql -h $pghost -U $pguser -d $pgdatabase -f $f -q
+        fi
+    done
+fi
 
 # Create pgtap extension
 echo "==== Creating pgtap extension ===="
-psql -h $pghost -U $pguser -d $pgdatabase -c "create extension pgtap;"
+psql -h $pghost -U $pguser -d $pgdatabase -c "CREATE EXTENSION IF NOT EXISTS pgtap;"
 
 # Execute sql in fixture files (if any) in alphabetical order
 if [ -d $data_dir/fixtures ]; then
