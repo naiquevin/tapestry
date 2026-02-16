@@ -131,7 +131,8 @@ impl Query {
             }
             None => mistakes.push(ManifestMistake::QueryTemplateRefNotFound {
                 query_id: &self.id,
-                template: self.template.to_str().unwrap(),
+                // FIX: Template path may be non-UTF8; avoid to_str().unwrap().
+                template: Cow::Owned(self.template.display().to_string()),
             }),
         }
 
@@ -231,7 +232,8 @@ impl Queries {
             if val > &1 {
                 let m = ManifestMistake::Duplicates {
                     key: "queries[].id",
-                    value: key,
+                    // FIX: Store as Cow to match ManifestMistake payload type.
+                    value: Cow::Borrowed(*key),
                 };
                 mistakes.push(m)
             }
@@ -246,7 +248,8 @@ impl Queries {
                     if val > &1 {
                         let m = ManifestMistake::Duplicates {
                             key: "queries[].output",
-                            value: key.to_str().unwrap(),
+                            // FIX: Output path may be non-UTF8; use display().
+                            value: Cow::Owned(key.display().to_string()),
                         };
                         mistakes.push(m)
                     }
@@ -538,9 +541,10 @@ output = 'my_query_explicit.sql'
         match mistakes[0] {
             ManifestMistake::QueryTemplateRefNotFound { query_id, template } => {
                 assert_eq!("songs_formats", query_id);
+                // FIX: template is Cow<str> to support non-UTF8 paths.
                 assert_eq!(
                     "examples/chinook/templates/queries/undefined.sql.j2",
-                    template
+                    template.as_ref()
                 );
             }
             _ => assert!(false),
@@ -568,7 +572,8 @@ output = 'my_query_explicit.sql'
         match mistakes[0] {
             ManifestMistake::Duplicates { key, value } => {
                 assert_eq!("queries[].id", key);
-                assert_eq!("artists_long_songs", value);
+                // FIX: value is Cow<str> to support non-UTF8 paths.
+                assert_eq!("artists_long_songs", value.as_ref());
             }
             _ => assert!(false),
         }
@@ -596,9 +601,10 @@ output = 'my_query_explicit.sql'
         match mistakes[0] {
             ManifestMistake::Duplicates { key, value } => {
                 assert_eq!("queries[].output", key);
+                // FIX: value is Cow<str> to support non-UTF8 paths.
                 assert_eq!(
                     "examples/chinook/output/queries/artists_long_songs.sql",
-                    value
+                    value.as_ref()
                 );
             }
             _ => assert!(false),

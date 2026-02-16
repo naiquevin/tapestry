@@ -8,7 +8,7 @@ use crate::query::{Queries, Query};
 use crate::tagging::{NameTag, NameTagger};
 use crate::toml::decode_pathbuf;
 use std::borrow::Cow;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::fs::{self, File};
 use std::io::{self, BufRead};
 use std::path::{Path, PathBuf};
@@ -180,7 +180,7 @@ impl Layout {
                         Some(v) => Some(decode_pathbuf(
                             v,
                             Some(output_base_dir.as_ref()),
-                            "queries_output_file",
+                            "query_output_file",
                         )?),
                         None => None,
                     };
@@ -258,20 +258,31 @@ pub fn write_combined(
     tagger: Option<&NameTagger>,
 ) -> Result<(), Error> {
     let mut combined_output = String::new();
-    let mut paths = Vec::with_capacity(files.len());
+    if files.is_empty() {
+        return Err(Error::Layout(
+            "No queries to write (write_combined called with empty list)".to_string(),
+        ));
+    }
+
+    let mut filepath: Option<&Path> = None;
     for file in files {
         let sql = file.tagged_sql(tagger);
         combined_output.push_str(&sql);
         combined_output.push('\n');
         combined_output.push('\n');
-        paths.push(file.path);
+        match filepath {
+            Some(p) => {
+                if p != file.path {
+                    return Err(Error::Layout(
+                        "write_combined called with disparate file paths".to_string(),
+                    ));
+                }
+            }
+            None => filepath = Some(file.path),
+        }
     }
-    let mut path_set: HashSet<&Path> = HashSet::from_iter(paths);
-    if path_set.len() > 1 {
-        panic!("write_combined function called with disparate file paths. Please report this bug");
-    }
-    let filepath = path_set.drain().next().unwrap();
-    write(filepath, formatter, &combined_output)
+    // Safe due to the is_empty guard above
+    write(filepath.unwrap(), formatter, &combined_output)
 }
 
 // Writes file contents to separate files in a loop
@@ -306,8 +317,8 @@ fn parse_combined_sql<'a>(
 
     let file = File::open(filepath).map_err(Error::Io)?;
 
-    // @NOTE: `map_while(Result::ok)` is the equivalent of flatten
-    for line in io::BufReader::new(file).lines().map_while(Result::ok) {
+    for line in io::BufReader::new(file).lines() {
+        let line = line.map_err(Error::Io)?;
         match tags_to_ids.get(&line) {
             Some(id) => {
                 curr_id = Some(id);

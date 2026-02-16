@@ -56,7 +56,7 @@ impl TryFrom<&Path> for Metadata {
         let queries_output_dir = table
             .get("queries_output_dir")
             .ok_or(parse_error!("Key 'queries_output_dir' is missing"))
-            .map(|v| decode_pathbuf(v, None, "query_output_dir"))??;
+            .map(|v| decode_pathbuf(v, None, "queries_output_dir"))??;
         let tests_output_dir = table
             .get("tests_output_dir")
             .ok_or(parse_error!("Key 'tests_output_dir' is missing"))
@@ -222,7 +222,7 @@ impl Metadata {
         Ok(())
     }
 
-    pub fn validate(&self) -> Vec<ManifestMistake> {
+    pub fn validate(&self) -> Vec<ManifestMistake<'_>> {
         let mut mistakes = vec![];
         match validate_path(&self.query_templates_dir, "query_templates_dir") {
             Ok(()) => {}

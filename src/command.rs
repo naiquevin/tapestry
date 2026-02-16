@@ -287,7 +287,11 @@ pub fn coverage(fail_under: Option<u8>) -> Result<i32, Error> {
         // Calculate coverage summary
         let num_untested = untested.len();
         let num_tested = num_queries - num_untested;
-        let pcent_cov = (num_tested as f32 / num_queries as f32) * 100_f32;
+        let pcent_cov = if num_queries == 0 {
+            100_f32
+        } else {
+            (num_tested as f32 / num_queries as f32) * 100_f32
+        };
         rows.push(vec![
             "Total".to_owned(),
             format!("{pcent_cov:.02}%\n({num_tested}/{num_queries} queries have at least 1 test)"),

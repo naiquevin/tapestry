@@ -1,3 +1,5 @@
+// FIX: Use Cow<str> in error payloads to support non-UTF8 paths without panicking.
+use std::borrow::Cow;
 use std::path::Path;
 
 #[derive(Debug)]
@@ -13,11 +15,13 @@ pub enum ManifestMistake<'a> {
     NonUniqueDirs,
     QueryTemplateRefNotFound {
         query_id: &'a str,
-        template: &'a str,
+        // FIX: Template path may be non-UTF8; store as Cow<str> to avoid unwrap.
+        template: Cow<'a, str>,
     },
     QueryRefNotFound {
         query_id: &'a str,
-        test_template: &'a str,
+        // FIX: Test template path may be non-UTF8; store as Cow<str> to avoid unwrap.
+        test_template: Cow<'a, str>,
     },
     InvalidConds {
         query_id: &'a str,
@@ -25,7 +29,8 @@ pub enum ManifestMistake<'a> {
     },
     Duplicates {
         key: &'a str,
-        value: &'a str,
+        // FIX: Can be owned (e.g. from Path::display()) to avoid UTF-8 assumptions.
+        value: Cow<'a, str>,
     },
     InvalidQueryOutput {
         query_id: &'a str,
@@ -39,8 +44,7 @@ impl<'a> ManifestMistake<'a> {
     pub fn err_msg(&self) -> String {
         match self {
             Self::PathDoesnotExist { path, key } => {
-                let path_str = path.to_str().unwrap();
-                format!("Path '{path_str}' does not exist; key: '{key}'")
+                format!("Path '{}' does not exist; key: '{key}'", path.display())
             }
             Self::InvalidOutputDir { path, key } => {
                 format!(

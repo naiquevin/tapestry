@@ -2,6 +2,8 @@ use crate::error::{parse_error, Error};
 use crate::query::Queries;
 use crate::toml::{decode_pathbuf, decode_string};
 use crate::validation::{validate_path, ManifestMistake};
+// FIX: Use Cow<str> for error payloads to avoid UTF-8 unwrap on paths.
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
@@ -92,7 +94,8 @@ impl TestTemplate {
         if queries.get(&self.query).is_none() {
             mistakes.push(ManifestMistake::QueryRefNotFound {
                 query_id: &self.query,
-                test_template: self.path.to_str().unwrap(),
+                // FIX: Avoid to_str().unwrap() for potentially non-UTF8 paths.
+                test_template: Cow::Owned(self.path.display().to_string()),
             });
         }
 
@@ -170,7 +173,8 @@ impl TestTemplates {
             if val > &1 {
                 let m = ManifestMistake::Duplicates {
                     key: "test_templates[].path",
-                    value: key.to_str().unwrap(),
+                    // FIX: Output path may be non-UTF8; use display().
+                    value: Cow::Owned(key.display().to_string()),
                 };
                 mistakes.push(m)
             }

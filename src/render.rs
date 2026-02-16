@@ -134,7 +134,7 @@ impl<'a> Engine<'a> {
                 .test_templates
                 .get(path)
                 .ok_or(Error::UndefinedTestTemplate(
-                    path.to_str().unwrap().to_owned(),
+                    path.display().to_string(),
                 ))?;
         let tmpl = self
             .test_templates_env

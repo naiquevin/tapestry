@@ -1,6 +1,8 @@
 use crate::error::{parse_error, Error};
 use crate::toml::{decode_pathbuf, decode_strset};
 use crate::validation::{validate_path, ManifestMistake};
+// FIX: Avoid UTF-8 assumptions by indexing query templates by PathBuf.
+use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
@@ -32,15 +34,6 @@ impl QueryTemplate {
         }
     }
 
-    /// Returns identifier for the QueryTemplate
-    ///
-    /// It's simply the path returned as String. Expected to be used
-    /// for indexing etc.
-    fn id(&self) -> &str {
-        // @UNWRAP: Path is expected to be valid UTF-8
-        self.path.to_str().unwrap()
-    }
-
     /// Returns file name of the template which can be used with
     /// `minijinja::Environment` that's initialized using
     /// `minijinja::path_loader`
@@ -59,7 +52,7 @@ impl QueryTemplate {
             .unwrap()
     }
 
-    fn validate(&self) -> Option<ManifestMistake> {
+    fn validate(&self) -> Option<ManifestMistake<'_>> {
         match validate_path(&self.path, "query_templates[].path") {
             Ok(()) => None,
             Err(m) => Some(m),
@@ -70,13 +63,14 @@ impl QueryTemplate {
 #[derive(Debug)]
 pub struct QueryTemplates {
     inner: Vec<Rc<QueryTemplate>>,
-    index: HashMap<String, Rc<QueryTemplate>>,
+    // FIX: PathBuf keys allow non-UTF8 paths without panicking.
+    index: HashMap<PathBuf, Rc<QueryTemplate>>,
 }
 
 impl QueryTemplates {
     pub fn new() -> Self {
         let inner: Vec<Rc<QueryTemplate>> = vec![];
-        let index: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
+        let index: HashMap<PathBuf, Rc<QueryTemplate>> = HashMap::new();
         Self { inner, index }
     }
 
@@ -86,13 +80,14 @@ impl QueryTemplates {
         // would be populating the index at the time of lookup (like a
         // read-through cache) but in that case we'd need to manage
         // multiple mutable references.
-        let mut index: HashMap<String, Rc<QueryTemplate>> = HashMap::new();
+        let mut index: HashMap<PathBuf, Rc<QueryTemplate>> = HashMap::new();
         let items = match value.as_array() {
             Some(xs) => {
                 let mut res = Vec::with_capacity(xs.len());
                 for x in xs {
                     let qt = Rc::new(QueryTemplate::decode(&base_dir, x)?);
-                    let idx_key = qt.id().to_owned();
+                    // FIX: Index by full template path (no UTF-8 conversion needed).
+                    let idx_key = qt.path.clone();
                     let idx_val = qt.clone();
                     res.push(qt);
                     index.insert(idx_key, idx_val);
@@ -108,7 +103,7 @@ impl QueryTemplates {
         })
     }
 
-    pub fn validate(&self) -> Vec<ManifestMistake> {
+    pub fn validate(&self) -> Vec<ManifestMistake<'_>> {
         let mut mistakes = vec![];
         let count = self.inner.len();
         let mut all_paths: HashMap<&Path, usize> = HashMap::with_capacity(count);
@@ -125,7 +120,8 @@ impl QueryTemplates {
             if val > &1 {
                 let m = ManifestMistake::Duplicates {
                     key: "query_templates[].path",
-                    value: key.to_str().unwrap(),
+                    // FIX: Use display() to avoid assuming UTF-8.
+                    value: Cow::Owned(key.display().to_string()),
                 };
                 mistakes.push(m)
             }
@@ -134,8 +130,8 @@ impl QueryTemplates {
     }
 
     pub fn get(&self, path: &Path) -> Option<&Rc<QueryTemplate>> {
-        let key = path.to_str().unwrap().to_owned();
-        self.index.get(&key)
+        // FIX: Lookup by Path (no UTF-8 conversion).
+        self.index.get(path)
     }
 
     pub fn iter(&self) -> std::slice::Iter<'_, Rc<QueryTemplate>> {
@@ -166,7 +162,8 @@ pub mod test_util {
                 path: PathBuf::from(p),
                 all_conds: strset(ac),
             });
-            let idx_key = qt.id().to_owned();
+            // FIX: Index by PathBuf to avoid UTF-8 conversion.
+            let idx_key = qt.path.clone();
             let idx_val = qt.clone();
             qts.inner.push(qt);
             qts.index.insert(idx_key, idx_val);
@@ -282,9 +279,10 @@ all_conds = [ 1, 2 ]
         match mistakes[0] {
             ManifestMistake::Duplicates { key, value } => {
                 assert_eq!("query_templates[].path", key);
+                // FIX: value is Cow<str> to support non-UTF8 paths.
                 assert_eq!(
                     "examples/chinook/templates/queries/artists_long_songs.sql.j2",
-                    value
+                    value.as_ref()
                 );
             }
             _ => assert!(false),
