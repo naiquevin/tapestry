@@ -48,8 +48,6 @@ personal project so it has been tested for the basic use cases. A
 working [example](examples/chinook) is also included in the repo which
 you may try out.
 
-The first tag/version is yet to be created and released.
-
 Installation
 ------------
 
