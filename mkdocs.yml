@@ -30,6 +30,7 @@ nav:
         - sql-formatter: user-guide/sql-formatter.md
       - Docker/Podman: user-guide/docker.md
       - CD/CI integration: user-guide/cd-ci.md
+      - AI agent skills: user-guide/ai-agent-skills.md
   - Rationale: rationale.md
 
 

@@ -4,19 +4,16 @@
 
 ### Create a virtualenv
 
-```bash
-mkdir ~/.virtualenvs
-cd ~/.virtualenvs
-python -m venv mkdocs
+From the root of this git repository, run:
 
+```bash
+uv venv -p 3.13 .venv
 ```
 
 ### Install dependencies
 
 ```bash
-cd /path/to/tapestry/repo
-. ~/.virtualenvs/bin/mkdocs/bin/activate
-pip install -r docs-requirements.txt
+uv pip install -r docs-requirements.txt
 ```
 
 ### Verify
@@ -25,7 +22,7 @@ To verify that the setup works locally, run the following command from
 the project root dir.
 
 ```bash
-mkdocs serve
+.venv/bin/mkdocs serve
 ```
 
 ## Publishing on github pages
